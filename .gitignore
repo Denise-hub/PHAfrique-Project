@@ -46,6 +46,9 @@ client_secret*.json
 # vercel
 .vercel
 
+# GitHub Pages build (CI moves api/admin here during static export)
+.gh-pages-skip
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

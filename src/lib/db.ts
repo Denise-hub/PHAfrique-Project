@@ -61,6 +61,6 @@ function getPrisma(): PrismaClient | ReturnType<typeof createStub> {
 
 export const prisma = new Proxy({} as PrismaClient, {
   get(_, prop: string) {
-    return getPrisma()[prop as keyof PrismaClient]
+    return (getPrisma() as Record<string, unknown>)[prop]
   },
 })

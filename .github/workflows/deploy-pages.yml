@@ -38,6 +38,12 @@ jobs:
       - name: Generate Prisma client
         run: npx prisma generate
 
+      - name: Prepare for static export
+        run: |
+          mkdir -p .gh-pages-skip
+          mv src/app/api .gh-pages-skip/
+          mv src/app/admin .gh-pages-skip/
+
       - name: Build Next.js (static export)
         run: npm run build
 
