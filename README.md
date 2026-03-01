@@ -137,6 +137,18 @@ PHAfrique-Project/
 - **Environment**: Provide all required variables from `env.example` (no secrets in this repo). Keep `.env` out of version control.
 - **Database**: Run `npx prisma generate` and `npx prisma db push` (and optionally `db:seed`) on the server or in your deploy pipeline.
 
+### GitHub Pages (static snapshot)
+
+A GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) builds a **static export** and deploys it to GitHub Pages on every push to `main`. The site will be at:
+
+**https://denise-hub.github.io/PHAfrique-Project/**
+
+- **Custom domain error:** If GitHub shows *"The custom domain 'phafrique' is not properly formatted"*, fix it in **Settings → Pages**:
+  - Either **clear the custom domain** (leave it empty) to use the default `*.github.io` URL above, or  
+  - Enter a **full domain**, e.g. `www.phafrique.com` or `phafrique.com` (not just `phafrique`). You must own the domain and add the DNS records GitHub shows.
+- **Build and deployment:** Under **Source**, keep **GitHub Actions** selected. The "Next.js" workflow runs automatically on push to `main`.
+- **Limitation:** GitHub Pages serves static files only. The deployed site is a static snapshot (no admin login, no API, no live database). For the full app with admin and database, use a Node.js host (e.g. [Vercel](https://vercel.com), Netlify, or your own server).
+
 ---
 
 ## License
