@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAGES: '1'
-      # No DB in CI; app will build with empty data (static snapshot)
+      NODE_ENV: production
       DATABASE_URL: 'file:./prisma/dev.db'
     steps:
       - uses: actions/checkout@v4
@@ -33,19 +33,31 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Generate Prisma client
         run: npx prisma generate
 
       - name: Prepare for static export
         run: |
+          set -e
           mkdir -p .gh-pages-skip
-          mv src/app/api .gh-pages-skip/
-          mv src/app/admin .gh-pages-skip/
+          if [ -d src/app/api ]; then mv src/app/api .gh-pages-skip/; fi
+          if [ -d src/app/admin ]; then mv src/app/admin .gh-pages-skip/; fi
+          echo "Contents of src/app:"
+          ls -la src/app
 
       - name: Build Next.js (static export)
         run: npm run build
+
+      - name: Verify output
+        run: |
+          if [ ! -d out ] || [ -z "$(ls -A out 2>/dev/null)" ]; then
+            echo "ERROR: out directory missing or empty"
+            exit 1
+          fi
+          echo "Export OK:"
+          ls -la out | head -20
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@3

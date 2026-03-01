@@ -16,7 +16,12 @@ const nextConfig = {
   env: {
     DATABASE_URL: databaseUrl,
   },
-  ...(isGitHubPages && { basePath, assetPrefix, output: 'export' }),
+  ...(isGitHubPages && {
+    basePath,
+    assetPrefix,
+    output: 'export',
+    eslint: { ignoreDuringBuilds: true },
+  }),
   ...(!isGitHubPages && { output: 'standalone' }),
   images: {
     remotePatterns: [

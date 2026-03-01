@@ -149,6 +149,8 @@ A GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) builds a **stat
 - **Build and deployment:** Under **Source**, keep **GitHub Actions** selected. The "Next.js" workflow runs automatically on push to `main`.
 - **Limitation:** GitHub Pages serves static files only. The deployed site is a static snapshot (no admin login, no API, no live database). For the full app with admin and database, use a Node.js host (e.g. [Vercel](https://vercel.com), Netlify, or your own server).
 
+**If the workflow fails:** In the repo go to **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions**. Then in **Actions**, open the failed run, click the **build** job, and check the log for the exact error step.
+
 ---
 
 ## License
