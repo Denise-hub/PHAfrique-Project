@@ -1,0 +1,98 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/db'
+import { writeFile, mkdir } from 'fs/promises'
+import path from 'path'
+
+function trim(s: unknown): string | null {
+  if (s == null) return null
+  const t = String(s).trim()
+  return t === '' ? null : t
+}
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params
+  let name: string | null = null
+  let email: string | null = null
+  let phone: string | null = null
+  let message: string | null = null
+  let resumeUrl: string | null = null
+  let country: string | null = null
+  let qualification: string | null = null
+  let publicHealthIssues: string | null = null
+  let internshipInterest: string | null = null
+
+  const contentType = req.headers.get('content-type') || ''
+  if (contentType.includes('multipart/form-data')) {
+    const formData = await req.formData()
+    name = trim(formData.get('name'))
+    email = trim(formData.get('email'))
+    phone = trim(formData.get('phone'))
+    message = trim(formData.get('message'))
+    resumeUrl = trim(formData.get('resumeUrl'))
+    country = trim(formData.get('country'))
+    qualification = trim(formData.get('qualification'))
+    publicHealthIssues = trim(formData.get('publicHealthIssues'))
+    internshipInterest = trim(formData.get('internshipInterest'))
+
+    const cv = formData.get('cv')
+    if (cv && cv instanceof File && cv.size > 0) {
+      const dir = path.join(process.cwd(), 'public', 'uploads', 'applications')
+      await mkdir(dir, { recursive: true })
+      const ext = path.extname(cv.name) || '.pdf'
+      const base = `${id}-${Date.now()}${ext}`
+      const filePath = path.join(dir, base)
+      const buffer = Buffer.from(await cv.arrayBuffer())
+      await writeFile(filePath, buffer)
+      resumeUrl = `/uploads/applications/${base}`
+    }
+  } else {
+    const body = await req.json().catch(() => ({}))
+    name = trim(body.name)
+    email = trim(body.email)
+    phone = trim(body.phone)
+    message = trim(body.message)
+    resumeUrl = trim(body.resumeUrl)
+    country = trim(body.country)
+    qualification = trim(body.qualification)
+    publicHealthIssues = trim(body.publicHealthIssues)
+    internshipInterest = trim(body.internshipInterest)
+  }
+
+  if (!name || !email) {
+    return NextResponse.json({ error: 'name and email are required' }, { status: 400 })
+  }
+
+  const opp = await prisma.opportunity.findUnique({ where: { id } })
+  if (!opp || !opp.isActive) {
+    return NextResponse.json({ error: 'Opportunity not found or not accepting applications' }, { status: 404 })
+  }
+  if (opp.applicationDeadline && opp.applicationDeadline < new Date()) {
+    return NextResponse.json({ error: 'Application deadline has passed' }, { status: 400 })
+  }
+
+  try {
+    const app = await prisma.application.create({
+      data: {
+        opportunityId: id,
+        name,
+        email,
+        phone,
+        message,
+        resumeUrl,
+        country,
+        qualification,
+        publicHealthIssues,
+        internshipInterest,
+      },
+    })
+    revalidatePath('/opportunities')
+    return NextResponse.json({ ok: true, id: app.id })
+  } catch (e) {
+    console.error('opportunities apply POST', e)
+    return NextResponse.json({ error: 'Application failed' }, { status: 500 })
+  }
+}

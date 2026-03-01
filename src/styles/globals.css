@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .container-custom {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-16 md:py-24;
+  }
+  
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-lg bg-[#044444] px-6 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[#033333] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#044444] focus:ring-offset-2 active:scale-[0.98];
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-lg border-2 border-white bg-transparent px-6 py-3 text-base font-semibold text-white transition-all duration-200 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/50 focus:ring-offset-2 active:scale-[0.98];
+  }
+
+  .btn-secondary-outline {
+    @apply inline-flex items-center justify-center rounded-lg border-2 border-[#044444] bg-transparent px-6 py-3 text-base font-semibold text-[#044444] transition-all duration-200 hover:bg-[#044444]/10 focus:outline-none focus:ring-2 focus:ring-[#044444] focus:ring-offset-2 active:scale-[0.98];
+  }
+
+  .btn-accent {
+    @apply inline-flex items-center justify-center rounded-lg bg-[#FF0000] px-6 py-3 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:bg-[#CC0000] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[#FF6666] focus:ring-offset-2 active:scale-[0.98];
+  }
+  
+  .heading-1 {
+    @apply text-4xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-5xl md:text-6xl;
+  }
+  
+  .heading-2 {
+    @apply text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-4xl md:text-5xl;
+  }
+  
+  .heading-3 {
+    @apply text-2xl font-semibold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-3xl;
+  }
+  
+  .text-body {
+    @apply text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed;
+  }
+}
+
+@keyframes scroll-flags {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-scroll-flags {
+  animation: scroll-flags 35s linear infinite;
+}
+.animate-scroll-flags:hover {
+  animation-play-state: paused;
+}
+
+@keyframes gradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
+}
+

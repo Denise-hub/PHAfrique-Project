@@ -1,0 +1,1 @@
+Place ph-team-meeting.jpg here: the PHA team at a table with menstrual health materials (four women in PHA polos and purple/white caps). Used as the hero background; the site falls back to about/Better-quality-l-1024x768-1.jpeg if this file is missing.

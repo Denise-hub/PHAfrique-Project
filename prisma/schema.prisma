@@ -1,0 +1,148 @@
+// PHAfrique Project — CMS (images, events, content, opportunities, participants)
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String   // e.g. /uploads/2025/abc123.jpg
+  alt       String?
+  caption   String?
+  category  String   // hero | gallery | program | about | general
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  imageUrl    String?
+  link        String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Content {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. hero_subtitle, mission, contact_email
+  value     String   // text or JSON string
+  updatedAt DateTime @updatedAt
+}
+
+// "Our goals" / focus areas (e.g. Maternal, Mental, Environmental, Ethics)
+model Program {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  imageUrl    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// "Our Projects" (e.g. SOS MENHEMA, Kgetsi Ya Tsi, Internship program)
+model Project {
+  id           String    @id @default(cuid())
+  title        String
+  slug         String    @unique
+  description  String?
+  imageUrl     String?
+  link         String?
+  publishedAt  DateTime? // when to feature; null = not featured
+  sortOrder    Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Internship & volunteering opportunities
+// type: use "INTERNSHIP" | "VOLUNTEER" (API accepts "internship"|"volunteering" and normalizes)
+model Opportunity {
+  id                   String    @id @default(cuid())
+  title                String
+  slug                 String    @unique
+  type                 String    // INTERNSHIP | VOLUNTEER
+  description          String?
+  imageUrl             String?   // Card/hero image for public display
+  location             String?   // e.g. Nairobi / Remote
+  duration             String?   // e.g. 3–6 months
+  roleOverview         String?   // Rich text / multiline
+  requirements         String?   // Multiline
+  whatYouGain          String?   // Multiline
+  startDate            DateTime?
+  expiryDate           DateTime?
+  applicationDeadline  DateTime?
+  isActive             Boolean   @default(true)
+  sortOrder            Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  applications         Application[]
+  participants         Participant[]
+}
+
+// Admin users and RBAC: email → role, optional password for credential login
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique // lowercase, trimmed
+  role         String   // SUPER_ADMIN | CO_FOUNDER | SOCIAL_MEDIA_MANAGER | NEWSLETTER_MANAGER
+  passwordHash String?  // bcrypt; null = Google-only login
+  displayName  String?  // shown in admin panel
+  imageUrl     String?  // profile image URL or path
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Applications for opportunities
+model Application {
+  id                 String      @id @default(cuid())
+  opportunityId      String
+  opportunity        Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  name               String
+  email              String
+  phone              String?
+  message            String?
+  resumeUrl          String?
+  country            String?     // Country of residence (internship form)
+  qualification      String?     // Highest qualification (internship form)
+  publicHealthIssues String?     // Essay / cover note
+  internshipInterest String?     // Comma-separated portfolio areas (internship form)
+  status             String      @default("pending") // pending | reviewed | accepted | rejected
+  adminNotes         String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  participant        Participant?
+}
+
+// Interns and volunteers (managed under Opportunities); profile can link to opportunity/application and period
+model Participant {
+  id             String       @id @default(cuid())
+  type           String       // INTERN | VOLUNTEER
+  name           String
+  email          String?
+  role           String       // e.g. "Public Health Research Intern"
+  imageUrl       String?      // uploaded image path
+  bio            String?
+  linkedInUrl    String?
+  opportunityId  String?
+  opportunity    Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  applicationId  String?      @unique
+  application    Application? @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  isActive       Boolean      @default(true)
+  sortOrder      Int          @default(0)
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
