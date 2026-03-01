@@ -24,6 +24,10 @@ const nextConfig = {
   }),
   ...(!isGitHubPages && { output: 'standalone' }),
   images: {
+    ...(isGitHubPages && {
+      loader: 'custom',
+      loaderFile: './image-loader.js',
+    }),
     remotePatterns: [
       { protocol: 'https', hostname: 'flagcdn.com', pathname: '/**' },
     ],

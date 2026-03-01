@@ -50,6 +50,8 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+          GITHUB_PAGES: '1'
+          NEXT_PUBLIC_BASE_PATH: '/PHAfrique-Project'
 
       - name: Verify output
         run: |
