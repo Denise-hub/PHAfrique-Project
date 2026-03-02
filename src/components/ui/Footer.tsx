@@ -54,6 +54,7 @@ export default function Footer() {
               width={120}
               height={40}
               className="h-9 w-auto object-contain"
+              unoptimized
             />
             <span className="text-base font-semibold text-white">
               Public Health Corps Africa

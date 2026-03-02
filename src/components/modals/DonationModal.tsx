@@ -404,6 +404,7 @@ export default function DonationModal({ isOpen, onClose }: DonationModalProps) {
                   width={50}
                   height={50}
                   className="object-contain"
+                  unoptimized
                 />
               </div>
               <h2 className="text-xl font-bold text-[#044444] dark:text-[#044444] text-center">

@@ -38,16 +38,13 @@ client_secret*.json
 # uploads (application CVs etc.)
 /public/uploads
 
-# large media (GitHub 100 MB limit; host videos elsewhere)
+# large media (host videos elsewhere if needed)
 *.mp4
 *.mov
 *.webm
 
 # vercel
 .vercel
-
-# GitHub Pages build (CI moves api/admin here during static export)
-.gh-pages-skip
 
 # typescript
 *.tsbuildinfo

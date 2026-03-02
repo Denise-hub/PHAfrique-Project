@@ -122,6 +122,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               width={40}
               height={40}
               className="h-8 w-auto object-contain"
+              unoptimized
             />
             <div>
               <div className="font-bold text-lg text-[#FF0000]">Admin Panel</div>

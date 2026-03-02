@@ -122,6 +122,7 @@ export default function AdminLoginPage() {
                   width={80}
                   height={26}
                   className="h-7 w-auto object-contain"
+                  unoptimized
                 />
               </Link>
               <h2 className="text-xl font-bold mb-2">Welcome to PHAfrique Admin</h2>
@@ -144,10 +145,11 @@ export default function AdminLoginPage() {
                 <Image
                   src="/assets/logos/TRANSPARENT-MAIN-LOGO-ico.png"
                   alt="PHAfrique Project"
-                    width={80}
-                    height={26}
-                    className="h-7 w-auto object-contain"
-                  />
+                  width={80}
+                  height={26}
+                  className="h-7 w-auto object-contain"
+                  unoptimized
+                />
                 </Link>
                 <h2 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">Admin Login</h2>
               </div>

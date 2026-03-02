@@ -80,8 +80,8 @@ export const authOptions: NextAuthOptions = {
               update: {},
             })) as NonNullable<typeof admin>
             console.log('[auth] SUPER_ADMIN row created, continuing with password check')
-} catch (e) {
-          console.error('[auth] authorize RETURNING null: reason=Failed to create SUPER_ADMIN row:', (e as Error).message)
+          } catch (e) {
+            console.error('[auth] authorize RETURNING null: reason=Failed to create SUPER_ADMIN row:', (e as Error).message)
             return null
           }
         }
@@ -177,7 +177,7 @@ export const authOptions: NextAuthOptions = {
       try {
         console.log('[auth] signIn callback | provider:', account?.provider, '| user:', user ? { id: user.id, email: user.email } : null)
         if (account?.provider === 'google') {
-        const email = (user.email || (profile as { email?: string })?.email || '').toLowerCase().trim()
+          const email = (user.email || (profile as { email?: string })?.email || '').toLowerCase().trim()
         if (!email) {
           console.error('[auth] Google sign-in: no email in profile')
           return false
@@ -207,7 +207,7 @@ export const authOptions: NextAuthOptions = {
           return false
         }
       }
-        console.log('[auth] signIn callback returning: true')
+      console.log('[auth] signIn callback returning: true')
         return true
       } catch (e) {
         console.error('[auth] signIn callback THREW:', (e as Error).message, (e as Error).stack)

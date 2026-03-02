@@ -18,7 +18,7 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 - Animated hero, scroll-reveal sections, dark mode, mobile-responsive
 - Admin: role-based access (e.g. SUPER_ADMIN, CO_FOUNDER, SOCIAL_MEDIA_MANAGER, NEWSLETTER_MANAGER)
 - Internships & volunteering: list opportunities, submit applications, manage interns/volunteers and their profiles
-- Backend: Prisma + SQLite, NextAuth (credentials + optional Google OAuth), REST APIs for admin CRUD and public read
+- Backend: Prisma + SQLite, NextAuth (credentials + Google OAuth for admin), REST APIs for admin CRUD and public read
 
 ---
 
@@ -53,11 +53,10 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 
 3. **Environment**
    - Copy `env.example` to `.env`
-   - Set `DATABASE_URL` (e.g. `file:./dev.db`; path is relative to `prisma/`)
-   - Set `NEXTAUTH_URL` (e.g. `http://localhost:3000`) and `NEXTAUTH_SECRET` (e.g. `openssl rand -base64 32`)
-   - Set `ADMIN_EMAIL` and `ADMIN_PASSWORD_HASH` (bcrypt). Generate hash:  
-     `node -e "console.log(require('bcryptjs').hashSync('YOUR_PASSWORD', 10))"`
-   - Optional: Google OAuth, SMTP (see `env.example`)
+   - **Required:** `DATABASE_URL`, `NEXTAUTH_URL` (e.g. `http://localhost:3000`), `NEXTAUTH_SECRET` (e.g. `openssl rand -base64 32`)
+   - **Admin (email/password):** `ADMIN_EMAIL`, and either `ADMIN_PASSWORD` (plain) or `ADMIN_PASSWORD_HASH` (bcrypt). For the default super-admin (denmaombi@gmail.com), `ADMIN_PASSWORD` is used on first login.
+   - **Google login (admin):** Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `http://localhost:3000/api/auth/callback/google` for local; only admin users in the DB can sign in with Google.
+   - Optional: SMTP (see `env.example`)
 
 4. **Database**
    ```bash
@@ -73,6 +72,9 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
    ```
    - Site: [http://localhost:3000](http://localhost:3000)  
    - Admin: [http://localhost:3000/admin](http://localhost:3000/admin)
+
+   **If you see "localhost refused to connect" or ERR_CONNECTION_REFUSED:**  
+   The dev server is not running. From the project root run `npm run dev` and wait until you see "Ready in …" before opening http://localhost:3000. On Windows PowerShell use `npm run dev` (no `&&`); the script is already configured for port 3000.
 
 ---
 
@@ -137,19 +139,31 @@ PHAfrique-Project/
 - **Environment**: Provide all required variables from `env.example` (no secrets in this repo). Keep `.env` out of version control.
 - **Database**: Run `npx prisma generate` and `npx prisma db push` (and optionally `db:seed`) on the server or in your deploy pipeline.
 
-### GitHub Pages (static snapshot)
+### Deploy to Vercel
 
-A GitHub Actions workflow (`.github/workflows/deploy-pages.yml`) builds a **static export** and deploys it to GitHub Pages on every push to `main`. The site will be at:
+This project is ready for [Vercel](https://vercel.com). No GitHub Pages deployment.
 
-**https://denise-hub.github.io/PHAfrique-Project/**
+**Steps**
 
-- **Custom domain error:** If GitHub shows *"The custom domain 'phafrique' is not properly formatted"*, fix it in **Settings → Pages**:
-  - Either **clear the custom domain** (leave it empty) to use the default `*.github.io` URL above, or  
-  - Enter a **full domain**, e.g. `www.phafrique.com` or `phafrique.com` (not just `phafrique`). You must own the domain and add the DNS records GitHub shows.
-- **Build and deployment:** Under **Source**, keep **GitHub Actions** selected. The "Next.js" workflow runs automatically on push to `main`.
-- **Limitation:** GitHub Pages serves static files only. The deployed site is a static snapshot (no admin login, no API, no live database). For the full app with admin and database, use a Node.js host (e.g. [Vercel](https://vercel.com), Netlify, or your own server).
+1. **Import** the repo at [vercel.com](https://vercel.com) (sign in with GitHub).
+2. **Environment variables** — set these in Vercel (Settings → Environment Variables). Use the same names as in `env.example`:
 
-**If the workflow fails:** In the repo go to **Settings → Pages**. Under **Build and deployment**, set **Source** to **GitHub Actions**. Then in **Actions**, open the failed run, click the **build** job, and check the log for the exact error step.
+   | Variable | Required | Notes |
+   |----------|----------|--------|
+   | `NEXTAUTH_URL` | Yes | Your live URL, e.g. `https://your-app.vercel.app` (Vercel sets this automatically; override if using a custom domain) |
+   | `NEXTAUTH_SECRET` | Yes | e.g. `openssl rand -base64 32` — keep secret |
+   | `DATABASE_URL` | Yes | Use a hosted DB (Vercel Postgres, Turso, PlanetScale, etc.). Serverless does not persist SQLite. |
+   | `GOOGLE_CLIENT_ID` | For Google login | From [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `https://your-app.vercel.app/api/auth/callback/google` |
+   | `GOOGLE_CLIENT_SECRET` | For Google login | From same OAuth client |
+   | `ADMIN_EMAIL` | Optional | Default admin email |
+   | `ADMIN_PASSWORD` or `ADMIN_PASSWORD_HASH` | Optional | For email/password admin login (super-admin) |
+   | SMTP_* | Optional | For application status emails |
+
+3. **Deploy.** After the first deploy, run your database migrations (e.g. Prisma) in the Vercel project or via your DB provider. Seed admin users (`npm run db:seed`) or create them via the app so that Google sign-in works for those emails.
+
+**Post-deploy:** Admin at `https://your-app.vercel.app/admin`, Google login and email/password login both work for users in the admin list. All images, APIs, and features mirror local.
+
+**Other hosts** (Netlify, Railway, Render): Use the same env vars; ensure Node.js and a persistent database are supported.
 
 ---
 

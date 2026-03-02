@@ -6,35 +6,19 @@ const projectRoot = process.cwd()
 const prismaDbPath = path.resolve(projectRoot, 'prisma', 'dev.db')
 const databaseUrl = 'file:' + prismaDbPath.replace(/\\/g, '/')
 
-// GitHub Pages: use static export and basePath when building for Pages.
-const isGitHubPages = process.env.GITHUB_PAGES === '1'
-const basePath = isGitHubPages ? '/PHAfrique-Project' : undefined
-const assetPrefix = isGitHubPages ? '/PHAfrique-Project/' : undefined
-
 const nextConfig = {
   reactStrictMode: true,
   env: {
     DATABASE_URL: databaseUrl,
   },
-  ...(isGitHubPages && {
-    basePath,
-    assetPrefix,
-    output: 'export',
-    eslint: { ignoreDuringBuilds: true },
-  }),
-  ...(!isGitHubPages && { output: 'standalone' }),
+  output: 'standalone',
   images: {
-    ...(isGitHubPages && {
-      loader: 'custom',
-      loaderFile: './image-loader.js',
-    }),
     remotePatterns: [
       { protocol: 'https', hostname: 'flagcdn.com', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
-    unoptimized: true, // Disable optimization to avoid errors with local images
+    unoptimized: true,
   },
-  // Optimize for production
   compress: true,
   poweredByHeader: false,
 }
