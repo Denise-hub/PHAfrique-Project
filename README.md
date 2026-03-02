@@ -53,7 +53,7 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 
 3. **Environment**
    - Copy `env.example` to `.env`
-   - **Required:** `DATABASE_URL` (recommended: `file:./prisma/dev.db` locally), `NEXTAUTH_URL` (e.g. `http://localhost:3000`), `NEXTAUTH_SECRET` (e.g. `openssl rand -base64 32`)
+   - **Required:** `DATABASE_URL`, `NEXTAUTH_URL` (e.g. `http://localhost:3000`), `NEXTAUTH_SECRET` (e.g. `openssl rand -base64 32`)
    - **Admin (email/password):** `ADMIN_EMAIL`, and either `ADMIN_PASSWORD` (plain) or `ADMIN_PASSWORD_HASH` (bcrypt). For the default super-admin (denmaombi@gmail.com), `ADMIN_PASSWORD` is used on first login.
    - **Google login (admin):** Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `http://localhost:3000/api/auth/callback/google` for local; only admin users in the DB can sign in with Google.
    - Optional: SMTP (see `env.example`)
@@ -152,7 +152,7 @@ This project is ready for [Vercel](https://vercel.com). No GitHub Pages deployme
    |----------|----------|--------|
    | `NEXTAUTH_URL` | Yes | Your live URL, e.g. `https://your-app.vercel.app` (Vercel sets this automatically; override if using a custom domain) |
    | `NEXTAUTH_SECRET` | Yes | e.g. `openssl rand -base64 32` — keep secret |
-   | `DATABASE_URL` | Yes | Local: `file:./prisma/dev.db`. Production: use a hosted DB (Vercel Postgres, Neon, Railway, etc.). Vercel serverless does not persist SQLite. |
+   | `DATABASE_URL` | Yes | Use a hosted DB (Vercel Postgres, Turso, PlanetScale, etc.). Serverless does not persist SQLite. |
    | `GOOGLE_CLIENT_ID` | For Google login | From [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `https://your-app.vercel.app/api/auth/callback/google` |
    | `GOOGLE_CLIENT_SECRET` | For Google login | From same OAuth client |
    | `ADMIN_EMAIL` | Optional | Default admin email |
