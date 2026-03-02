@@ -3,6 +3,8 @@ import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 
+export const dynamic = 'force-dynamic'
+
 const str = (v: unknown) => (v != null ? String(v).trim() || null : null)
 
 export async function GET(req: NextRequest) {

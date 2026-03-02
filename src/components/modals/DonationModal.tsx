@@ -127,6 +127,8 @@ export default function DonationModal({ isOpen, onClose }: DonationModalProps) {
         clearTimeout(debounceTimerRef.current)
       }
     }
+    // initializePayPal is intentionally omitted to avoid re-running on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paypalLoaded, amount, paymentMethod, debounce])
 
   const initializePayPal = () => {

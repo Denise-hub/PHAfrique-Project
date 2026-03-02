@@ -7,6 +7,8 @@ import { saveImageFile } from '@/lib/upload'
 import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 
+export const dynamic = 'force-dynamic'
+
 function normalizeOpportunityType(t: string): string {
   const v = String(t).toLowerCase()
   if (v === 'internship') return 'INTERNSHIP'

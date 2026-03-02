@@ -3,6 +3,8 @@ import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

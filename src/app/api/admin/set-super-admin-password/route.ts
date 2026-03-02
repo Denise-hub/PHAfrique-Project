@@ -9,6 +9,8 @@ import { prisma } from '@/lib/db'
 
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-setup-secret') || req.nextUrl.searchParams.get('secret')
   if (!secret || secret !== process.env.NEXTAUTH_SECRET) {

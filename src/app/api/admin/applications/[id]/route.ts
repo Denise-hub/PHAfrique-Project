@@ -3,6 +3,8 @@ import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { getMailer, getDefaultFrom } from '@/lib/mailer'
 
+export const dynamic = 'force-dynamic'
+
 const ALLOWED_STATUSES = ['pending', 'reviewed', 'accepted', 'rejected']
 
 function normalizeStatus(s: string): string {

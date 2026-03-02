@@ -7,6 +7,8 @@ import { saveImageFile } from '@/lib/upload'
 import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 
+export const dynamic = 'force-dynamic'
+
 const str = (v: unknown) => (v != null ? String(v).trim() || null : null)
 
 export async function PUT(

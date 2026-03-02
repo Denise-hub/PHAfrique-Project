@@ -158,10 +158,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             className="mb-3 flex items-center gap-3 rounded-lg px-4 py-2 text-left transition-colors hover:bg-white/10"
           >
             {session?.user?.image ? (
-              <img
+              <Image
                 src={session.user.image}
                 alt=""
+                width={40}
+                height={40}
                 className="h-10 w-10 shrink-0 rounded-full border-2 border-white/30 object-cover"
+                unoptimized
               />
             ) : (
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg font-semibold text-white">

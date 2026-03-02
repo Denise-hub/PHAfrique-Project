@@ -6,6 +6,8 @@ import { requireAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   const unauth = await requireAdmin()
   if (unauth) return unauth

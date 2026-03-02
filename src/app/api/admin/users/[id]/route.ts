@@ -7,6 +7,8 @@ import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 import { ROLES, effectiveRole, type Role } from '@/lib/roles'
 
+export const dynamic = 'force-dynamic'
+
 const ALLOWED_ROLES: Role[] = [
   ROLES.SUPER_ADMIN,
   ROLES.CO_FOUNDER,

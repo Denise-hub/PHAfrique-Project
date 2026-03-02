@@ -12,6 +12,7 @@ const ProgramsSection = dynamic(() => import('@/components/sections/ProgramsSect
 const Team = dynamic(() => import('@/components/sections/Team'), { ssr: true })
 const CTA = dynamic(() => import('@/components/sections/CTA'), { ssr: true })
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 export default async function Home(): Promise<React.ReactElement> {

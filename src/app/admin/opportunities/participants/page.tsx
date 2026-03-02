@@ -330,7 +330,14 @@ function AdminParticipantsPageInner() {
             <div key={p.id} className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
                 {p.imageUrl ? (
-                  <img src={p.imageUrl.startsWith('/') ? p.imageUrl : `/${p.imageUrl}`} alt="" className="h-12 w-12 rounded-full object-cover border border-neutral-200 dark:border-neutral-600 shrink-0" />
+                  <Image
+                    src={p.imageUrl.startsWith('/') ? p.imageUrl : `/${p.imageUrl}`}
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 rounded-full object-cover border border-neutral-200 dark:border-neutral-600 shrink-0"
+                    unoptimized
+                  />
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-[#044444]/20 dark:bg-[#44AAAA]/20 flex items-center justify-center text-lg font-semibold text-[#044444] dark:text-[#44AAAA] shrink-0">
                     {(p.name || '?')[0].toUpperCase()}

@@ -2,6 +2,7 @@ import ProgramsSection from '@/components/sections/ProgramsSection'
 import PageHero from '@/components/ui/PageHero'
 import { getPrograms } from '@/lib/programs'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 export default async function ProgramsPage() {

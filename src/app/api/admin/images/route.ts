@@ -6,6 +6,8 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { randomUUID } from 'crypto'
 
+export const dynamic = 'force-dynamic'
+
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const
 const EXT: Record<string, string> = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' }
 const MAX = 5 * 1024 * 1024 // 5MB

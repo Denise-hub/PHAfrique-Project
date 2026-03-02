@@ -6,6 +6,8 @@ import { effectiveRole, ROLES } from '@/lib/roles'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 
+export const dynamic = 'force-dynamic'
+
 const TYPE_INTERN = 'INTERN'
 const TYPE_VOLUNTEER = 'VOLUNTEER'
 

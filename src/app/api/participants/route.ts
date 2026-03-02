@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 /** Prisma client can miss participant model if server was started without running generate. */
 function ensureParticipantModel() {
   if (typeof (prisma as { participant?: unknown }).participant === 'undefined') {
