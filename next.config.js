@@ -6,6 +6,9 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
+    // So NextAuth sees these on Vercel (serverless can miss env otherwise)
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
+    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   output: 'standalone',
   images: {

@@ -1,16 +1,21 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
 /**
  * GET /api/debug/auth-diagnostic
- * Returns auth-related state to identify login blockers. Safe to call in development.
- * In production returns 404 unless NODE_ENV is not 'production' (e.g. staging).
+ * Returns auth-related state to identify login blockers.
+ * In production: call with ?key=YOUR_NEXTAUTH_SECRET to enable (so only you can see it).
+ * In development: no key needed.
  */
-export async function GET() {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'Not available in production' }, { status: 404 })
+export async function GET(req: NextRequest) {
+  const isProduction = process.env.NODE_ENV === 'production'
+  if (isProduction) {
+    const key = req.nextUrl.searchParams.get('key')
+    if (key !== process.env.NEXTAUTH_SECRET || !process.env.NEXTAUTH_SECRET) {
+      return NextResponse.json({ error: 'Not available in production' }, { status: 404 })
+    }
   }
 
   const out: {
@@ -25,6 +30,8 @@ export async function GET() {
       ADMIN_PASSWORD_HASH: { defined: boolean; length: number; prefix: string }
       NEXTAUTH_SECRET: { defined: boolean }
       NEXTAUTH_URL: string | null
+      VERCEL_URL: string | null
+      googleOAuth: { configured: boolean }
     }
     prisma: {
       adminUserModelAvailable: boolean
@@ -38,6 +45,10 @@ export async function GET() {
       ADMIN_PASSWORD_HASH: { defined: false, length: 0, prefix: '' },
       NEXTAUTH_SECRET: { defined: false },
       NEXTAUTH_URL: process.env.NEXTAUTH_URL || null,
+      VERCEL_URL: process.env.VERCEL_URL || null,
+      googleOAuth: {
+        configured: !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET),
+      },
     },
     prisma: { adminUserModelAvailable: false },
     summary: [],
@@ -87,6 +98,9 @@ export async function GET() {
   }
   if (!out.env.NEXTAUTH_SECRET.defined) {
     out.summary.push('NEXTAUTH_SECRET is not set; sessions may fail.')
+  }
+  if (!out.env.googleOAuth.configured) {
+    out.summary.push('GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set; Google Sign-In will be disabled.')
   }
 
   return NextResponse.json(out, {

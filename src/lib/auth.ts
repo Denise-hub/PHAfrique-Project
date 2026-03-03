@@ -177,7 +177,6 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  trustHost: true,
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
