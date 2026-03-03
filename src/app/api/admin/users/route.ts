@@ -8,6 +8,8 @@ import { ROLES, type Role } from '@/lib/roles'
 export const dynamic = 'force-dynamic'
 
 const ALLOWED_CREATE_ROLES: Role[] = [
+  ROLES.SUPER_ADMIN,
+  ROLES.ADMIN,
   ROLES.CO_FOUNDER,
   ROLES.SOCIAL_MEDIA_MANAGER,
   ROLES.NEWSLETTER_MANAGER,

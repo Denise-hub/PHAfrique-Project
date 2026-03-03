@@ -14,6 +14,7 @@ type AdminUser = {
 }
 
 const ROLES_CREATE = [
+  { value: 'ADMIN', label: 'Admin' },
   { value: 'CO_FOUNDER', label: 'Co-Founder' },
   { value: 'SOCIAL_MEDIA_MANAGER', label: 'Social Media Manager' },
   { value: 'NEWSLETTER_MANAGER', label: 'Newsletter Manager' },

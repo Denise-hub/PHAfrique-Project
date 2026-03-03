@@ -5,6 +5,8 @@
 
 export const ROLES = {
   SUPER_ADMIN: 'SUPER_ADMIN',
+  // ADMIN has full access to all admin sections (same as SUPER_ADMIN)
+  ADMIN: 'ADMIN',
   CO_FOUNDER: 'CO_FOUNDER',
   SOCIAL_MEDIA_MANAGER: 'SOCIAL_MEDIA_MANAGER',
   NEWSLETTER_MANAGER: 'NEWSLETTER_MANAGER',
@@ -26,6 +28,18 @@ export type AdminSection =
 
 const SECTION_ACCESS: Record<Role, AdminSection[]> = {
   [ROLES.SUPER_ADMIN]: [
+    'dashboard',
+    'programs',
+    'projects',
+    'opportunities',
+    'applications',
+    'news',
+    'content',
+    'gallery',
+    'users',
+    'profile',
+  ],
+  [ROLES.ADMIN]: [
     'dashboard',
     'programs',
     'projects',

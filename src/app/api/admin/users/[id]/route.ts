@@ -11,6 +11,7 @@ export const dynamic = 'force-dynamic'
 
 const ALLOWED_ROLES: Role[] = [
   ROLES.SUPER_ADMIN,
+  ROLES.ADMIN,
   ROLES.CO_FOUNDER,
   ROLES.SOCIAL_MEDIA_MANAGER,
   ROLES.NEWSLETTER_MANAGER,
