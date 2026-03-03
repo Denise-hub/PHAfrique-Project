@@ -4,6 +4,11 @@ import GoogleProvider from 'next-auth/providers/google'
 import { compare, hash } from 'bcryptjs'
 import { prisma } from '@/lib/db'
 
+// On Vercel, use the deployment URL so login works on both production and preview URLs
+if (typeof process !== 'undefined' && process.env.VERCEL && process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`
+}
+
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
 function getAdminUserModel() {
@@ -172,6 +177,7 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
