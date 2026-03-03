@@ -66,8 +66,13 @@ export async function POST(req: NextRequest) {
       if (typeof imgUrl === 'string' && imgUrl.trim()) imageUrl = imgUrl.trim()
       const imageFile = formData.get('image') as File | null
       if (imageFile && imageFile.size > 0) {
-        const saved = await saveImageFile(imageFile)
-        if (saved) imageUrl = saved
+        try {
+          const saved = await saveImageFile(imageFile)
+          if (saved) imageUrl = saved
+        } catch (e) {
+          // If image upload fails (e.g. filesystem restriction), log and continue creating the user without an image
+          console.error('[admin/users POST] image upload failed, continuing without profile image:', (e as Error).message)
+        }
       }
     } else {
       const body = await req.json().catch(() => ({}))
@@ -84,7 +89,7 @@ export async function POST(req: NextRequest) {
     }
     if (!ALLOWED_CREATE_ROLES.includes(role as Role)) {
       return NextResponse.json(
-        { error: 'Role must be one of: CO_FOUNDER, SOCIAL_MEDIA_MANAGER, NEWSLETTER_MANAGER' },
+        { error: 'Role must be one of: SUPER_ADMIN, ADMIN, CO_FOUNDER, SOCIAL_MEDIA_MANAGER, NEWSLETTER_MANAGER' },
         { status: 400 }
       )
     }
