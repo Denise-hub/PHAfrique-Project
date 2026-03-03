@@ -3,6 +3,7 @@ import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
 export const revalidate = 60
 
 function formatDate(d: Date) {

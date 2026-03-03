@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
@@ -39,7 +40,16 @@ export async function PUT(
       if (formData.has('link')) data.link = str(formData.get('link'))
       const image = formData.get('image')
       if (image instanceof File && image.size > 0) {
-        data.imageUrl = await saveImageFile(image)
+        try {
+          const uploaded = await saveImageFile(image)
+          if (uploaded) data.imageUrl = uploaded
+        } catch (e) {
+          console.error('admin/events PUT image upload:', e)
+          return NextResponse.json(
+            { error: (e as Error).message || 'Image upload failed. Try a smaller file or check Cloudinary.' },
+            { status: 500 }
+          )
+        }
       } else if (formData.has('imageUrl')) {
         const urlVal = str(formData.get('imageUrl'))
         data.imageUrl = urlVal === '' ? null : urlVal
@@ -56,10 +66,15 @@ export async function PUT(
     }
 
     const ev = await prisma.event.update({ where: { id }, data })
+    revalidatePath('/news')
     return NextResponse.json(ev)
   } catch (error) {
     console.error('Error updating event:', error)
-    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    if (error && typeof error === 'object' && 'code' in error && (error as { code: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+    const msg = (error as Error)?.message || 'Update failed'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
 
@@ -73,9 +88,13 @@ export async function DELETE(
     
     const { id } = await params
     await prisma.event.delete({ where: { id } })
+    revalidatePath('/news')
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('Error deleting event:', error)
-    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    if (error && typeof error === 'object' && 'code' in error && (error as { code: string }).code === 'P2025') {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+    return NextResponse.json({ error: 'Delete failed' }, { status: 500 })
   }
 }

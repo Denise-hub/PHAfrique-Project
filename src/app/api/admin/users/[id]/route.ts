@@ -34,7 +34,7 @@ export async function PATCH(
     if (!admin) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
     const isSelf = currentEmail === admin.email
-    const canEditOthers = currentRole === ROLES.SUPER_ADMIN
+    const canEditOthers = currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN
 
     if (!isSelf && !canEditOthers) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -102,6 +102,7 @@ export async function DELETE(
   const { id } = await params
   const session = await getServerSession(authOptions)
   const currentEmail = session?.user?.email?.toLowerCase().trim()
+  const currentRole = effectiveRole((session?.user as { role?: string })?.role)
 
   try {
     const admin = await prisma.adminUser.findUnique({ where: { id } })
@@ -109,6 +110,11 @@ export async function DELETE(
 
     if (admin.email === currentEmail) {
       return NextResponse.json({ error: 'You cannot delete your own account' }, { status: 400 })
+    }
+
+    const canDelete = currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN
+    if (!canDelete) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     await prisma.adminUser.delete({ where: { id } })

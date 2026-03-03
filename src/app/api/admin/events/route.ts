@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
@@ -43,7 +44,17 @@ export async function POST(req: NextRequest) {
       endDate = str(formData.get('endDate'))
       link = str(formData.get('link'))
       const image = formData.get('image')
-      imageUrl = await saveImageFile(image instanceof File && image.size > 0 ? image : null)
+      if (image instanceof File && image.size > 0) {
+        try {
+          imageUrl = await saveImageFile(image)
+        } catch (e) {
+          console.error('admin/events POST image upload:', e)
+          return NextResponse.json(
+            { error: (e as Error).message || 'Image upload failed. Try a smaller file or check Cloudinary.' },
+            { status: 500 }
+          )
+        }
+      }
     } else {
       const body = await req.json().catch(() => ({}))
       title = body.title ? String(body.title).trim() : null
@@ -70,9 +81,11 @@ export async function POST(req: NextRequest) {
         link: link ?? null,
       },
     })
+    revalidatePath('/news')
     return NextResponse.json(ev)
   } catch (e) {
     console.error('admin/events POST', e)
-    return NextResponse.json({ error: 'Create failed' }, { status: 500 })
+    const msg = (e as Error).message || 'Create failed'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

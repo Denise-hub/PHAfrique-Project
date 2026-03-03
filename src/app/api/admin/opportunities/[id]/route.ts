@@ -26,7 +26,7 @@ export async function PUT(
 
     const session = await getServerSession(authOptions)
     const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -51,7 +51,18 @@ export async function PUT(
         expiryDate: formData.get('expiryDate'),
       }
       const image = formData.get('image')
-      imageUrlFromFile = await saveImageFile(image instanceof File ? image : null)
+      if (image instanceof File && image.size > 0) {
+        try {
+          const uploaded = await saveImageFile(image)
+          if (uploaded) imageUrlFromFile = uploaded
+        } catch (e) {
+          console.error('admin/opportunities PUT image upload:', e)
+          return NextResponse.json(
+            { error: (e as Error).message || 'Image upload failed. Try a smaller file or check Cloudinary.' },
+            { status: 500 }
+          )
+        }
+      }
     } else {
       body = await req.json().catch(() => ({}))
     }
@@ -106,7 +117,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
     const session = await getServerSession(authOptions)
     const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

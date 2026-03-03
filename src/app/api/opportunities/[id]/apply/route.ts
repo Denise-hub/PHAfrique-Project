@@ -4,6 +4,8 @@ import { prisma } from '@/lib/db'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
+export const dynamic = 'force-dynamic'
+
 function trim(s: unknown): string | null {
   if (s == null) return null
   const t = String(s).trim()
@@ -38,16 +40,21 @@ export async function POST(
     publicHealthIssues = trim(formData.get('publicHealthIssues'))
     internshipInterest = trim(formData.get('internshipInterest'))
 
-    const cv = formData.get('cv')
+    const cv = formData.get('cv') || formData.get('resumeFile') || formData.get('resume')
     if (cv && cv instanceof File && cv.size > 0) {
-      const dir = path.join(process.cwd(), 'public', 'uploads', 'applications')
-      await mkdir(dir, { recursive: true })
-      const ext = path.extname(cv.name) || '.pdf'
-      const base = `${id}-${Date.now()}${ext}`
-      const filePath = path.join(dir, base)
-      const buffer = Buffer.from(await cv.arrayBuffer())
-      await writeFile(filePath, buffer)
-      resumeUrl = `/uploads/applications/${base}`
+      try {
+        const dir = path.join(process.cwd(), 'public', 'uploads', 'applications')
+        await mkdir(dir, { recursive: true })
+        const ext = path.extname(cv.name) || '.pdf'
+        const base = `${id}-${Date.now()}${ext}`
+        const filePath = path.join(dir, base)
+        const buffer = Buffer.from(await cv.arrayBuffer())
+        await writeFile(filePath, buffer)
+        resumeUrl = `/uploads/applications/${base}`
+      } catch (e) {
+        console.error('Apply: CV file save failed (expected on Vercel). Application will be saved without file.', e)
+        resumeUrl = null
+      }
     }
   } else {
     const body = await req.json().catch(() => ({}))
@@ -93,6 +100,10 @@ export async function POST(
     return NextResponse.json({ ok: true, id: app.id })
   } catch (e) {
     console.error('opportunities apply POST', e)
-    return NextResponse.json({ error: 'Application failed' }, { status: 500 })
+    const prismaErr = e && typeof e === 'object' && 'code' in e ? (e as { code: string }).code : ''
+    if (prismaErr === 'P2003') {
+      return NextResponse.json({ error: 'Opportunity not found' }, { status: 400 })
+    }
+    return NextResponse.json({ error: 'Application failed. Please try again.' }, { status: 500 })
   }
 }

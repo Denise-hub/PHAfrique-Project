@@ -15,6 +15,9 @@ const ALLOWED_CREATE_ROLES: Role[] = [
   ROLES.NEWSLETTER_MANAGER,
 ]
 
+// Basic constraints for profile images (same spirit as gallery uploads)
+const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024 // 5MB
+
 export async function GET() {
   const unauth = await requireSection('users')
   if (unauth) return unauth
@@ -66,12 +69,21 @@ export async function POST(req: NextRequest) {
       if (typeof imgUrl === 'string' && imgUrl.trim()) imageUrl = imgUrl.trim()
       const imageFile = formData.get('image') as File | null
       if (imageFile && imageFile.size > 0) {
+        if (imageFile.size > MAX_PROFILE_IMAGE_SIZE) {
+          return NextResponse.json(
+            { error: 'Profile image too large. Max size is 5MB.' },
+            { status: 400 }
+          )
+        }
         try {
           const saved = await saveImageFile(imageFile)
           if (saved) imageUrl = saved
         } catch (e) {
-          // If image upload fails (e.g. filesystem restriction), log and continue creating the user without an image
-          console.error('[admin/users POST] image upload failed, continuing without profile image:', (e as Error).message)
+          console.error('[admin/users POST] image upload failed:', (e as Error).message)
+          return NextResponse.json(
+            { error: 'Profile image upload failed. Please try again with a smaller JPG/PNG image.' },
+            { status: 500 }
+          )
         }
       }
     } else {

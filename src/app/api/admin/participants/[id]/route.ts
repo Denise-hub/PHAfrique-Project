@@ -56,7 +56,7 @@ export async function PATCH(
   if (unauth) return unauth
   const session = await getServerSession(authOptions)
   const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   const syncErr = ensureParticipantModel()
@@ -91,8 +91,16 @@ export async function PATCH(
     let imageUrl: string | null = existing.imageUrl
     const imageFile = form.get('image') as File | null
     if (imageFile && imageFile.size > 0) {
-      const saved = await saveImageFile(imageFile)
-      if (saved) imageUrl = saved
+      try {
+        const saved = await saveImageFile(imageFile)
+        if (saved) imageUrl = saved
+      } catch (e) {
+        console.error('participants PATCH image upload:', e)
+        return NextResponse.json(
+          { error: (e as Error).message || 'Image upload failed. Try a smaller file or check Cloudinary.' },
+          { status: 500 }
+        )
+      }
     }
 
     const participant = await prisma.participant.update({
@@ -130,7 +138,7 @@ export async function DELETE(
   if (unauth) return unauth
   const session = await getServerSession(authOptions)
   const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   const syncErr = ensureParticipantModel()

@@ -6,14 +6,18 @@ const nextConfig = {
   reactStrictMode: true,
   env: {
     DATABASE_URL: process.env.DATABASE_URL,
-    // So NextAuth sees these on Vercel (serverless can miss env otherwise)
     NEXTAUTH_URL: process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+    CLOUDINARY_UPLOAD_FOLDER: process.env.CLOUDINARY_UPLOAD_FOLDER,
   },
   output: 'standalone',
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'flagcdn.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
     unoptimized: true,

@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   if (unauth) return unauth
   const session = await getServerSession(authOptions)
   const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   const syncErr = ensureParticipantModel()

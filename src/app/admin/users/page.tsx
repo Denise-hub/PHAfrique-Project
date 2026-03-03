@@ -28,7 +28,10 @@ const ROLES_ALL = [
 export default function AdminUsersPage() {
   const { data: session } = useSession()
   const currentEmail = session?.user?.email?.toLowerCase().trim()
-  const isSuperAdmin = (session?.user as { role?: string })?.role === 'SUPER_ADMIN'
+  const role = (session?.user as { role?: string })?.role
+  const isSuperAdmin = role === 'SUPER_ADMIN'
+  const isAdmin = role === 'ADMIN'
+  const canManageUsers = isSuperAdmin || isAdmin
 
   const [list, setList] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
@@ -172,7 +175,7 @@ export default function AdminUsersPage() {
         ? await (() => {
             const fd = new FormData()
             fd.set('displayName', editForm.displayName.trim())
-            if (isSuperAdmin && currentEmail !== editUser.email) fd.set('role', editForm.role)
+            if (canManageUsers && currentEmail !== editUser.email) fd.set('role', editForm.role)
             if (editForm.password.trim().length >= 8) fd.set('password', editForm.password.trim())
             fd.set('image', editImageFile!)
             return fetch(`/api/admin/users/${editUser.id}`, {
@@ -188,7 +191,7 @@ export default function AdminUsersPage() {
             body: JSON.stringify({
               displayName: editForm.displayName.trim() || null,
               imageUrl: editForm.imageUrl.trim() || null,
-              ...(isSuperAdmin && currentEmail !== editUser.email ? { role: editForm.role } : {}),
+              ...(canManageUsers && currentEmail !== editUser.email ? { role: editForm.role } : {}),
               ...(editForm.password.trim().length >= 8 ? { password: editForm.password.trim() } : {}),
             }),
           })
@@ -415,7 +418,7 @@ export default function AdminUsersPage() {
                 className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-sm file:bg-[#044444] file:text-white"
               />
             </div>
-            {isSuperAdmin && currentEmail !== editUser.email && (
+            {canManageUsers && currentEmail !== editUser.email && (
               <div>
                 <label htmlFor="edit-role" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
                   Role
@@ -535,7 +538,7 @@ export default function AdminUsersPage() {
                         >
                           Edit
                         </button>
-                        {!isSelf && isSuperAdmin && (
+                        {!isSelf && canManageUsers && (
                           deleteConfirm === u.id ? (
                             <>
                               <span className="text-neutral-500">Remove?</span>

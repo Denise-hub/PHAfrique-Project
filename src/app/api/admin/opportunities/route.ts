@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     const session = await getServerSession(authOptions)
     const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER) {
+    if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
@@ -76,7 +76,18 @@ export async function POST(req: NextRequest) {
       startDate = start ? new Date(start) : null
       expiryDate = expiry ? new Date(expiry) : null
       const image = formData.get('image')
-      imageUrl = await saveImageFile(image instanceof File ? image : null)
+      if (image instanceof File && image.size > 0) {
+        try {
+          const uploaded = await saveImageFile(image)
+          if (uploaded) imageUrl = uploaded
+        } catch (e) {
+          console.error('admin/opportunities POST image upload:', e)
+          return NextResponse.json(
+            { error: (e as Error).message || 'Image upload failed. Try a smaller file or check Cloudinary.' },
+            { status: 500 }
+          )
+        }
+      }
     } else {
       const body = await req.json().catch(() => ({}))
       title = body.title ? String(body.title).trim() : null
