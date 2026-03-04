@@ -13,7 +13,6 @@ const Team = nextDynamic(() => import('@/components/sections/Team'), { ssr: true
 const CTA = nextDynamic(() => import('@/components/sections/CTA'), { ssr: true })
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 60
 
 export default async function Home(): Promise<React.ReactElement> {
   const [programs, projects] = await Promise.all([getPrograms(), getProjects()])

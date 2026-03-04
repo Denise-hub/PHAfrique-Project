@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,7 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     const unauth = await requireSection('gallery')
     if (unauth) return unauth
-    
+
     const { searchParams } = new URL(req.url)
     const category = searchParams.get('category')
     const list = await prisma.image.findMany({
@@ -21,9 +22,8 @@ export async function GET(req: NextRequest) {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching images:', error)
-    return NextResponse.json({ error: 'Failed to fetch images' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/images GET', e, 'Failed to fetch images')
   }
 }
 
@@ -67,8 +67,6 @@ export async function POST(req: NextRequest) {
     revalidatePath('/gallery')
     return NextResponse.json(img)
   } catch (e) {
-    console.error('admin/images POST', e)
-    const msg = (e as Error).message || 'Upload failed'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    return handleApiError('admin/images POST', e, 'Upload or create failed')
   }
 }

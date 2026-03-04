@@ -17,9 +17,10 @@ function ensureParticipantModel() {
  * Query: type=INTERN | type=VOLUNTEER (optional; if omitted returns all active)
  */
 export async function GET(req: NextRequest) {
-  const syncErr = ensureParticipantModel()
-  if (syncErr) return NextResponse.json({ error: syncErr }, { status: 503 })
   try {
+    const syncErr = ensureParticipantModel()
+    if (syncErr) return NextResponse.json([], { status: 200 })
+
     const { searchParams } = new URL(req.url)
     const typeParam = searchParams.get('type')?.toUpperCase()
     const typeFilter = typeParam === 'VOLUNTEER' ? 'VOLUNTEER' : typeParam === 'INTERN' ? 'INTERN' : null
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest) {
     })
     return NextResponse.json(list)
   } catch (error) {
-    console.error('Error fetching participants:', error)
-    return NextResponse.json({ error: 'Failed to fetch participants' }, { status: 500 })
+    console.error('[api/participants GET]', error)
+    return NextResponse.json([])
   }
 }

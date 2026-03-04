@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 
@@ -20,9 +21,8 @@ export async function GET() {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
     })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching programs:', error)
-    return NextResponse.json({ error: 'Failed to fetch programs' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/programs GET', e, 'Failed to fetch programs')
   }
 }
 
@@ -81,10 +81,9 @@ export async function POST(req: NextRequest) {
     revalidatePath('/programs', 'layout')
     return NextResponse.json(p)
   } catch (e: unknown) {
-    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2002') {
+    if (e && typeof e === 'object' && 'code' in e && (e as { code: string }).code === 'P2002') {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
-    console.error('admin/programs POST', e)
-    return NextResponse.json({ error: 'Create failed' }, { status: 500 })
+    return handleApiError('admin/programs POST', e, 'Create failed')
   }
 }

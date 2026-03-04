@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 
@@ -29,9 +30,8 @@ export async function GET() {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching opportunities:', error)
-    return NextResponse.json({ error: 'Failed to fetch opportunities' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/opportunities GET', e, 'Failed to fetch opportunities')
   }
 }
 
@@ -131,11 +131,9 @@ export async function POST(req: NextRequest) {
     revalidatePath('/opportunities')
     return NextResponse.json(o)
   } catch (e: unknown) {
-    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2002') {
+    if (e && typeof e === 'object' && 'code' in e && (e as { code: string }).code === 'P2002') {
       return NextResponse.json({ error: 'Slug already exists' }, { status: 400 })
     }
-    const message = e instanceof Error ? e.message : 'Create failed'
-    console.error('admin/opportunities POST', e)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return handleApiError('admin/opportunities POST', e, 'Create failed')
   }
 }

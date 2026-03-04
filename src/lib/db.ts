@@ -5,6 +5,10 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrisma(): PrismaClient {
+  const url = process.env.DATABASE_URL
+  if (process.env.NODE_ENV === 'production' && (!url || url.startsWith('file:'))) {
+    console.error('[db] In production, DATABASE_URL must be a PostgreSQL URL (e.g. Neon). Set it in Vercel → Project → Settings → Environment Variables.')
+  }
   const client = new PrismaClient({
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   })

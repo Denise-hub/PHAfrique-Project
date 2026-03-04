@@ -1,18 +1,11 @@
 /** @type {import('next').NextConfig} */
 
-// Use DATABASE_URL from environment (e.g. Vercel/Neon) so production connects to Postgres.
-// Locally, set DATABASE_URL in .env to your Neon or other Postgres URL.
+// Do NOT put DATABASE_URL, NEXTAUTH_*, ADMIN_PASSWORD, or CLOUDINARY_* in env here.
+// They must be read at runtime from the deployment environment (Vercel Environment Variables)
+// so the app uses the correct database and auth URL.
 const nextConfig = {
   reactStrictMode: true,
-  env: {
-    DATABASE_URL: process.env.DATABASE_URL,
-    NEXTAUTH_URL: process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined),
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
-    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
-    CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
-    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-    CLOUDINARY_UPLOAD_FOLDER: process.env.CLOUDINARY_UPLOAD_FOLDER,
-  },
+  env: {},
   output: 'standalone',
   images: {
     remotePatterns: [

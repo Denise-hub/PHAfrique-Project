@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,9 +38,8 @@ export async function GET() {
       },
     })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching participants:', error)
-    return NextResponse.json({ error: 'Failed to fetch participants' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/participants GET', e, 'Failed to fetch participants')
   }
 }
 

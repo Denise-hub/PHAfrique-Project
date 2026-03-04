@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,9 +16,8 @@ export async function GET(req: NextRequest) {
 
     const list = await prisma.event.findMany({ orderBy: { startDate: 'desc' } })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching events:', error)
-    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/events GET', e, 'Failed to fetch events')
   }
 }
 
@@ -84,8 +84,6 @@ export async function POST(req: NextRequest) {
     revalidatePath('/news')
     return NextResponse.json(ev)
   } catch (e) {
-    console.error('admin/events POST', e)
-    const msg = (e as Error).message || 'Create failed'
-    return NextResponse.json({ error: msg }, { status: 500 })
+    return handleApiError('admin/events POST', e, 'Create failed')
   }
 }

@@ -6,15 +6,17 @@ const isVercel = typeof process.env.VERCEL === 'string'
 const isProduction = process.env.NODE_ENV === 'production'
 
 /**
- * Upload an image to Cloudinary if CLOUDINARY_ env vars are configured.
- * Returns null if not configured; throws on API error.
- * Uses buffer + base64 in serverless so the file is sent reliably.
+ * Upload an image to Cloudinary (signed upload with server-side secret).
+ * Returns secure_url. Throws if env not configured or Cloudinary API error.
+ * Use from /api/upload or anywhere you need Cloudinary-only upload.
  */
-async function uploadToCloudinary(file: File): Promise<string | null> {
+export async function uploadImageToCloudinary(file: File): Promise<string> {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME
   const apiKey = process.env.CLOUDINARY_API_KEY
   const apiSecret = process.env.CLOUDINARY_API_SECRET
-  if (!cloudName || !apiKey || !apiSecret) return null
+  if (!cloudName || !apiKey || !apiSecret) {
+    throw new Error('Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in Vercel Environment Variables.')
+  }
 
   const folder = process.env.CLOUDINARY_UPLOAD_FOLDER || 'phafrique'
   const timestamp = Math.floor(Date.now() / 1000)
@@ -42,7 +44,17 @@ async function uploadToCloudinary(file: File): Promise<string | null> {
     const msg = typeof data?.error?.message === 'string' ? data.error.message : 'Cloudinary upload failed'
     throw new Error(msg)
   }
-  return (data.secure_url as string) || (data.url as string) || null
+  const url = (data.secure_url as string) || (data.url as string) || null
+  if (!url) throw new Error('Cloudinary did not return a URL.')
+  return url
+}
+
+async function uploadToCloudinary(file: File): Promise<string | null> {
+  try {
+    return await uploadImageToCloudinary(file)
+  } catch {
+    return null
+  }
 }
 
 /**

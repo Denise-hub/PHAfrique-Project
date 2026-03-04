@@ -35,13 +35,13 @@ export default function AdminLoginPage() {
         
         const urlError = params.get('error')
         if (urlError === 'AccessDenied') {
-          setError('Your account is not registered as an admin. For denmaombi@gmail.com you can use email/password (same as ADMIN_PASSWORD in .env); the app will create the admin on first login.')
+          setError('Your account is not registered as an admin.')
         } else if (urlError === 'Unauthorized' || urlError === 'CredentialsSignin') {
-          setError('Invalid email or password. Use the password that was set when your account was created. If you are the main admin (denmaombi@gmail.com), set ADMIN_PASSWORD in .env to that exact password, save the file, restart the dev server, then try again.')
+          setError('Invalid email or password. Use the main admin email and the same password set as ADMIN_PASSWORD in Vercel.')
         } else if (urlError === 'Configuration') {
-          setError('Auth is misconfigured on the server. In Vercel, ensure NEXTAUTH_SECRET and ADMIN_PASSWORD are set for this environment, then redeploy. Use the exact same URL you see in the browser (production or preview) to log in.')
+          setError('Auth is misconfigured. Set NEXTAUTH_SECRET, NEXTAUTH_URL, and ADMIN_PASSWORD in Vercel Environment Variables, then redeploy.')
         } else if (urlError) {
-          setError('Authentication failed. Check the server terminal for [auth] logs or open /api/debug/auth-diagnostic.')
+          setError('Authentication failed.')
         }
       } catch (err) {
         console.error('Error parsing URL:', err)

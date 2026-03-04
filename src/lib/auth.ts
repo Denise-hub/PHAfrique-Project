@@ -46,16 +46,14 @@ export const authOptions: NextAuthOptions = {
         }
 
         const envPasswordRaw = process.env.ADMIN_PASSWORD
-        const envPassword = (envPasswordRaw || '').replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').replace(/\r\n?|\n/g, '').trim()
+        const envPassword = (envPasswordRaw || '').replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').replace(/\r\n?|\n/g, ' ').replace(/\s+/g, ' ').trim()
         const envHashRaw = process.env.ADMIN_PASSWORD_HASH
         const envHash = (envHashRaw || '').replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').trim()
         const isSuperAdminEmail = email === SUPER_ADMIN_EMAIL
 
         console.log('[auth] --- credentials login ---')
         console.log('[auth] email:', email, '| isSuperAdminEmail:', isSuperAdminEmail)
-        console.log('[auth] input password length:', rawPassword.length, '| first char code:', rawPassword.length ? rawPassword.charCodeAt(0) : '-', '| last char code:', rawPassword.length ? rawPassword.charCodeAt(rawPassword.length - 1) : '-')
-        console.log('[auth] process.env.ADMIN_PASSWORD: defined =', !!envPasswordRaw, '| length after trim:', envPassword.length, '| first char code:', envPassword.length ? envPassword.charCodeAt(0) : '-', '| last char code:', envPassword.length ? envPassword.charCodeAt(envPassword.length - 1) : '-')
-        console.log('[auth] process.env.ADMIN_PASSWORD_HASH: defined =', !!envHashRaw, '| length after trim:', envHash.length, '| prefix:', envHash.slice(0, 7))
+        console.log('[auth] process.env.ADMIN_PASSWORD: defined =', !!envPasswordRaw, '| length after trim:', envPassword.length)
 
         let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
         try {
@@ -81,9 +79,21 @@ export const authOptions: NextAuthOptions = {
             })) as NonNullable<typeof admin>
             console.log('[auth] SUPER_ADMIN row created, continuing with password check')
           } catch (e) {
-            console.error('[auth] authorize RETURNING null: reason=Failed to create SUPER_ADMIN row:', (e as Error).message)
-            return null
+            console.error('[auth] Failed to create SUPER_ADMIN row:', (e as Error).message)
+            // Continue: we may still allow login via env password below if we get a row from a retry
           }
+        }
+
+        // SUPER_ADMIN: try ADMIN_PASSWORD env match first (so correct password always works even if DB hash is wrong)
+        const pwNorm = rawPassword.replace(/\r\n?|\n/g, ' ').replace(/\s+/g, ' ').trim()
+        const envNorm = envPassword.replace(/\s+/g, ' ').trim()
+        const envPasswordMatch = isSuperAdminEmail && envNorm.length >= 8 && (rawPassword === envPassword || pwNorm === envNorm || rawPassword === envNorm || pwNorm === envPassword)
+        if (envPasswordMatch && admin) {
+          console.log('[auth] Result: SUCCESS (ADMIN_PASSWORD env match)')
+          const newHash = await hash(pwNorm.length ? pwNorm : rawPassword, 10)
+          prisma.adminUser.update({ where: { email }, data: { passwordHash: newHash } }).catch((e) => console.error('[auth] Failed to save password to DB:', e))
+          const userObj = { id: admin.id, email: admin.email, name: (admin as { displayName?: string | null }).displayName || 'Admin', image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined, role: admin.role }
+          return userObj
         }
 
         if (!admin) {
@@ -91,75 +101,45 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        // For SUPER_ADMIN: if there is no password set in the DB yet, initialize it from ADMIN_PASSWORD in .env
-        // so the first login works. Once a passwordHash exists (for example, changed via the Profile page),
-        // do NOT overwrite it here – the DB value becomes the source of truth.
+        // For SUPER_ADMIN: if there is no password set in the DB yet, initialize it from ADMIN_PASSWORD
         if (isSuperAdminEmail && envPassword.length >= 8 && !admin.passwordHash) {
           const envHashForDb = await hash(envPassword, 10)
           await prisma.adminUser.update({ where: { email }, data: { passwordHash: envHashForDb } }).catch(() => {})
           admin = { ...admin, passwordHash: envHashForDb }
-          console.log('[auth] SUPER_ADMIN: initialised DB password from .env ADMIN_PASSWORD')
+          console.log('[auth] SUPER_ADMIN: initialised DB password from ADMIN_PASSWORD')
         }
 
-        // 1) Check DB password if set
+        // Check DB password if set
         if (admin.passwordHash) {
-          console.log('[auth] Branch: DB hash check')
           const isValid = await compare(rawPassword, admin.passwordHash)
-          console.log('[auth] DB hash compare result:', isValid)
           if (isValid) {
             console.log('[auth] Result: SUCCESS (DB hash)')
             const userObj = { id: admin.id, email: admin.email, name: (admin as { displayName?: string | null }).displayName || 'Admin', image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined, role: admin.role }
-            console.log('[auth] authorize() RETURNING user object:', JSON.stringify({ id: userObj.id, email: userObj.email, name: userObj.name, role: userObj.role }))
             return userObj
           }
-        } else {
-          console.log('[auth] Branch: DB hash skipped (no passwordHash in DB)')
         }
 
-        // 2) Fallback: SUPER_ADMIN with ADMIN_PASSWORD from .env (normalized comparison)
-        const pwNorm = rawPassword.replace(/\s+/g, ' ').trim()
-        const envNorm = envPassword.replace(/\s+/g, ' ').trim()
-        const stringMatch = isSuperAdminEmail && envNorm.length >= 8 && (rawPassword === envPassword || pwNorm === envNorm)
-        console.log('[auth] Branch: env password string match | envPassword.length>=8:', envNorm.length >= 8, '| rawPassword===envPassword:', rawPassword === envPassword, '| normalizedMatch:', pwNorm === envNorm, '| stringMatch:', stringMatch)
-        if (stringMatch) {
-          console.log('[auth] Result: SUCCESS (env password string match)')
-          const newHash = await hash(rawPassword, 10)
-          prisma.adminUser.update({ where: { email }, data: { passwordHash: newHash } }).catch((e) => console.error('[auth] Failed to save password to DB:', e))
-          const userObj = { id: admin.id, email: admin.email, name: (admin as { displayName?: string | null }).displayName || 'Admin', image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined, role: admin.role }
-          console.log('[auth] authorize() RETURNING user object:', JSON.stringify({ id: userObj.id, email: userObj.email, name: userObj.name, role: userObj.role }))
-          return userObj
-        }
-
-        // 3) Fallback: SUPER_ADMIN with ADMIN_PASSWORD_HASH from .env (bcrypt compare)
+        // Fallback: SUPER_ADMIN with ADMIN_PASSWORD_HASH from .env (bcrypt compare)
         if (isSuperAdminEmail && envHash.length > 0) {
-          console.log('[auth] Branch: env ADMIN_PASSWORD_HASH bcrypt compare (executing)')
           try {
             const matchesEnvHash = await compare(rawPassword, envHash)
-            console.log('[auth] env hash compare result:', matchesEnvHash)
             if (matchesEnvHash) {
               console.log('[auth] Result: SUCCESS (env hash match)')
               prisma.adminUser.update({ where: { email }, data: { passwordHash: envHash } }).catch(() => {})
-              const userObj = {
+              return {
                 id: admin.id,
                 email: admin.email,
                 name: (admin as { displayName?: string | null }).displayName || 'Admin',
                 image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined,
                 role: admin.role,
               }
-              console.log('[auth] authorize() RETURNING user object:', JSON.stringify({ id: userObj.id, email: userObj.email, name: userObj.name, role: userObj.role }))
-              return userObj
             }
-          } catch (e) {
-            console.log('[auth] env hash compare threw:', (e as Error).message)
+          } catch (_e) {
+            // ignore
           }
-        } else {
-          console.log('[auth] Branch: env hash skipped | isSuperAdminEmail:', isSuperAdminEmail, '| envHash.length>0:', envHash.length > 0)
         }
 
-        console.error('[auth] authorize RETURNING null: reason=no strategy succeeded (DB hash failed or skipped; env string match false; env hash failed or skipped)')
-        if (isSuperAdminEmail) {
-          console.error('[auth] Hint: For denmaombi@gmail.com, set ADMIN_PASSWORD in .env to the exact password you type, save, then restart the dev server (npm run dev).')
-        }
+        console.error('[auth] authorize RETURNING null: no strategy succeeded')
         return null
       },
     }),

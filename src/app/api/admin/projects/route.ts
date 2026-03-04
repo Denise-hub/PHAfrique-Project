@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache'
 import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { handleApiError } from '@/lib/api-error'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,9 +22,8 @@ export async function GET() {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     })
     return NextResponse.json(list)
-  } catch (error) {
-    console.error('Error fetching projects:', error)
-    return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 })
+  } catch (e) {
+    return handleApiError('admin/projects GET', e, 'Failed to fetch projects')
   }
 }
 
@@ -73,10 +73,9 @@ export async function POST(req: NextRequest) {
     revalidatePath('/portfolios', 'layout')
     return NextResponse.json(p)
   } catch (e: unknown) {
-    if (e && typeof e === 'object' && 'code' in e && e.code === 'P2002') {
+    if (e && typeof e === 'object' && 'code' in e && (e as { code: string }).code === 'P2002') {
       return NextResponse.json({ error: 'A portfolio with that title already exists. Try a different title.' }, { status: 400 })
     }
-    console.error('admin/projects POST', e)
-    return NextResponse.json({ error: 'Create failed' }, { status: 500 })
+    return handleApiError('admin/projects POST', e, 'Create failed')
   }
 }

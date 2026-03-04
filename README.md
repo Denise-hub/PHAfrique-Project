@@ -18,7 +18,7 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 - Animated hero, scroll-reveal sections, dark mode, mobile-responsive
 - Admin: role-based access (e.g. SUPER_ADMIN, CO_FOUNDER, SOCIAL_MEDIA_MANAGER, NEWSLETTER_MANAGER)
 - Internships & volunteering: list opportunities, submit applications, manage interns/volunteers and their profiles
-- Backend: Prisma + SQLite, NextAuth (credentials + Google OAuth for admin), REST APIs for admin CRUD and public read
+- Backend: Prisma + PostgreSQL (Neon), NextAuth (credentials + Google OAuth for admin), REST APIs for admin CRUD and public read
 
 ---
 
@@ -29,9 +29,9 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 | Framework  | Next.js 14 (App Router)       |
 | Language   | TypeScript                    |
 | Styling    | Tailwind CSS                  |
-| Database   | SQLite (Prisma ORM)           |
+| Database   | PostgreSQL (Neon, pooled connection) |
 | Auth       | NextAuth.js                   |
-| Deployment | Node.js (standalone output)   |
+| Deployment | Vercel (or Node.js standalone)   |
 
 ---
 
@@ -53,10 +53,10 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
 
 3. **Environment**
    - Copy `env.example` to `.env`
-   - **Required:** `DATABASE_URL`, `NEXTAUTH_URL` (e.g. `http://localhost:3000`), `NEXTAUTH_SECRET` (e.g. `openssl rand -base64 32`)
+   - **Required:** `DATABASE_URL` (Neon PostgreSQL pooled URL), `NEXTAUTH_URL` (e.g. `http://localhost:3000`), `NEXTAUTH_SECRET`
    - **Admin (email/password):** `ADMIN_EMAIL`, and either `ADMIN_PASSWORD` (plain) or `ADMIN_PASSWORD_HASH` (bcrypt). For the default super-admin (denmaombi@gmail.com), `ADMIN_PASSWORD` is used on first login.
    - **Google login (admin):** Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `http://localhost:3000/api/auth/callback/google` for local; only admin users in the DB can sign in with Google.
-   - Optional: SMTP (see `env.example`)
+   - **Image uploads:** Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` (and optional `CLOUDINARY_UPLOAD_FOLDER`) so uploads go to Cloudinary; only URLs are stored in the database.
 
 4. **Database**
    ```bash
@@ -64,7 +64,7 @@ A modern website and admin CMS for **PHAfrique Project** (Public Health en Afriq
    npx prisma db push
    npm run db:seed
    ```
-   `db:seed` adds sample programs, projects, opportunities, and content keys.
+   `db:seed` adds sample programs, projects, opportunities, and content keys. Use a Neon PostgreSQL connection string for `DATABASE_URL` (no SQLite in production).
 
 5. **Run locally**
    ```bash
@@ -97,7 +97,7 @@ PHAfrique-Project/
 ├── prisma/
 │   ├── schema.prisma       # Data models (Program, Project, Opportunity, Application, Participant, etc.)
 │   ├── seed.js             # Seed script
-│   └── dev.db              # SQLite DB (created by db push)
+│   └── dev.db              # (Optional local SQLite; production uses Neon) |
 ├── src/
 │   ├── app/                # Next.js App Router
 │   │   ├── api/            # API routes (auth, admin, public)
@@ -128,7 +128,7 @@ PHAfrique-Project/
 | `npm run build`       | Production build               |
 | `npm start`           | Run production server         |
 | `npm run db:generate` | Generate Prisma client        |
-| `npm run db:push`     | Sync schema to SQLite          |
+| `npm run db:push`     | Sync schema to PostgreSQL (Neon) |
 | `npm run db:seed`     | Seed database                  |
 
 ---
@@ -152,11 +152,14 @@ This project is ready for [Vercel](https://vercel.com). No GitHub Pages deployme
    |----------|----------|--------|
    | `NEXTAUTH_URL` | Yes | Your live URL, e.g. `https://your-app.vercel.app` (Vercel sets this automatically; override if using a custom domain) |
    | `NEXTAUTH_SECRET` | Yes | e.g. `openssl rand -base64 32` — keep secret |
-   | `DATABASE_URL` | Yes | Use a hosted DB (Vercel Postgres, Turso, PlanetScale, etc.). Serverless does not persist SQLite. |
+   | `DATABASE_URL` | Yes | Neon PostgreSQL pooled connection string. Do not use SQLite in production. |
+   | `CLOUDINARY_CLOUD_NAME` | Yes (for uploads) | From Cloudinary dashboard |
+   | `CLOUDINARY_API_KEY` | Yes (for uploads) | From Cloudinary dashboard |
+   | `CLOUDINARY_API_SECRET` | Yes (for uploads) | From Cloudinary dashboard |
+   | `ADMIN_PASSWORD` or `ADMIN_PASSWORD_HASH` | For admin login | For email/password admin login (super-admin) |
    | `GOOGLE_CLIENT_ID` | For Google login | From [Google Cloud Console](https://console.cloud.google.com/apis/credentials). Add redirect URI `https://your-app.vercel.app/api/auth/callback/google` |
    | `GOOGLE_CLIENT_SECRET` | For Google login | From same OAuth client |
    | `ADMIN_EMAIL` | Optional | Default admin email |
-   | `ADMIN_PASSWORD` or `ADMIN_PASSWORD_HASH` | Optional | For email/password admin login (super-admin) |
    | SMTP_* | Optional | For application status emails |
 
 3. **Deploy.** After the first deploy, run your database migrations (e.g. Prisma) in the Vercel project or via your DB provider. Seed admin users (`npm run db:seed`) or create them via the app so that Google sign-in works for those emails.
