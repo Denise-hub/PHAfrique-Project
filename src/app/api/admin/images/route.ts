@@ -5,6 +5,9 @@ import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 import { handleApiError } from '@/lib/api-error'
 
+// Admin‑only API for managing images in the gallery and other image categories.
+// This route is intentionally separate from the public gallery endpoint so we
+// can apply stricter validation, file‑size checks, and admin permissions.
 export const dynamic = 'force-dynamic'
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const
