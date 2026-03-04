@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
@@ -96,6 +96,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const role = (session?.user as { role?: string } | undefined)?.role
   const effective = effectiveRole(role)
   const allowedNavItems = navItems.filter((item) => canAccessSection(effective, item.section))
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const currentSection = pathname === '/admin' ? 'dashboard' : navItems.find((n) => pathname?.startsWith(n.href))?.section
   useEffect(() => {
@@ -110,9 +111,22 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <div className="h-screen bg-neutral-50 dark:bg-neutral-950 flex overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-64 shrink-0 bg-gradient-to-b from-[#044444] to-[#033333] text-white flex flex-col fixed h-screen shadow-xl">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col md:flex-row">
+      {/* Sidebar (desktop + slide-in on mobile) */}
+      {/* Backdrop for mobile */}
+      {sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 shrink-0 bg-gradient-to-b from-[#044444] to-[#033333] text-white flex flex-col shadow-xl transform transition-transform duration-200 md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
+      >
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
           <Link href="/admin" className="flex items-center gap-3">
@@ -191,13 +205,24 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
       </aside>
 
-      {/* Main Content - min-w-0 allows flex child to shrink; overflow contained so content doesn't slide under sidebar */}
-      <div className="flex-1 min-w-0 flex flex-col ml-64">
+      {/* Main Content - min-w-0 allows flex child to shrink; margin-left only on md+ so mobile gets full width */}
+      <div className="flex-1 min-w-0 flex flex-col md:ml-64">
         {/* Top Bar */}
-        <header className="sticky top-0 z-10 shrink-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6">
-            <div className="min-w-0 flex items-center gap-4">
-              <h1 className="text-lg sm:text-xl font-bold text-neutral-900 dark:text-neutral-100 truncate">
+        <header className="sticky top-0 z-20 shrink-0 bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
+          <div className="flex items-center justify-between h-14 sm:h-16 px-3 sm:px-4 md:px-6">
+            <div className="min-w-0 flex items-center gap-3 sm:gap-4">
+              {/* Mobile menu button */}
+              <button
+                type="button"
+                className="inline-flex md:hidden items-center justify-center rounded-lg p-2 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#044444]"
+                aria-label="Open navigation menu"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <h1 className="text-base sm:text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 truncate">
                 {pathname === '/admin'
                   ? 'Dashboard'
                   : allowedNavItems
@@ -209,7 +234,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 flex items-center gap-2 px-3 py-2 text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:bg-[#044444]/10 dark:hover:bg-[#044444]/20 rounded-lg transition-all"
+              className="shrink-0 hidden xs:flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:bg-[#044444]/10 dark:hover:bg-[#044444]/20 rounded-lg transition-all"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -220,8 +245,10 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </div>
         </header>
 
-        {/* Page Content - scrolls horizontally when content is wide */}
-        <main className="flex-1 min-h-0 overflow-x-auto overflow-y-auto p-4 sm:p-6">{children}</main>
+        {/* Page Content - scrolls when content is wide, with padding that works on mobile */}
+        <main className="flex-1 min-h-0 overflow-x-auto overflow-y-auto p-3 sm:p-4 md:p-6">
+          {children}
+        </main>
       </div>
     </div>
   )
