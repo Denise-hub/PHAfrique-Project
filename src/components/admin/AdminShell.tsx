@@ -7,6 +7,9 @@ import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { canAccessSection, effectiveRole, type AdminSection } from '@/lib/roles'
 
+// Main navigation definition for the admin area. Each entry maps a route
+// to a label, an icon name, and the permission "section" it belongs to.
+// Permissions are enforced both here (for the visible menu) and on the API.
 const navItems: { href: string; label: string; icon: string; section: AdminSection }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'grid', section: 'dashboard' },
   { href: '/admin/programs', label: 'Programs', icon: 'briefcase', section: 'programs' },
@@ -88,6 +91,11 @@ const getIcon = (iconName: string) => {
   }
 }
 
+// Top‑level layout shell for all authenticated admin pages.
+// Handles:
+// - Role‑based visibility of navigation items
+// - Guarding against visiting sections the current role cannot access
+// - Responsive layout (fixed sidebar on desktop, slide‑in drawer on mobile)
 export default function AdminShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()

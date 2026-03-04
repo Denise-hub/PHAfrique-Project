@@ -4,8 +4,14 @@ import GoogleProvider from 'next-auth/providers/google'
 import { compare, hash } from 'bcryptjs'
 import { prisma } from '@/lib/db'
 
+// Email address used for the initial super‑admin account. This address is
+// treated specially when seeding and when validating credentials so that
+// there is always at least one account able to reach the admin panel.
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
+// Defensive helper around the Prisma client. In some environments Prisma
+// may not yet be generated; returning null here lets the calling code fail
+// gracefully instead of throwing at import time.
 function getAdminUserModel() {
   try {
     const model = (prisma as unknown as { adminUser?: { findUnique: (args: { where: { email: string } }) => Promise<unknown> } }).adminUser

@@ -32,12 +32,10 @@ export default function AdminLoginPage() {
         if (url) {
           setCallbackUrl(url)
         }
-        
+
         const urlError = params.get('error')
-        if (urlError === 'AccessDenied') {
-          setError('Your account is not registered as an admin.')
-        } else if (urlError === 'Unauthorized' || urlError === 'CredentialsSignin') {
-          setError('Invalid email or password. Use the main admin email and the same password set as ADMIN_PASSWORD in Vercel.')
+        if (urlError === 'AccessDenied' || urlError === 'Unauthorized' || urlError === 'CredentialsSignin') {
+          setError('You are not allowed to log in because you are not a registered admin.')
         } else if (urlError === 'Configuration') {
           setError('Auth is misconfigured. Set NEXTAUTH_SECRET, NEXTAUTH_URL, and ADMIN_PASSWORD in Vercel Environment Variables, then redeploy.')
         } else if (urlError) {

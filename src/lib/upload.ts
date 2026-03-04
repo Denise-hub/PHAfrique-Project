@@ -5,10 +5,16 @@ import crypto from 'crypto'
 const isVercel = typeof process.env.VERCEL === 'string'
 const isProduction = process.env.NODE_ENV === 'production'
 
+// Centralised image upload utilities.
+// In production the site always uploads to Cloudinary and stores only the
+// resulting URL in the database. In local development it falls back to
+// writing under public/uploads/images when Cloudinary is not configured.
+// This keeps file‑system behaviour predictable across the whole app.
+
 /**
- * Upload an image to Cloudinary (signed upload with server-side secret).
- * Returns secure_url. Throws if env not configured or Cloudinary API error.
- * Use from /api/upload or anywhere you need Cloudinary-only upload.
+ * Upload an image to Cloudinary using a signed request.
+ * Returns the final public URL (secure_url when available).
+ * Throws if Cloudinary is not configured or responds with an error.
  */
 export async function uploadImageToCloudinary(file: File): Promise<string> {
   const cloudName = process.env.CLOUDINARY_CLOUD_NAME
