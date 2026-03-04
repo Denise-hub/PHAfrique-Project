@@ -5,6 +5,7 @@ import { useInView } from '@/hooks/useInView'
 import Link from 'next/link'
 import Image from 'next/image'
 import ProgramDetailModal, { type ProgramForModal } from '@/components/program/ProgramDetailModal'
+import { imageSrc } from '@/lib/image-url'
 
 export type ProgramItem = {
   id: string
@@ -89,7 +90,7 @@ export default function ProgramsSection({ programs = [], showHeading = true }: P
                   {/* Image with gradient overlay */}
                   <div className="relative aspect-[4/3] w-full overflow-hidden bg-neutral-200 dark:bg-neutral-700 flex-shrink-0">
                     <Image
-                      src={p.imageUrl}
+                      src={imageSrc(p.imageUrl)}
                       alt={p.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover/card:scale-105"

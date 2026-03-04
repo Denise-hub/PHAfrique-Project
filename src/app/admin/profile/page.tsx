@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { imageSrc } from '@/lib/image-url'
 
 export default function AdminProfilePage() {
   const { data: session, update: updateSession } = useSession()
@@ -16,7 +17,7 @@ export default function AdminProfilePage() {
   const displayImageUrl = imageFile
     ? URL.createObjectURL(imageFile)
     : form.imageUrl
-      ? (form.imageUrl.startsWith('/') ? form.imageUrl : `/${form.imageUrl.replace(/^\//, '')}`)
+      ? imageSrc(form.imageUrl)
       : (session?.user?.image ?? null)
 
   useEffect(() => {

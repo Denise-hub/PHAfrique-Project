@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
 import { prisma } from '@/lib/db'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
@@ -66,7 +67,7 @@ export default async function NewsPage() {
                   {item.imageUrl && (
                     <div className="relative w-full sm:w-48 h-40 sm:h-32 shrink-0 rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                       <Image
-                        src={item.imageUrl.startsWith('/') ? item.imageUrl : `/${item.imageUrl}`}
+                        src={imageSrc(item.imageUrl)}
                         alt=""
                         fill
                         className="object-cover"

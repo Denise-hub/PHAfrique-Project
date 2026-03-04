@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
+import { imageSrc } from '@/lib/image-url'
 
 type Opp = {
   id: string
@@ -55,8 +56,7 @@ const INTERNSHIP_CONFIG = {
 const OPPORTUNITY_IMAGE_PLACEHOLDER = '/assets/images/opportunities/internship-hero.jpg'
 function opportunityImageUrl(url: string | null | undefined): string {
   if (url == null || String(url).trim() === '') return OPPORTUNITY_IMAGE_PLACEHOLDER
-  const u = String(url).trim()
-  return u.startsWith('/') ? u : `/${u}`
+  return imageSrc(String(url).trim())
 }
 
 // Split multiline text into non-empty lines for bullet list display
@@ -432,7 +432,7 @@ export default function OpportunitiesPage() {
                   <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-[#044444]/10 dark:ring-[#044444]/20 group-hover:ring-[#FF0000]/20 transition-all">
                     {intern.imageUrl ? (
                       <Image
-                        src={intern.imageUrl}
+                        src={imageSrc(intern.imageUrl)}
                         alt={intern.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-110"
@@ -557,7 +557,7 @@ export default function OpportunitiesPage() {
                   <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-[#044444]/10 dark:ring-[#044444]/20 group-hover:ring-[#FF0000]/20 transition-all">
                     {volunteer.imageUrl ? (
                       <Image
-                        src={volunteer.imageUrl}
+                        src={imageSrc(volunteer.imageUrl)}
                         alt={volunteer.name}
                         fill
                         className="object-cover transition-transform duration-300 group-hover:scale-110"

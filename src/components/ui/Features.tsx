@@ -5,6 +5,7 @@ import { useInView } from '@/hooks/useInView'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { imageSrc } from '@/lib/image-url'
 
 interface Program {
   id: string
@@ -98,7 +99,7 @@ export default function Features() {
                         <div className="absolute inset-0 border-t-4 border-[#FF0000] z-10" aria-hidden />
                         <div className="absolute top-0 right-0 bottom-0 w-2 bg-[#044444] z-10" aria-hidden />
                         <Image
-                          src={programs[0].imageUrl || '/assets/images/programs/hero.jpeg'}
+                          src={imageSrc(programs[0].imageUrl || '/assets/images/programs/hero.jpeg')}
                           alt={programs[0].title}
                           fill
                           className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
@@ -174,7 +175,7 @@ export default function Features() {
                           {/* Teal accent stripe on right side */}
                           <div className="absolute top-0 right-0 bottom-0 w-1 bg-[#044444] z-10" aria-hidden />
                           <Image
-                            src={program.imageUrl || '/assets/images/programs/hero.jpeg'}
+                            src={imageSrc(program.imageUrl || '/assets/images/programs/hero.jpeg')}
                             alt={program.title}
                             fill
                             className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"

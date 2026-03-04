@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { imageSrc } from '@/lib/image-url'
 
 type Ev = { id: string; title: string; description: string | null; location: string | null; startDate: string; endDate: string | null; imageUrl: string | null; link: string | null }
 
@@ -116,7 +117,7 @@ export default function AdminEventsPage() {
                 {edit?.imageUrl && !imageFile && (
                   <div className="mt-2 flex items-center gap-3">
                     <div className="relative w-20 h-20 rounded border border-neutral-200 dark:border-neutral-600 overflow-hidden bg-neutral-100 dark:bg-neutral-700">
-                      <Image src={form.imageUrl.startsWith('/') ? form.imageUrl : `/${form.imageUrl}`} alt="" fill className="object-cover" unoptimized />
+                      <Image src={imageSrc(form.imageUrl)} alt="" fill className="object-cover" unoptimized />
                     </div>
                     <button
                       type="button"

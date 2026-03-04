@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
 import { prisma } from '@/lib/db'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 60
@@ -38,7 +39,7 @@ export default async function GalleryPage() {
                 className="group relative aspect-square rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-800 shadow-md hover:shadow-lg transition-shadow"
               >
                 <Image
-                  src={img.url.startsWith('/') ? img.url : `/${img.url}`}
+                  src={imageSrc(img.url)}
                   alt={img.alt ?? img.caption ?? 'Gallery image'}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"

@@ -4,6 +4,7 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { imageSrc } from '@/lib/image-url'
 
 type Img = { id: string; url: string; alt: string | null; caption: string | null; category: string; sortOrder: number }
 
@@ -176,7 +177,7 @@ export default function AdminImagesPage() {
                 <tr key={i.id} className="border-b border-neutral-100 dark:border-neutral-800">
                   <td className="py-2 pr-4">
                     <div className="relative h-12 w-16 rounded overflow-hidden bg-neutral-100 dark:bg-neutral-700">
-                      <Image src={i.url.startsWith('/') ? i.url : `/${i.url}`} alt={i.caption || i.alt || 'Gallery image'} fill className="object-cover" sizes="64px" unoptimized />
+                      <Image src={imageSrc(i.url)} alt={i.caption || i.alt || 'Gallery image'} fill className="object-cover" sizes="64px" unoptimized />
                     </div>
                   </td>
                   <td className="py-2 pr-4 text-sm max-w-xs">{i.caption || '—'}</td>

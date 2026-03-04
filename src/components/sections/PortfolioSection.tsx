@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useInView } from '@/hooks/useInView'
 import Image from 'next/image'
 import Link from 'next/link'
+import { imageSrc } from '@/lib/image-url'
 
 export type PortfolioItem = {
   id: string
@@ -64,7 +65,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                 const col = i % 2
                 const colorIndex = (row + col) % 2
                 const accentColor = colorIndex === 0 ? '#FF0000' : '#044444'
-                const baseUrl = item.imageUrl ?? PLACEHOLDER_IMAGE
+                const baseUrl = imageSrc(item.imageUrl ?? PLACEHOLDER_IMAGE)
                 const imageUrl = item.updatedAt
                   ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}t=${typeof item.updatedAt === 'string' ? new Date(item.updatedAt).getTime() : (item.updatedAt as Date).getTime()}`
                   : baseUrl

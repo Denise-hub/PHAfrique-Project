@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
+import { imageSrc } from '@/lib/image-url'
 
 type AdminUser = {
   id: string
@@ -402,7 +403,7 @@ export default function AdminUsersPage() {
               {(editImageFile || editForm.imageUrl) && (
                 <div className="mb-2 relative w-16 h-16 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800">
                   <Image
-                    src={editImageFile ? URL.createObjectURL(editImageFile) : (editForm.imageUrl.startsWith('/') ? editForm.imageUrl : `/${editForm.imageUrl.replace(/^\//, '')}`)}
+                    src={editImageFile ? URL.createObjectURL(editImageFile) : imageSrc(editForm.imageUrl)}
                     alt="Preview"
                     fill
                     className="object-cover"
@@ -507,7 +508,7 @@ export default function AdminUsersPage() {
                       <div className="flex items-center gap-3">
                         {u.imageUrl ? (
                           <Image
-                            src={u.imageUrl}
+                            src={imageSrc(u.imageUrl)}
                             alt=""
                             width={36}
                             height={36}

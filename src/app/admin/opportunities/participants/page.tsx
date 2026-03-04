@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useSession } from 'next-auth/react'
 import { useSearchParams } from 'next/navigation'
 import { effectiveRole, ROLES } from '@/lib/roles'
+import { imageSrc } from '@/lib/image-url'
 
 type Participant = {
   id: string
@@ -212,7 +213,7 @@ function AdminParticipantsPageInner() {
   const imagePreview = form.imageFile
     ? URL.createObjectURL(form.imageFile)
     : edit?.imageUrl
-      ? (edit.imageUrl.startsWith('/') ? edit.imageUrl : `/${edit.imageUrl}`)
+      ? imageSrc(edit.imageUrl)
       : null
 
   return (
@@ -331,7 +332,7 @@ function AdminParticipantsPageInner() {
               <div className="flex items-center gap-4 min-w-0">
                 {p.imageUrl ? (
                   <Image
-                    src={p.imageUrl.startsWith('/') ? p.imageUrl : `/${p.imageUrl}`}
+                    src={imageSrc(p.imageUrl)}
                     alt=""
                     width={48}
                     height={48}

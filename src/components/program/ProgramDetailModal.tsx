@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { imageSrc } from '@/lib/image-url'
 
 export type ProgramForModal = {
   id: string
@@ -24,7 +25,7 @@ type Props = {
 }
 
 export default function ProgramDetailModal({ program, onClose, showViewAllLink = true }: Props) {
-  const imageUrl = program.imageUrl ?? PLACEHOLDER_IMAGE
+  const imageUrl = program.imageUrl ? imageSrc(program.imageUrl) : PLACEHOLDER_IMAGE
   const regions = program.regions && program.regions.length > 0 ? program.regions : ['All Regions']
 
   useEffect(() => {
