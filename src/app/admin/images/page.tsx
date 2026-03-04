@@ -50,17 +50,36 @@ export default function AdminImagesPage() {
     if (!file) { setErr('Choose a file'); return }
     setBusy(true)
     setErr('')
-    const fd = new FormData()
-    fd.set('file', file)
-    fd.set('caption', form.description)
-    fd.set('category', GALLERY_CATEGORY)
-    fd.set('sortOrder', String(form.sortOrder))
-    const r = await fetch('/api/admin/images', { method: 'POST', credentials: 'include', body: fd })
-    const j = await r.json()
-    setBusy(false)
-    if (!r.ok) { setErr(j.error || 'Failed'); return }
-    load()
-    close()
+    try {
+      const fd = new FormData()
+      fd.set('file', file)
+      fd.set('caption', form.description)
+      fd.set('category', GALLERY_CATEGORY)
+      fd.set('sortOrder', String(form.sortOrder))
+
+      const r = await fetch('/api/admin/images', { method: 'POST', credentials: 'include', body: fd })
+
+      let j: any = {}
+      try {
+        j = await r.json()
+      } catch {
+        j = {}
+      }
+
+      if (!r.ok) {
+        const msg = j.error || 'Upload failed. You may have been signed out – refresh the page and sign in again.'
+        setErr(msg)
+        return
+      }
+
+      load()
+      close()
+    } catch (error) {
+      console.error('admin/images upload failed', error)
+      setErr('Network error while uploading. Please check your connection and try again.')
+    } finally {
+      setBusy(false)
+    }
   }
 
   async function onEdit(e: React.FormEvent) {
