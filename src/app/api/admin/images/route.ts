@@ -8,7 +8,8 @@ import { handleApiError } from '@/lib/api-error'
 export const dynamic = 'force-dynamic'
 
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const
-const MAX = 5 * 1024 * 1024 // 5MB
+// Match /api/upload limit and Cloudinary defaults so larger hero/gallery images don't fail unexpectedly.
+const MAX = 10 * 1024 * 1024 // 10MB
 
 export async function GET(req: NextRequest) {
   try {
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid file type. Use JPEG, PNG, WebP, or GIF.' }, { status: 400 })
     }
     if (file.size > MAX) {
-      return NextResponse.json({ error: 'File too large. Max 5MB.' }, { status: 400 })
+      return NextResponse.json({ error: `File too large. Max ${MAX / 1024 / 1024}MB.` }, { status: 400 })
     }
 
     let url: string | null = null

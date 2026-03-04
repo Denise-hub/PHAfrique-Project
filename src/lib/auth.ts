@@ -65,25 +65,6 @@ export const authOptions: NextAuthOptions = {
 
         console.log('[auth] DB user found:', !!admin, '| has passwordHash:', !!admin?.passwordHash)
 
-        // Ensure SUPER_ADMIN row exists so we never block on "run db:seed"
-        if (isSuperAdminEmail && !admin) {
-          console.log('[auth] SUPER_ADMIN row missing; creating now')
-          try {
-            const initialHash = envPassword.length >= 8
-              ? await hash(envPassword, 10)
-              : (envHash.length > 0 ? envHash : null)
-            admin = (await prisma.adminUser.upsert({
-              where: { email },
-              create: { email, role: 'SUPER_ADMIN', passwordHash: initialHash },
-              update: {},
-            })) as NonNullable<typeof admin>
-            console.log('[auth] SUPER_ADMIN row created, continuing with password check')
-          } catch (e) {
-            console.error('[auth] Failed to create SUPER_ADMIN row:', (e as Error).message)
-            // Continue: we may still allow login via env password below if we get a row from a retry
-          }
-        }
-
         // SUPER_ADMIN: try ADMIN_PASSWORD env match first (so correct password always works even if DB hash is wrong)
         const pwNorm = rawPassword.replace(/\r\n?|\n/g, ' ').replace(/\s+/g, ' ').trim()
         const envNorm = envPassword.replace(/\s+/g, ' ').trim()
