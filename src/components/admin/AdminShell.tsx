@@ -242,7 +242,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="shrink-0 hidden xs:flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:bg-[#044444]/10 dark:hover:bg-[#044444]/20 rounded-lg transition-all"
+              className="shrink-0 flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:bg-[#044444]/10 dark:hover:bg-[#044444]/20 rounded-lg transition-all"
             >
               <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
