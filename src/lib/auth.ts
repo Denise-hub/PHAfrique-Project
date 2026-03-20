@@ -71,12 +71,20 @@ export const authOptions: NextAuthOptions = {
 
         console.log('[auth] DB user found:', !!admin, '| has passwordHash:', !!admin?.passwordHash)
 
-        // SUPER_ADMIN: try ADMIN_PASSWORD env match first (so correct password always works even if DB hash is wrong)
+        // First-login bootstrap:
+        // - SUPER_ADMIN: ADMIN_PASSWORD can always recover access.
+        // - Other admins: allow ADMIN_PASSWORD only when passwordHash is not set yet.
         const pwNorm = rawPassword.replace(/\r\n?|\n/g, ' ').replace(/\s+/g, ' ').trim()
         const envNorm = envPassword.replace(/\s+/g, ' ').trim()
-        const envPasswordMatch = isSuperAdminEmail && envNorm.length >= 8 && (rawPassword === envPassword || pwNorm === envNorm || rawPassword === envNorm || pwNorm === envPassword)
-        if (envPasswordMatch && admin) {
-          console.log('[auth] Result: SUCCESS (ADMIN_PASSWORD env match)')
+        const envPasswordMatch = envNorm.length >= 8 && (rawPassword === envPassword || pwNorm === envNorm || rawPassword === envNorm || pwNorm === envPassword)
+        const canBootstrapWithEnvPassword =
+          !!admin && envPasswordMatch && (isSuperAdminEmail || !admin.passwordHash)
+        if (canBootstrapWithEnvPassword && admin) {
+          console.log(
+            '[auth] Result: SUCCESS (ADMIN_PASSWORD bootstrap match)',
+            '| mode:',
+            isSuperAdminEmail ? 'super-admin-recovery' : 'first-login-bootstrap',
+          )
           const newHash = await hash(pwNorm.length ? pwNorm : rawPassword, 10)
           prisma.adminUser.update({ where: { email }, data: { passwordHash: newHash } }).catch((e) => console.error('[auth] Failed to save password to DB:', e))
           const userObj = { id: admin.id, email: admin.email, name: (admin as { displayName?: string | null }).displayName || 'Admin', image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined, role: admin.role }

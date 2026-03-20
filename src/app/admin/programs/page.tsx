@@ -99,7 +99,7 @@ export default function AdminProgramsPage() {
 
   async function onDelete(id: string) {
     if (!canManage) return
-    if (!confirm('Delete this program?')) return
+    if (!confirm('Delete this portfolio item?')) return
     setBusy(true)
     try {
       const r = await fetch(`/api/admin/programs/${id}`, { method: 'DELETE' })
@@ -130,10 +130,10 @@ export default function AdminProgramsPage() {
         </Link>
       </div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="heading-2">Programs</h1>
+        <h1 className="heading-2">Portfolios</h1>
         {canManage && (
           <button type="button" onClick={openAdd} className="btn-primary">
-            Add program
+            Add portfolio item
           </button>
         )}
       </div>
@@ -141,7 +141,7 @@ export default function AdminProgramsPage() {
       {formOpen && canManage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white dark:bg-neutral-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4">{edit ? 'Edit program' : 'Add program'}</h2>
+            <h2 className="text-lg font-semibold mb-4">{edit ? 'Edit portfolio item' : 'Add portfolio item'}</h2>
             <form onSubmit={onSubmit} className="space-y-3">
               {err && <p className="text-sm text-[#FF0000]">{err}</p>}
               <input placeholder="Title *" value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value, slug: f.slug || slugFromTitle(e.target.value) }))} className={inp} required />
@@ -155,7 +155,7 @@ export default function AdminProgramsPage() {
                   onChange={(e) => setForm((f) => ({ ...f, imageFile: e.target.files?.[0] ?? null }))}
                   className={inp}
                 />
-                <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Upload a high-quality image for the program card. Leave empty to keep existing image when editing.</p>
+                  <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Upload a high-quality image for the portfolio card. Leave empty to keep existing image when editing.</p>
               </div>
               <input type="number" placeholder="Sort order" value={form.sortOrder} onChange={(e) => setForm((f) => ({ ...f, sortOrder: parseInt(e.target.value, 10) || 0 }))} className={inp} />
               <div className="flex gap-2 pt-2">
@@ -197,7 +197,7 @@ export default function AdminProgramsPage() {
               )}
             </div>
           ))}
-          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No programs yet.</p>}
+          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No portfolio items yet.</p>}
         </div>
       )}
     </div>

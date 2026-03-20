@@ -32,7 +32,8 @@ const labelCl = 'block text-sm font-medium text-neutral-700 dark:text-neutral-30
 function AdminParticipantsPageInner() {
   const { data: session } = useSession()
   const role = effectiveRole((session?.user as { role?: string })?.role)
-  const canManage = role === ROLES.SUPER_ADMIN || role === ROLES.CO_FOUNDER
+  const canManage =
+    role === ROLES.SUPER_ADMIN || role === ROLES.CO_FOUNDER || role === ROLES.ADMIN || role === ROLES.SOCIAL_MEDIA_MANAGER
 
   const [list, setList] = useState<Participant[]>([])
   const [opportunities, setOpportunities] = useState<Opportunity[]>([])
@@ -41,7 +42,7 @@ function AdminParticipantsPageInner() {
   const [edit, setEdit] = useState<Participant | null>(null)
   const [fromApplicationId, setFromApplicationId] = useState<string | null>(null)
   const [form, setForm] = useState({
-    type: 'INTERN',
+    type: 'VOLUNTEER',
     name: '',
     email: '',
     role: '',
@@ -62,12 +63,20 @@ function AdminParticipantsPageInner() {
       fetch('/api/admin/participants', { credentials: 'include' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
       fetch('/api/admin/opportunities', { credentials: 'include' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
     ]).then(([participants, opps]) => {
-      setList(participants)
+      // Show active website volunteers only (matches user-side workflow).
+      setList(
+        participants.filter(
+          (p) => String(p.type || '').toUpperCase() === 'VOLUNTEER' && Boolean(p.isActive),
+        ),
+      )
+      // Keep all opportunities available for linking (including internships),
+      // even though this workflow manages volunteer users only.
       setOpportunities(opps)
     }).catch(() => setErr('Failed to load')).finally(() => setLoading(false))
   }
 
-  useEffect(() => { load() }, [])
+  // Reload when the active admin role/session changes.
+  useEffect(() => { load() }, [role])
 
   const searchParams = useSearchParams()
   useEffect(() => {
@@ -78,10 +87,9 @@ function AdminParticipantsPageInner() {
       .then((r) => r.ok ? r.json() : null)
       .then((app) => {
         if (!app?.opportunity) return
-        const oppType = String(app.opportunity.type || '').toUpperCase()
-        const participantType = oppType === 'VOLUNTEER' ? 'VOLUNTEER' : 'INTERN'
         setForm({
-          type: participantType,
+          // This workflow manages volunteers only.
+          type: 'VOLUNTEER',
           name: app.name || '',
           email: app.email || '',
           role: app.opportunity.title ? `${app.opportunity.title} participant` : '',
@@ -101,7 +109,7 @@ function AdminParticipantsPageInner() {
     if (!canManage) return
     setFromApplicationId(null)
     setForm({
-      type: 'INTERN',
+      type: 'VOLUNTEER',
       name: '',
       email: '',
       role: '',
@@ -120,7 +128,7 @@ function AdminParticipantsPageInner() {
   function openEdit(p: Participant) {
     if (!canManage) return
     setForm({
-      type: p.type === 'VOLUNTEER' ? 'VOLUNTEER' : 'INTERN',
+      type: 'VOLUNTEER',
       name: p.name,
       email: p.email || '',
       role: p.role,
@@ -223,18 +231,18 @@ function AdminParticipantsPageInner() {
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           Dashboard
         </Link>
-        <Link href="/admin/opportunities" className="text-sm text-neutral-600 dark:text-neutral-400 hover:underline">Opportunities</Link>
+        <Link href="/admin/opportunities" className="text-sm text-neutral-600 dark:text-neutral-400 hover:underline">Volunteers</Link>
       </div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-        <h1 className="heading-2">Interns & Volunteers</h1>
+        <h1 className="heading-2">Volunteers</h1>
         {canManage && (
           <button type="button" onClick={openAdd} className="btn-primary">
-            + Add intern / volunteer
+            + Add Volunteer
           </button>
         )}
       </div>
       <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
-        Manage people who appear on the Opportunities page. Add from accepted applications or create manually. Profile image is required when adding.
+        Want to add a new volunteer to the website? Click the Add button.
       </p>
 
       {err && !formOpen && (
@@ -245,7 +253,7 @@ function AdminParticipantsPageInner() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-lg rounded-xl bg-white dark:bg-neutral-800 shadow-xl border border-neutral-200 dark:border-neutral-700 max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white dark:bg-neutral-800 border-b border-neutral-200 dark:border-neutral-700 px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{edit ? 'Edit participant' : 'Add intern / volunteer'}</h2>
+              <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-100">{edit ? 'Edit Volunteer' : 'Add Volunteer'}</h2>
               <button type="button" onClick={closeForm} className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700" aria-label="Close">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -256,7 +264,6 @@ function AdminParticipantsPageInner() {
                 <div>
                   <label className={labelCl}>Type</label>
                   <select value={form.type} onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))} className={inp}>
-                    <option value="INTERN">Intern</option>
                     <option value="VOLUNTEER">Volunteer</option>
                   </select>
                 </div>
@@ -310,7 +317,7 @@ function AdminParticipantsPageInner() {
               {err && <p ref={errRef} className="text-sm text-red-600 dark:text-red-400" role="alert">{err}</p>}
               <div className="flex gap-2 pt-2">
                 <button type="submit" disabled={busy} className="px-4 py-2 bg-[#044444] dark:bg-[#44AAAA] text-white rounded-lg hover:opacity-90 disabled:opacity-50 text-sm font-medium">
-                  {busy ? 'Saving…' : edit ? 'Save changes' : 'Add participant'}
+                  {busy ? 'Saving…' : edit ? 'Save changes' : 'Add Volunteer'}
                 </button>
                 <button type="button" onClick={closeForm} disabled={busy} className="px-4 py-2 border border-neutral-300 dark:border-neutral-600 rounded-lg text-sm">Cancel</button>
               </div>
@@ -323,7 +330,7 @@ function AdminParticipantsPageInner() {
         <p className="text-neutral-500">Loading…</p>
       ) : list.length === 0 ? (
         <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-8 text-center text-neutral-500">
-          No interns or volunteers yet. Click &quot;Add intern / volunteer&quot; to add one; you can also add from an accepted application on the Applications page.
+          No volunteers yet. Click &quot;Add Volunteer&quot; to add one; you can also add from an accepted application on the Applications page.
         </div>
       ) : (
         <div className="space-y-3">

@@ -41,14 +41,17 @@ export async function POST(
     internshipInterest = trim(formData.get('internshipInterest'))
 
     const cv = formData.get('cv') || formData.get('resumeFile') || formData.get('resume')
-    if (cv && cv instanceof File && cv.size > 0) {
+    // Next.js provides uploaded files as Web File/Blob objects. Avoid relying on `instanceof File`
+    // because runtime globals can differ across environments.
+    if (cv && typeof (cv as any).arrayBuffer === 'function' && (typeof (cv as any).size === 'number' ? (cv as any).size > 0 : true)) {
       try {
         const dir = path.join(process.cwd(), 'public', 'uploads', 'applications')
         await mkdir(dir, { recursive: true })
-        const ext = path.extname(cv.name) || '.pdf'
+        const originalName = typeof (cv as any).name === 'string' ? (cv as any).name : 'resume.pdf'
+        const ext = path.extname(originalName) || '.pdf'
         const base = `${id}-${Date.now()}${ext}`
         const filePath = path.join(dir, base)
-        const buffer = Buffer.from(await cv.arrayBuffer())
+        const buffer = Buffer.from(await (cv as any).arrayBuffer())
         await writeFile(filePath, buffer)
         resumeUrl = `/uploads/applications/${base}`
       } catch (e) {

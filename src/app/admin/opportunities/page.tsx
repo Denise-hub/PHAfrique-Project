@@ -3,35 +3,31 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import { effectiveRole, ROLES } from '@/lib/roles'
 
-type O = {
+type VolunteerItem = {
   id: string
-  title: string
-  slug: string
   type: string
-  description: string | null
+  name: string
+  role: string
   imageUrl?: string | null
-  location?: string | null
-  duration?: string | null
-  roleOverview?: string | null
-  requirements?: string | null
-  whatYouGain?: string | null
-  startDate: string | null
-  expiryDate: string | null
+  opportunity?: { id: string; title: string; type: string } | null
   isActive: boolean
 }
 
 export default function AdminOpportunitiesPage() {
   const { data: session } = useSession()
+  const router = useRouter()
   const rawRole = (session?.user as { role?: string } | undefined)?.role
   const role = effectiveRole(rawRole)
-  const canManage = role === ROLES.SUPER_ADMIN || role === ROLES.CO_FOUNDER
+  const canManage = role === ROLES.SUPER_ADMIN || role === ROLES.CO_FOUNDER || role === ROLES.ADMIN
+  const allowCrud = false
 
-  const [list, setList] = useState<O[]>([])
+  const [list, setList] = useState<VolunteerItem[]>([])
   const [loading, setLoading] = useState(true)
   const [formOpen, setFormOpen] = useState(false)
-  const [edit, setEdit] = useState<O | null>(null)
+  const [edit, setEdit] = useState<VolunteerItem | null>(null)
   const [form, setForm] = useState({
     title: '',
     type: 'INTERNSHIP',
@@ -50,23 +46,35 @@ export default function AdminOpportunitiesPage() {
 
   function load() {
     setErr('')
-    fetch('/api/admin/opportunities', { credentials: 'include' })
+    fetch('/api/admin/participants', { credentials: 'include' })
       .then(async (r) => {
         const j = await r.json().catch(() => ({}))
         if (!r.ok) {
-          setErr(typeof j?.error === 'string' ? j.error : r.statusText || 'Failed to load opportunities')
+          setErr(typeof j?.error === 'string' ? j.error : r.statusText || 'Failed to load volunteers')
           setList([])
           return
         }
-        setList(Array.isArray(j) ? j : [])
+        // Show the volunteer users list aligned with user-side display.
+        const all = Array.isArray(j) ? j : []
+        setList(
+          all.filter(
+            (p) => String(p.type || '').toUpperCase() === 'VOLUNTEER' && Boolean(p.isActive),
+          ),
+        )
       })
       .catch((e) => {
-        setErr(e instanceof Error ? e.message : 'Failed to load opportunities')
+        setErr(e instanceof Error ? e.message : 'Failed to load volunteers')
         setList([])
       })
       .finally(() => setLoading(false))
   }
-  useEffect(() => { load() }, [])
+  // Reload when the active admin role/session changes.
+  useEffect(() => { load() }, [role])
+
+  // Always redirect to the volunteer-specific workflow page.
+  useEffect(() => {
+    router.replace('/admin/opportunities/participants')
+  }, [router])
 
   // Force light mode on this admin page and debug dark class
   useEffect(() => {
@@ -77,7 +85,7 @@ export default function AdminOpportunitiesPage() {
   }, [])
 
   function openAdd() {
-    if (!canManage) return
+    if (!canManage || !allowCrud) return
     setForm({
       title: '', type: 'INTERNSHIP', description: '', location: '', duration: '',
       roleOverview: '', requirements: '', whatYouGain: '', startDate: '', expiryDate: '', imageFile: null,
@@ -86,30 +94,19 @@ export default function AdminOpportunitiesPage() {
     setErr('')
     setFormOpen(true)
   }
-  function openEdit(o: O) {
-    if (!canManage) return
-    const toDatetimeLocal = (s: string | null) => {
-      if (s == null || String(s).trim() === '') return ''
-      const d = new Date(String(s).trim())
-      if (Number.isNaN(d.getTime())) return ''
-      const y = d.getFullYear()
-      const m = String(d.getMonth() + 1).padStart(2, '0')
-      const day = String(d.getDate()).padStart(2, '0')
-      const h = String(d.getHours()).padStart(2, '0')
-      const min = String(d.getMinutes()).padStart(2, '0')
-      return `${y}-${m}-${day}T${h}:${min}`.trim()
-    }
-      setForm({
-      title: o.title ?? '',
-      type: String(o.type ?? 'INTERNSHIP').toUpperCase() === 'VOLUNTEER' ? 'VOLUNTEER' : 'INTERNSHIP',
-      description: o.description ?? '',
-      location: o.location ?? '',
-      duration: o.duration ?? '',
-      roleOverview: o.roleOverview ?? '',
-      requirements: o.requirements ?? '',
-      whatYouGain: o.whatYouGain ?? '',
-      startDate: toDatetimeLocal(o.startDate ?? null),
-      expiryDate: toDatetimeLocal(o.expiryDate ?? null),
+  function openEdit(o: VolunteerItem) {
+    if (!canManage || !allowCrud) return
+    setForm({
+      title: '',
+      type: 'VOLUNTEER',
+      description: '',
+      location: '',
+      duration: '',
+      roleOverview: '',
+      requirements: '',
+      whatYouGain: '',
+      startDate: '',
+      expiryDate: '',
       imageFile: null,
     })
     setEdit(o)
@@ -127,7 +124,7 @@ export default function AdminOpportunitiesPage() {
   }
 
   async function onSubmit(e: React.FormEvent) {
-    if (!canManage) return
+    if (!canManage || !allowCrud) return
     e?.preventDefault()
     e?.stopPropagation()
     console.log('Submit triggered. Current busy state:', busy)
@@ -222,21 +219,13 @@ export default function AdminOpportunitiesPage() {
 
   return (
     <div>
-      <div className="mb-4">
-        <Link href="/admin" className="text-sm text-[#044444] dark:text-[#44AAAA] hover:underline inline-flex items-center gap-1">
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Dashboard
-        </Link>
-      </div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
-        <h1 className="heading-2">Opportunities</h1>
+        <h1 className="heading-2">Volunteers</h1>
         <div className="flex items-center gap-3">
           <Link href="/admin/opportunities/participants" className="text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline">
-            Interns & Volunteers
+            Add Volunteer
           </Link>
-          {canManage && (
+          {canManage && allowCrud && (
             <button type="button" onClick={openAdd} className="btn-primary">
               Add opportunity
             </button>
@@ -250,7 +239,7 @@ export default function AdminOpportunitiesPage() {
         </div>
       )}
 
-      {formOpen && canManage && (
+      {formOpen && canManage && allowCrud && (
         <>
           <div className="fixed inset-0 z-[100] bg-black/50 pointer-events-none" aria-hidden />
           <div className="fixed inset-y-0 right-0 z-[101] w-full max-w-2xl bg-white dark:bg-neutral-800 shadow-2xl border-l border-neutral-200 dark:border-neutral-700 flex flex-col overflow-hidden pointer-events-auto">
@@ -410,21 +399,22 @@ export default function AdminOpportunitiesPage() {
       {loading ? <p className="text-neutral-500">Loading…</p> : (
             <div className="space-y-4">
           {list.map((o) => {
-            const isClosed = o.expiryDate ? new Date(o.expiryDate) < new Date() : false
             return (
             <div key={o.id} className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 flex justify-between items-start gap-4">
               <div>
                 <div className="font-semibold text-neutral-900 dark:text-neutral-100">
-                  {o.title}{isClosed && <span className="ml-2 text-xs font-semibold text-[#FF0000]">(Closed)</span>}
+                  {o.name}
                 </div>
                 <div className="text-sm text-neutral-500">
-                  {o.type}
-                  {o.startDate && ` · Starts ${new Date(o.startDate).toLocaleDateString()}`}
-                  {o.expiryDate && ` · Expires ${new Date(o.expiryDate).toLocaleDateString()}`}
+                  {o.role} · {o.type}
                 </div>
-                {o.description && <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1 line-clamp-2">{o.description}</div>}
+                {o.opportunity?.title && (
+                  <div className="text-sm text-neutral-600 dark:text-neutral-400 mt-1 line-clamp-2">
+                    Linked opportunity: {o.opportunity.title}
+                  </div>
+                )}
               </div>
-              {canManage && (
+              {canManage && allowCrud && (
                 <div className="flex gap-2 shrink-0">
                   <button
                     type="button"
@@ -445,7 +435,7 @@ export default function AdminOpportunitiesPage() {
               )}
             </div>
             )})}
-          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No opportunities yet.</p>}
+          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No volunteers yet.</p>}
         </div>
       )}
     </div>

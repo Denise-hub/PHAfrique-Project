@@ -56,7 +56,7 @@ export async function PATCH(
   if (unauth) return unauth
   const session = await getServerSession(authOptions)
   const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN && role !== ROLES.SOCIAL_MEDIA_MANAGER) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   const syncErr = ensureParticipantModel()
@@ -138,7 +138,7 @@ export async function DELETE(
   if (unauth) return unauth
   const session = await getServerSession(authOptions)
   const role = effectiveRole((session?.user as { role?: string } | undefined)?.role)
-  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN) {
+  if (role !== ROLES.SUPER_ADMIN && role !== ROLES.CO_FOUNDER && role !== ROLES.ADMIN && role !== ROLES.SOCIAL_MEDIA_MANAGER) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
   const syncErr = ensureParticipantModel()

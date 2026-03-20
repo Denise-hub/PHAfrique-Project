@@ -11,7 +11,13 @@ export async function GET(req: NextRequest) {
     
     const { searchParams } = new URL(req.url)
     const opportunityId = searchParams.get('opportunityId')
-    const where = opportunityId ? { opportunityId } : {}
+    const type = (searchParams.get('type') || '').toUpperCase()
+    const where: {
+      opportunityId?: string
+      opportunity?: { type: string }
+    } = {}
+    if (opportunityId) where.opportunityId = opportunityId
+    if (type === 'VOLUNTEER' || type === 'INTERNSHIP') where.opportunity = { type }
     const list = await prisma.application.findMany({
       where,
       include: { opportunity: { select: { title: true, slug: true, type: true } } },

@@ -12,14 +12,12 @@ type NavDropdown = { label: string; items: NavLink[] }
 const TOP_LINKS: NavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
+  { href: '/portfolios', label: 'Portfolios' },
   { href: '/opportunities', label: 'Opportunities' },
   { href: '/contact', label: 'Contact' },
 ]
 
-const DROPDOWNS: NavDropdown[] = [
-  { label: 'Our work', items: [{ href: '/portfolios', label: 'Portfolios' }, { href: '/programs', label: 'Programs' }] },
-  { label: 'Discover', items: [{ href: '/gallery', label: 'Gallery' }, { href: '/news', label: 'News' }] },
-]
+const DROPDOWNS: NavDropdown[] = []
 
 function isActive(pathname: string | null, href: string): boolean {
   if (!pathname) return false
@@ -65,13 +63,12 @@ export default function Header() {
     ? 'bg-[#044444] shadow-xl border-[#044444]'
     : 'bg-white/80 dark:bg-neutral-900/80 shadow-lg border-neutral-200/50 dark:border-neutral-700/50'
 
+  // Brand red in all states: default, scrolled (green bar), and dark mode
   const linkClass = (active: boolean) =>
-    `text-sm font-medium transition-all ${
+    `text-base md:text-lg font-bold tracking-tight transition-all text-[#FF0000] dark:text-[#FF0000] ${
       active
-        ? 'text-[#FF0000] underline decoration-2 decoration-[#FF0000] underline-offset-4'
-        : isScrolled
-        ? 'text-[#FF0000] hover:text-[#FF0000] hover:underline decoration-2 decoration-[#FF0000] underline-offset-4'
-        : 'text-[#FF0000] hover:text-[#FF0000] hover:underline decoration-2 decoration-[#044444] underline-offset-4'
+        ? 'underline decoration-2 decoration-[#FF0000] underline-offset-4'
+        : 'hover:underline decoration-2 decoration-transparent hover:decoration-[#FF0000] underline-offset-4'
     }`
 
   const borderClass = isScrolled ? 'border-white/20' : 'border-neutral-200 dark:border-neutral-700'
@@ -81,24 +78,24 @@ export default function Header() {
       <div className="h-1 w-full flex-shrink-0 bg-gradient-to-r from-primary-600 to-[#FF0000]" aria-hidden />
       <div className="px-4 pt-3">
         <nav
-          className={`pointer-events-auto max-w-7xl mx-auto rounded-2xl border backdrop-blur-md transition-all duration-300 ${navStyle}`}
+          className={`pointer-events-auto max-w-5xl sm:max-w-6xl mx-auto rounded-3xl md:rounded-full border backdrop-blur-md transition-all duration-300 ${navStyle}`}
           aria-label="Main"
         >
-          <div className="flex h-16 md:h-[72px] items-center justify-between px-4 md:px-6">
+          <div className="flex h-20 md:h-[80px] items-center justify-between px-4 md:px-6">
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
                 src="/assets/logos/TRANSPARENT-MAIN-LOGO-ico.png"
                 alt="Public Health Corps Africa"
-                width={180}
-                height={58}
-                className="h-12 md:h-14 w-auto object-contain"
+                width={260}
+                height={84}
+                className="h-16 md:h-20 w-auto object-contain"
                 priority
                 unoptimized
               />
             </Link>
 
             {/* Desktop nav */}
-            <div className="hidden md:flex items-center gap-1 md:gap-4">
+            <div className="hidden md:flex items-center gap-2 md:gap-5">
               {TOP_LINKS.map((l) => (
                 <Link key={l.href} href={l.href} className={linkClass(isActive(pathname, l.href))}>
                   {l.label}
@@ -130,10 +127,10 @@ export default function Header() {
                               key={item.href}
                               href={item.href}
                               role="menuitem"
-                              className={`block px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                              className={`block px-4 py-2.5 text-base font-bold text-[#FF0000] dark:text-[#FF0000] transition-all duration-200 ${
                                 isActive(pathname, item.href)
-                                  ? 'text-[#FF0000] bg-[#FF0000]/10 dark:bg-[#FF0000]/20'
-                                  : 'text-neutral-700 dark:text-neutral-200 hover:bg-[#044444]/10 dark:hover:bg-[#44AAAA]/10 hover:text-[#044444] dark:hover:text-[#44AAAA]'
+                                  ? 'bg-[#FF0000]/10 dark:bg-[#FF0000]/20'
+                                  : 'hover:bg-[#FF0000]/10 dark:hover:bg-[#FF0000]/15'
                               }`}
                               onClick={() => setOpenDropdown(null)}
                             >
@@ -201,12 +198,12 @@ export default function Header() {
                   <Link
                     key={l.href}
                     href={l.href}
-                    className={`py-3 px-3 rounded-lg font-medium transition-all ${
+                    className={`py-3 px-3 rounded-lg text-base sm:text-lg font-bold text-[#FF0000] dark:text-[#FF0000] transition-all ${
                       isActive(pathname, l.href)
-                        ? 'text-[#FF0000] bg-white/10 dark:bg-neutral-800/50 underline decoration-2 decoration-[#FF0000] underline-offset-4'
+                        ? 'bg-white/10 dark:bg-neutral-800/50 underline decoration-2 decoration-[#FF0000] underline-offset-4'
                         : isScrolled
-                        ? 'text-[#FF0000] hover:bg-white/10'
-                        : 'text-[#FF0000] hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                        ? 'hover:bg-white/10'
+                        : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -220,10 +217,10 @@ export default function Header() {
                       <button
                         type="button"
                         onClick={() => setOpenMobileDropdown(isExpanded ? null : dd.label)}
-                        className={`w-full text-left py-3 px-3 rounded-lg font-medium transition-all ${
+                        className={`w-full text-left py-3 px-3 rounded-lg text-base sm:text-lg font-bold text-[#FF0000] dark:text-[#FF0000] transition-all ${
                           isDropdownActive(pathname, dd.items)
-                            ? 'text-[#FF0000] bg-white/10 dark:bg-neutral-800/50'
-                            : isScrolled ? 'text-[#FF0000] hover:bg-white/10' : 'text-[#FF0000] hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                            ? 'bg-white/10 dark:bg-neutral-800/50'
+                            : isScrolled ? 'hover:bg-white/10' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
                         }`}
                         aria-expanded={isExpanded}
                       >
@@ -235,10 +232,10 @@ export default function Header() {
                             <Link
                               key={item.href}
                               href={item.href}
-                              className={`py-2.5 px-3 rounded-lg text-sm font-medium transition-all ${
+                              className={`py-2.5 px-3 rounded-lg text-base font-bold text-[#FF0000] dark:text-[#FF0000] transition-all ${
                                 isActive(pathname, item.href)
-                                  ? 'text-[#FF0000] bg-[#FF0000]/15 dark:bg-[#FF0000]/25'
-                                  : 'text-neutral-700 dark:text-neutral-300 hover:bg-[#044444]/10 dark:hover:bg-[#44AAAA]/10 hover:text-[#044444] dark:hover:text-[#44AAAA]'
+                                  ? 'bg-[#FF0000]/15 dark:bg-[#FF0000]/25'
+                                  : 'hover:bg-[#FF0000]/10 dark:hover:bg-[#FF0000]/15'
                               }`}
                               onClick={() => { setIsMobileMenuOpen(false); setOpenMobileDropdown(null); }}
                             >

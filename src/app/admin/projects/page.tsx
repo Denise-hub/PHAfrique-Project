@@ -58,7 +58,7 @@ export default function AdminProjectsPage() {
   }
 
   async function onDelete(id: string) {
-    if (!confirm('Delete this portfolio item?')) return
+    if (!confirm('Delete this project?')) return
     setBusy(true)
     const r = await fetch(`/api/admin/projects/${id}`, { method: 'DELETE' })
     setBusy(false)
@@ -78,16 +78,19 @@ export default function AdminProjectsPage() {
         </Link>
       </div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="heading-2">Portfolio</h1>
-        <button type="button" onClick={openAdd} className="btn-primary">Add portfolio item</button>
+        <h1 className="heading-2">Projects</h1>
+        <button type="button" onClick={openAdd} className="btn-primary">Add project</button>
       </div>
+      <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">
+        Manage projects displayed on the home page and linked to dedicated project pages.
+      </p>
 
       {formOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-xl bg-white dark:bg-neutral-800 shadow-xl" data-form-version="simple">
             <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-700 px-4 py-3 rounded-t-xl">
               <h2 className="text-base font-bold text-neutral-900 dark:text-neutral-100">
-                {edit ? 'Edit portfolio item' : 'Add portfolio item'}
+                {edit ? 'Edit project' : 'Add project'}
               </h2>
               <button type="button" onClick={close} className="p-1.5 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors" aria-label="Close">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -184,7 +187,7 @@ export default function AdminProjectsPage() {
               </div>
             </div>
           ))}
-          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No portfolio items yet.</p>}
+          {list.length === 0 && <p className="py-8 text-neutral-500 text-center">No project items yet.</p>}
         </div>
       )}
     </div>

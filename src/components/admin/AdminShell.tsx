@@ -12,10 +12,11 @@ import { canAccessSection, effectiveRole, type AdminSection } from '@/lib/roles'
 // Permissions are enforced both here (for the visible menu) and on the API.
 const navItems: { href: string; label: string; icon: string; section: AdminSection }[] = [
   { href: '/admin', label: 'Dashboard', icon: 'grid', section: 'dashboard' },
-  { href: '/admin/programs', label: 'Programs', icon: 'briefcase', section: 'programs' },
-  { href: '/admin/projects', label: 'Portfolio', icon: 'folder', section: 'projects' },
-  { href: '/admin/opportunities', label: 'Opportunities', icon: 'calendar', section: 'opportunities' },
+  { href: '/admin/programs', label: 'Portfolios', icon: 'briefcase', section: 'programs' },
+  { href: '/admin/projects', label: 'Projects', icon: 'folder', section: 'projects' },
+  { href: '/admin/opportunities/participants', label: 'Volunteers', icon: 'calendar', section: 'opportunities' },
   { href: '/admin/applications', label: 'Applications', icon: 'users', section: 'applications' },
+  { href: '/admin/contact-messages', label: 'Contact Messages', icon: 'file', section: 'content' },
   { href: '/admin/events', label: 'News', icon: 'newspaper', section: 'news' },
   { href: '/admin/content', label: 'Content', icon: 'file', section: 'content' },
   { href: '/admin/images', label: 'Gallery', icon: 'image', section: 'gallery' },

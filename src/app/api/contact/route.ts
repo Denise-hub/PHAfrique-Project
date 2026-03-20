@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/db'
 
 /**
  * Contact form submission endpoint.
@@ -52,8 +53,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message must be at least 10 characters' }, { status: 400 })
     }
     
-    // TODO: Send email to info@phafrique.com
-    // TODO: Optionally save to database for record keeping
+    // Save contact messages for admin visibility (in addition to normal email handling).
+    const messageEntry = {
+      id: `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+      name: String(name).trim(),
+      email: String(email).trim(),
+      phone: phone ? String(phone).trim() : null,
+      need: need ? String(need).trim() : null,
+      message: String(message).trim(),
+      createdAt: new Date().toISOString(),
+    }
+    try {
+      const existing = await prisma.content.findUnique({ where: { key: 'contact_messages' } })
+      let previous: unknown[] = []
+      if (existing?.value) {
+        try {
+          const parsed = JSON.parse(existing.value)
+          previous = Array.isArray(parsed) ? parsed : []
+        } catch {
+          previous = []
+        }
+      }
+      const next = [messageEntry, ...previous].slice(0, 1000)
+      await prisma.content.upsert({
+        where: { key: 'contact_messages' },
+        update: { value: JSON.stringify(next) },
+        create: { key: 'contact_messages', value: JSON.stringify(next) },
+      })
+    } catch (storageError) {
+      // Contact endpoint should still succeed even if log storage fails.
+      console.error('[contact] Failed to store message for admin view:', storageError)
+    }
     
     // Log in development for testing
     if (process.env.NODE_ENV === 'development') {
@@ -67,9 +97,8 @@ export async function POST(req: NextRequest) {
       console.log('[contact] Email would be sent to: info@phafrique.com')
     }
     
-    // In production, implement email sending here
-    // For now, return success (email integration can be added without changing frontend)
-    
+    // In production, implement email sending here (messages are already stored above).
+
     return NextResponse.json({ ok: true })
   } catch (error) {
     console.error('[contact] Error:', error)

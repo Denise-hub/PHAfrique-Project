@@ -29,42 +29,32 @@ export type AdminSection =
 const SECTION_ACCESS: Record<Role, AdminSection[]> = {
   [ROLES.SUPER_ADMIN]: [
     'dashboard',
-    'programs',
-    'projects',
     'opportunities',
     'applications',
-    'news',
     'content',
-    'gallery',
     'users',
     'profile',
   ],
   [ROLES.ADMIN]: [
     'dashboard',
-    'programs',
-    'projects',
     'opportunities',
     'applications',
-    'news',
     'content',
-    'gallery',
     'users',
     'profile',
   ],
   [ROLES.CO_FOUNDER]: [
     'dashboard',
-    'programs',
-    'projects',
     'opportunities',
     'applications',
-    'news',
     'content',
-    'gallery',
     'users',
     'profile',
   ],
-  [ROLES.SOCIAL_MEDIA_MANAGER]: ['dashboard', 'programs', 'opportunities', 'gallery', 'profile'],
-  [ROLES.NEWSLETTER_MANAGER]: ['dashboard', 'programs', 'opportunities', 'news', 'profile'],
+  // Limited roles: no access to application review or content editing.
+  // They can still view volunteer opportunities to support workflow visibility.
+  [ROLES.SOCIAL_MEDIA_MANAGER]: ['dashboard', 'opportunities', 'applications', 'profile'],
+  [ROLES.NEWSLETTER_MANAGER]: ['dashboard', 'opportunities', 'profile'],
 }
 
 export function canAccessSection(role: string | null | undefined, section: AdminSection): boolean {

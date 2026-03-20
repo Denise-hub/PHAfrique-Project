@@ -54,10 +54,15 @@ function getPrisma(): PrismaClient | ReturnType<typeof createStub> {
   }
   try {
     _instance = createPrisma()
-    if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = _instance as PrismaClient
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.prisma = _instance as PrismaClient
+    }
     return _instance
   } catch (e) {
-    console.error('[db] PrismaClient init failed. App will run without database. Run: npx prisma generate (stop dev server first).', e)
+    console.error(
+      '[db] PrismaClient init failed. App will run without database. Run: npx prisma generate (stop dev server first).',
+      e,
+    )
     _instance = createStub()
     return _instance
   }

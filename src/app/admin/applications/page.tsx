@@ -32,6 +32,7 @@ export default function AdminApplicationsPage() {
   const [detailStatus, setDetailStatus] = useState('')
   const [busy, setBusy] = useState(false)
   const [filter, setFilter] = useState('')
+  const [typeFilter, setTypeFilter] = useState<'ALL' | 'VOLUNTEER' | 'INTERNSHIP'>('ALL')
   const [saveError, setSaveError] = useState('')
   const [savedMessage, setSavedMessage] = useState('')
 
@@ -40,9 +41,12 @@ export default function AdminApplicationsPage() {
   }, [])
 
   const load = useCallback(() => {
-    const u = filter ? `/api/admin/applications?opportunityId=${encodeURIComponent(filter)}` : '/api/admin/applications'
+    const qs = new URLSearchParams()
+    if (filter) qs.set('opportunityId', filter)
+    if (typeFilter !== 'ALL') qs.set('type', typeFilter)
+    const u = `/api/admin/applications${qs.toString() ? `?${qs.toString()}` : ''}`
     fetch(u, { credentials: 'include' }).then((r) => r.json()).then(setList).catch(() => setList([])).finally(() => setLoading(false))
-  }, [filter])
+  }, [filter, typeFilter])
 
   useEffect(() => { load() }, [load])
 
@@ -101,16 +105,23 @@ export default function AdminApplicationsPage() {
       </div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
         <h1 className="heading-2">Applications</h1>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm w-56"
-        >
-          <option value="">All opportunities</option>
-          {opportunities.map((o) => (
-            <option key={o.id} value={o.id}>{o.title}</option>
-          ))}
-        </select>
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="inline-flex rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+            <button type="button" onClick={() => setTypeFilter('ALL')} className={`px-3 py-2 text-sm ${typeFilter === 'ALL' ? 'bg-[#044444] text-white' : 'bg-white dark:bg-neutral-800'}`}>All</button>
+            <button type="button" onClick={() => setTypeFilter('VOLUNTEER')} className={`px-3 py-2 text-sm ${typeFilter === 'VOLUNTEER' ? 'bg-[#044444] text-white' : 'bg-white dark:bg-neutral-800'}`}>Volunteering</button>
+            <button type="button" onClick={() => setTypeFilter('INTERNSHIP')} className={`px-3 py-2 text-sm ${typeFilter === 'INTERNSHIP' ? 'bg-[#044444] text-white' : 'bg-white dark:bg-neutral-800'}`}>Interns</button>
+          </div>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="rounded border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 px-3 py-2 text-sm w-56"
+          >
+            <option value="">All opportunities</option>
+            {opportunities.map((o) => (
+              <option key={o.id} value={o.id}>{o.title}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? <p className="text-neutral-500">Loading…</p> : (
@@ -138,12 +149,61 @@ export default function AdminApplicationsPage() {
               <p><span className="text-neutral-500">Email:</span> {detail.email}</p>
               {detail.phone && <p><span className="text-neutral-500">Phone:</span> {detail.phone}</p>}
               {detail.country && <p><span className="text-neutral-500">Country:</span> {detail.country}</p>}
-              {detail.qualification && <p><span className="text-neutral-500">Qualification:</span> {detail.qualification}</p>}
               <p><span className="text-neutral-500">Opportunity:</span> {detail.opportunity.title} ({detail.opportunity.type})</p>
               <p><span className="text-neutral-500">Applied:</span> {new Date(detail.createdAt).toLocaleString()}</p>
-              {detail.internshipInterest && <p><span className="text-neutral-500">Portfolio areas:</span> {detail.internshipInterest}</p>}
-              {(detail.message || detail.publicHealthIssues) && <p><span className="text-neutral-500">Message / Notes:</span><br /><span className="whitespace-pre-wrap">{detail.publicHealthIssues || detail.message}</span></p>}
-              {detail.resumeUrl && <p><span className="text-neutral-500">Resume:</span> <a href={detail.resumeUrl} target="_blank" rel="noopener noreferrer" className="text-[#044444] hover:underline">Open</a></p>}
+
+              {String(detail.opportunity.type).toUpperCase() === 'INTERNSHIP' ? (
+                <>
+                  {detail.qualification && (
+                    <p>
+                      <span className="text-neutral-500">School / University:</span> {detail.qualification}
+                    </p>
+                  )}
+                  {detail.publicHealthIssues && (
+                    <p>
+                      <span className="text-neutral-500">Major / Field of study:</span> {detail.publicHealthIssues}
+                    </p>
+                  )}
+                  {detail.internshipInterest && (
+                    <p>
+                      <span className="text-neutral-500">Year of study:</span> {detail.internshipInterest}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <>
+                  {(detail.message || detail.publicHealthIssues) && (
+                    <p>
+                      <span className="text-neutral-500">Message / Notes:</span>
+                      <br />
+                      <span className="whitespace-pre-wrap">{detail.message || detail.publicHealthIssues}</span>
+                    </p>
+                  )}
+                </>
+              )}
+
+              {detail.resumeUrl && (
+                <div className="mt-3">
+                  <p className="text-neutral-500 mb-2">CV</p>
+                  <div className="flex flex-wrap gap-2">
+                    <a
+                      href={detail.resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-1.5 rounded-lg bg-[#044444] text-white hover:bg-[#033333] transition-colors text-sm"
+                    >
+                      View CV
+                    </a>
+                    <a
+                      href={detail.resumeUrl}
+                      className="px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors text-sm"
+                      download
+                    >
+                      Download CV
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
             {saveError && (
               <div className="rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-800 px-3 py-2 text-sm text-red-700 dark:text-red-300 mb-3">

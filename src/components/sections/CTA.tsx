@@ -1,14 +1,11 @@
 'use client'
 
 import React from 'react'
-import { useState } from 'react'
-import { useInView } from '@/hooks/useInView'
 import Link from 'next/link'
-import DonationModal from '@/components/modals/DonationModal'
+import { useInView } from '@/hooks/useInView'
 
 export default function CTA() {
   const visible = useInView('cta-section', { threshold: 0.12 })
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false)
 
   return (
     <section
@@ -71,21 +68,21 @@ export default function CTA() {
               </svg>
               Explore Opportunities
             </Link>
-            <button
-              onClick={() => setIsDonationModalOpen(true)}
+            <a
+              href="https://linktr.ee/Publichealthenafrique"
+              target="_blank"
+              rel="noreferrer"
               className="group inline-flex items-center justify-center gap-2 rounded-xl border-2 border-white/20 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-white/30 px-8 py-4 text-base font-bold text-white/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/20 focus:ring-offset-2 focus:ring-offset-[#044444]"
             >
               <svg className="w-5 h-5 transition-transform duration-300 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               Donate Today
-            </button>
+            </a>
           </div>
         </div>
       </div>
       
-      {/* Donation Modal */}
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
     </section>
   )
 }

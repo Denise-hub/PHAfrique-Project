@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 const SOCIAL = [
   { 
@@ -38,28 +37,99 @@ const SOCIAL = [
     color: 'from-blue-600 to-blue-700',
     hoverColor: 'hover:from-blue-700 hover:to-blue-800',
   },
+  {
+    href: 'https://www.youtube.com/@PublicHealthenAfrique',
+    label: 'YouTube',
+    icon: 'M23.498 6.186a2.945 2.945 0 00-2.073-2.082C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.425.504A2.945 2.945 0 00.502 6.186 30.11 30.11 0 000 12a30.11 30.11 0 00.502 5.814 2.945 2.945 0 002.073 2.082C4.4 20.4 12 20.4 12 20.4s7.6 0 9.425-.504a2.945 2.945 0 002.073-2.082A30.11 30.11 0 0024 12a30.11 30.11 0 00-.502-5.814zM9.6 15.6V8.4L15.84 12 9.6 15.6z',
+    color: 'from-red-600 to-red-700',
+    hoverColor: 'hover:from-red-700 hover:to-red-800',
+  },
+  {
+    href: 'https://www.tiktok.com/@phafrique_2024?is_from_webapp=1&sender_device=pc',
+    label: 'TikTok',
+    icon: 'M16.707 0c.356 3.39 2.284 5.433 5.293 5.64V9.1c-1.797.11-3.266-.47-5.2-1.74v7.29c0 5.26-5.73 8.94-10.79 6.74-2.21-.96-3.85-3.11-4-5.73-.37-6.17 5.61-10.1 11.4-7.85v3.72c-.33-.1-.65-.16-.98-.18-2.34-.14-4.34 1.86-4.21 4.21.09 1.63 1.23 3.03 2.81 3.39 2.03.47 3.92-.99 3.92-2.92V0h2.74z',
+    color: 'from-neutral-800 to-neutral-900',
+    hoverColor: 'hover:from-neutral-900 hover:to-black',
+  },
 ]
 
 export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="bg-neutral-900 dark:bg-neutral-950 dark:border-t dark:border-neutral-800 text-neutral-300">
+    <footer className="bg-white dark:bg-neutral-950 border-t border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300">
       <div className="container-custom py-6 md:py-8">
         <div className="mx-auto flex max-w-xl flex-col items-center text-center">
-          <Link href="/" className="inline-flex items-center gap-2 mb-3">
-            <Image
-              src="/assets/logos/TRANSPARENT-MAIN-LOGO-ico.png"
-              alt="Public Health Corps Africa"
-              width={120}
-              height={40}
-              className="h-9 w-auto object-contain"
-              unoptimized
-            />
-            <span className="text-base font-semibold text-white">
-              Public Health Corps Africa
-            </span>
-          </Link>
+          <div className="mb-5 w-full">
+            <div className="inline-flex items-center gap-3">
+              <span className="hidden sm:inline-block h-[2px] w-10 sm:w-14 rounded-full bg-gradient-to-r from-[#044444] to-[#FF0000]" />
+              <h3 className="text-neutral-900 dark:text-white font-extrabold text-xl sm:text-2xl tracking-tight">
+                Contact Us
+              </h3>
+              <span className="hidden sm:inline-block h-[2px] w-10 sm:w-14 rounded-full bg-gradient-to-r from-[#FF0000] to-[#044444]" />
+            </div>
+
+            <div className="mt-5 w-full max-w-md mx-auto space-y-4 sm:translate-x-12 md:translate-x-16 lg:translate-x-20">
+              {/* Location */}
+              <div className="grid grid-cols-[48px_1fr] items-start gap-4 text-left">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-white/10">
+                  <svg className="h-5 w-5 text-neutral-700 dark:text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-extrabold tracking-[0.14em] text-neutral-600 dark:text-white/80 uppercase">
+                    Our Location
+                  </p>
+                  <p className="mt-1 text-sm sm:text-base font-semibold text-neutral-900 dark:text-white break-words">
+                    Rosebank, Johannesburg, South Africa
+                  </p>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="grid grid-cols-[48px_1fr] items-start gap-4 text-left">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-white/10">
+                  <svg className="h-5 w-5 text-neutral-700 dark:text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3l2 5-2 1c1.2 2.8 3.4 5 6.2 6.2l1-2 5 2v3a2 2 0 01-2 2c-8.284 0-15-6.716-15-15z" />
+                  </svg>
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-extrabold tracking-[0.14em] text-neutral-600 dark:text-white/80 uppercase">
+                    Phone Number
+                  </p>
+                  <a
+                    href="tel:+27766510576"
+                    className="mt-1 inline-block text-sm sm:text-base font-semibold text-neutral-900 dark:text-white hover:text-[#044444] dark:hover:text-white/90 transition-colors"
+                  >
+                    +27 76 651 0576
+                  </a>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="grid grid-cols-[48px_1fr] items-start gap-4 text-left">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 dark:bg-white/10">
+                  <svg className="h-5 w-5 text-neutral-700 dark:text-white/90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </span>
+                <div className="min-w-0">
+                  <p className="text-xs font-extrabold tracking-[0.14em] text-neutral-600 dark:text-white/80 uppercase">
+                    Email
+                  </p>
+                  <a
+                    href="mailto:info@phafrique.com"
+                    className="mt-1 inline-block text-sm sm:text-base font-semibold text-neutral-900 dark:text-white hover:text-[#044444] dark:hover:text-white/90 transition-colors break-all"
+                  >
+                    info@phafrique.com
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-center gap-3 flex-wrap">
             {SOCIAL.map((social) => (
               <a
@@ -82,22 +152,22 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-6 pt-5 border-t border-neutral-800 flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-4">
-          <p className="text-neutral-500 text-xs sm:text-sm">
-            © {year} Public Health Corps Africa{' '}
-            <span className="text-neutral-600 dark:text-neutral-500">|</span>{' '}
-            <Link 
-              href="/admin/login" 
-              className="text-neutral-500 hover:text-[#044444] transition-colors"
+      </div>
+
+      {/* Bottom bar stays black in both modes */}
+      <div className="bg-neutral-900 text-neutral-200">
+        <div className="container-custom py-4">
+          <p className="text-xs sm:text-sm font-medium text-center">
+            ©{year} All rights reserved. Public Health en Afrique{' '}
+            <span className="text-neutral-400">|</span>{' '}
+            <Link
+              href="/admin/login"
+              className="text-neutral-200 hover:text-[#044444] transition-colors"
               aria-label="Admin login"
             >
               Admin Login
             </Link>
           </p>
-          <div className="flex gap-4 text-xs sm:text-sm">
-            <Link href="/privacy" className="text-neutral-500 hover:text-[#044444] transition-colors">Privacy</Link>
-            <Link href="/terms" className="text-neutral-500 hover:text-[#044444] transition-colors">Terms</Link>
-          </div>
         </div>
       </div>
     </footer>
