@@ -29,6 +29,7 @@ function createStub(): Record<string, unknown> {
     $disconnect: () => Promise.resolve(),
     adminUser: {
       findUnique: noop,
+      findFirst: noop,
       findMany: () => empty,
       upsert: reject,
       update: async () => ({}),

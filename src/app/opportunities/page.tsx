@@ -436,7 +436,7 @@ export default function OpportunitiesPage() {
                   <div className="flex flex-col gap-3 h-64 md:h-full">
                     <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
                       <Image
-                        src="/uploads/2026/11243bf7-85d1-41ab-9391-e8121513abfa.jpg"
+                        src="/assets/images/programs/public-health-research-intern.jpg"
                         alt="PHA internship program — interns collaborating"
                         fill
                         className="object-contain p-2"

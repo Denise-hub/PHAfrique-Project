@@ -167,7 +167,7 @@ export default function PortfoliosPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   <div className="relative min-h-[260px] md:min-h-[320px]">
                     <Image
-                      src="/uploads/images/1771250043304-txu690ir6xf.jpg"
+                      src="/assets/images/programs/capacity-building.jpg"
                       alt="Skills development and learnership"
                       fill
                       className="object-cover"

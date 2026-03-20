@@ -105,7 +105,7 @@ export default function AboutPage() {
               />
               <div className="relative rounded-[32px] overflow-hidden shadow-2xl">
                 <Image
-                  src="/uploads/images/1771260229072-hj6w66nzekt.jpg"
+                  src="/assets/images/about/IMG_7872.jpg"
                   alt="Public Health en Afrique team engaging with community"
                   width={1200}
                   height={900}

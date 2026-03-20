@@ -45,7 +45,7 @@ const HOME_PROJECTS: HomeProjectCard[] = [
     id: 'internship-volunteering',
     title: 'Internship & Volunteering Program',
     href: '/opportunities',
-    imageUrl: '/uploads/images/IMG_20251011_131001.jpg',
+    imageUrl: '/assets/images/programs/capacity-building.jpg',
   },
   {
     id: 'project-hope',

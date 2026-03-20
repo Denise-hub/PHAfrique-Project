@@ -14,10 +14,23 @@ const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 // gracefully instead of throwing at import time.
 function getAdminUserModel() {
   try {
-    const model = (prisma as unknown as { adminUser?: { findUnique: (args: { where: { email: string } }) => Promise<unknown> } }).adminUser
+    const model = (prisma as unknown as {
+      adminUser?: {
+        findUnique: (args: { where: { email: string } }) => Promise<unknown>
+        findFirst: (args: { where: { email: { equals: string; mode: 'insensitive' } } }) => Promise<unknown>
+      }
+    }).adminUser
     return model ?? null
   } catch {
     return null
+  }
+}
+
+async function findAdminByEmail(adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>, email: string) {
+  try {
+    return await adminUser.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
+  } catch {
+    return await adminUser.findUnique({ where: { email } })
   }
 }
 
@@ -63,7 +76,7 @@ export const authOptions: NextAuthOptions = {
 
         let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
         try {
-          admin = await adminUser.findUnique({ where: { email } }) as typeof admin
+          admin = await findAdminByEmail(adminUser, email) as typeof admin
         } catch (e) {
           console.error('[auth] authorize RETURNING null: reason=DB error during findUnique:', (e as Error).message)
           return null
@@ -163,7 +176,7 @@ export const authOptions: NextAuthOptions = {
           return false
         }
         try {
-          let admin = await adminUser.findUnique({ where: { email } })
+          let admin = await findAdminByEmail(adminUser, email)
           if (!admin && email === SUPER_ADMIN_EMAIL) {
             console.log('[auth] Google sign-in: SUPER_ADMIN not in DB, creating now')
             admin = await prisma.adminUser.upsert({
@@ -210,9 +223,10 @@ export const authOptions: NextAuthOptions = {
           const adminUser = getAdminUserModel()
           if (adminUser) {
             try {
-              const admin = await adminUser.findUnique({
-                where: { email: (token.email as string).toLowerCase().trim() },
-              }) as { role?: string; displayName?: string; imageUrl?: string } | null
+              const admin = await findAdminByEmail(
+                adminUser,
+                (token.email as string).toLowerCase().trim()
+              ) as { role?: string; displayName?: string; imageUrl?: string } | null
               if (admin) {
                 token.role = (admin as { role: string }).role
                 if (admin.displayName) token.name = admin.displayName

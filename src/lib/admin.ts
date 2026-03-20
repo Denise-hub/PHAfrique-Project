@@ -5,7 +5,20 @@ import { canAccessSection, effectiveRole, type AdminSection } from './roles'
 import { prisma } from '@/lib/db'
 
 function getAdminUserModel() {
-  return (prisma as { adminUser?: { findUnique: (args: unknown) => Promise<unknown> } }).adminUser ?? null
+  return (prisma as {
+    adminUser?: {
+      findUnique: (args: unknown) => Promise<unknown>
+      findFirst: (args: unknown) => Promise<unknown>
+    }
+  }).adminUser ?? null
+}
+
+async function findAdminByEmail(adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>, email: string) {
+  try {
+    return await adminUser.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
+  } catch {
+    return await adminUser.findUnique({ where: { email } })
+  }
 }
 
 /**
@@ -30,7 +43,7 @@ export async function requireAdmin(): Promise<NextResponse | null> {
     }
     try {
       const email = session.user.email.toLowerCase().trim()
-      const admin = await adminUser.findUnique({ where: { email } }) as { role?: string } | null
+      const admin = await findAdminByEmail(adminUser, email) as { role?: string } | null
       if (!admin) return NextResponse.json({ error: 'Access denied' }, { status: 403 })
       role = admin.role
     } catch (err) {
@@ -60,7 +73,10 @@ export async function requireSection(section: AdminSection): Promise<NextRespons
       return NextResponse.json({ error: 'Server configuration error. Run: npx prisma generate' }, { status: 500 })
     }
     try {
-      const admin = await adminUser.findUnique({ where: { email: session.user.email!.toLowerCase().trim() } }) as { role?: string } | null
+      const admin = await findAdminByEmail(
+        adminUser,
+        session.user.email!.toLowerCase().trim()
+      ) as { role?: string } | null
       role = admin?.role ?? undefined
     } catch {
       return NextResponse.json({ error: 'Database error. Please try again.' }, { status: 500 })
