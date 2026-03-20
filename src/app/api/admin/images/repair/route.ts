@@ -63,3 +63,7 @@ export async function POST() {
     return NextResponse.json({ error: 'Failed to repair image URLs' }, { status: 500 })
   }
 }
+
+export async function GET() {
+  return POST()
+}

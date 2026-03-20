@@ -12,7 +12,10 @@ export function imageSrc(url: string): string {
   if (!cloudinaryFull && cloudinaryBare) value = cloudinaryBare
   value = value.replace(/^url\((.*)\)$/i, '$1').trim().replace(/^['"]|['"]$/g, '')
   value = value.replace(/%5C/gi, '/').replace(/%2520/gi, '%20')
-  if (value.startsWith('http://') || value.startsWith('https://')) return encodeURI(value)
+  if (value.startsWith('http://') || value.startsWith('https://')) {
+    const forceHttpsCloudinary = value.replace(/^http:\/\/res\.cloudinary\.com\//i, 'https://res.cloudinary.com/')
+    return encodeURI(forceHttpsCloudinary)
+  }
   if (value.startsWith('//')) return encodeURI(`https:${value}`)
   if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) return encodeURI(`https://${value}`)
   if (value.startsWith('res.cloudinary.com/')) return encodeURI(`https://${value}`)

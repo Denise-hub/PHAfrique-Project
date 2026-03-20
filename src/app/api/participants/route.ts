@@ -45,12 +45,19 @@ export async function GET(req: NextRequest) {
         endDate: true,
       },
     })
-    return NextResponse.json(
-      list.map((p) => ({
-        ...p,
-        imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
-      })),
+    const normalized = list.map((p) => ({
+      ...p,
+      imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
+    }))
+
+    // Self-heal malformed legacy image URLs in DB while serving data.
+    await Promise.all(
+      normalized
+        .filter((row, i) => (list[i].imageUrl ?? null) !== (row.imageUrl ?? null))
+        .map((row) => prisma.participant.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
+
+    return NextResponse.json(normalized)
   } catch (error) {
     console.error('[api/participants GET]', error)
     return NextResponse.json([])

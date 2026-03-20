@@ -38,12 +38,19 @@ export async function GET() {
         opportunity: { select: { id: true, title: true, type: true } },
       },
     })
-    return NextResponse.json(
-      list.map((p) => ({
-        ...p,
-        imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
-      })),
+    const normalized = list.map((p) => ({
+      ...p,
+      imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
+    }))
+
+    // Self-heal malformed legacy image URLs in DB while serving admin list.
+    await Promise.all(
+      normalized
+        .filter((row, i) => (list[i].imageUrl ?? null) !== (row.imageUrl ?? null))
+        .map((row) => prisma.participant.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
+
+    return NextResponse.json(normalized)
   } catch (e) {
     return handleApiError('admin/participants GET', e, 'Failed to fetch participants')
   }

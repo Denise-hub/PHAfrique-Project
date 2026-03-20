@@ -28,12 +28,19 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       select: { id: true, email: true, role: true, displayName: true, imageUrl: true, createdAt: true },
     })
-    return NextResponse.json(
-      users.map((u) => ({
-        ...u,
-        imageUrl: u.imageUrl ? imageSrc(u.imageUrl) || null : null,
-      })),
+    const normalized = users.map((u) => ({
+      ...u,
+      imageUrl: u.imageUrl ? imageSrc(u.imageUrl) || null : null,
+    }))
+
+    // Self-heal malformed legacy profile image URLs in DB.
+    await Promise.all(
+      normalized
+        .filter((row, i) => (users[i].imageUrl ?? null) !== (row.imageUrl ?? null))
+        .map((row) => prisma.adminUser.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
+
+    return NextResponse.json(normalized)
   } catch (error) {
     console.error('Error fetching admin users:', error)
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
