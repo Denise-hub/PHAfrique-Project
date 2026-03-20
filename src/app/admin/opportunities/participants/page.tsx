@@ -55,6 +55,7 @@ function AdminParticipantsPageInner() {
   })
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
   const errRef = useRef<HTMLParagraphElement>(null)
 
   function load() {
@@ -337,7 +338,7 @@ function AdminParticipantsPageInner() {
           {list.map((p) => (
             <div key={p.id} className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
-                {p.imageUrl ? (
+                {p.imageUrl && !brokenImages[p.id] && imageSrc(p.imageUrl) ? (
                   <Image
                     src={imageSrc(p.imageUrl)}
                     alt=""
@@ -345,6 +346,7 @@ function AdminParticipantsPageInner() {
                     height={48}
                     className="h-12 w-12 rounded-full object-cover border border-neutral-200 dark:border-neutral-600 shrink-0"
                     unoptimized
+                    onError={() => setBrokenImages((prev) => ({ ...prev, [p.id]: true }))}
                   />
                 ) : (
                   <div className="h-12 w-12 rounded-full bg-[#044444]/20 dark:bg-[#44AAAA]/20 flex items-center justify-center text-lg font-semibold text-[#044444] dark:text-[#44AAAA] shrink-0">

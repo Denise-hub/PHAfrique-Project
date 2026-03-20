@@ -107,8 +107,13 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const effective = effectiveRole(role)
   const allowedNavItems = navItems.filter((item) => canAccessSection(effective, item.section))
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [avatarBroken, setAvatarBroken] = useState(false)
 
   const currentSection = pathname === '/admin' ? 'dashboard' : navItems.find((n) => pathname?.startsWith(n.href))?.section
+  useEffect(() => {
+    setAvatarBroken(false)
+  }, [session?.user?.image])
+
   useEffect(() => {
     if (isLogin || status !== 'authenticated') return
     if (currentSection && !canAccessSection(effective, currentSection)) {
@@ -181,7 +186,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             href="/admin/profile"
             className="mb-3 flex items-center gap-3 rounded-lg px-4 py-2 text-left transition-colors hover:bg-white/10"
           >
-            {session?.user?.image ? (
+            {session?.user?.image && !avatarBroken && imageSrc(session.user.image) ? (
               <Image
                 src={imageSrc(session.user.image)}
                 alt=""
@@ -189,6 +194,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 height={40}
                 className="h-10 w-10 shrink-0 rounded-full border-2 border-white/30 object-cover"
                 unoptimized
+                onError={() => setAvatarBroken(true)}
               />
             ) : (
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 text-lg font-semibold text-white">

@@ -50,6 +50,7 @@ export default function AdminUsersPage() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
 
   function load() {
     setLoading(true)
@@ -506,7 +507,7 @@ export default function AdminUsersPage() {
                   <tr key={u.id} className="border-t border-neutral-200 dark:border-neutral-700">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        {u.imageUrl ? (
+                        {u.imageUrl && !brokenImages[u.id] && imageSrc(u.imageUrl) ? (
                           <Image
                             src={imageSrc(u.imageUrl)}
                             alt=""
@@ -514,6 +515,7 @@ export default function AdminUsersPage() {
                             height={36}
                             className="h-9 w-9 rounded-full border border-neutral-200 dark:border-neutral-600 object-cover"
                             unoptimized
+                            onError={() => setBrokenImages((prev) => ({ ...prev, [u.id]: true }))}
                           />
                         ) : (
                           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#044444]/20 dark:bg-[#44AAAA]/20 text-sm font-semibold text-[#044444] dark:text-[#44AAAA]">

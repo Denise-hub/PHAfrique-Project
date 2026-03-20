@@ -13,12 +13,17 @@ export default function AdminProfilePage() {
   const [busy, setBusy] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
+  const [avatarBroken, setAvatarBroken] = useState(false)
 
   const displayImageUrl = imageFile
     ? URL.createObjectURL(imageFile)
     : form.imageUrl
       ? imageSrc(form.imageUrl)
       : (session?.user?.image ?? null)
+
+  useEffect(() => {
+    setAvatarBroken(false)
+  }, [displayImageUrl])
 
   useEffect(() => {
     fetch('/api/admin/users/me', { credentials: 'include' })
@@ -149,15 +154,16 @@ export default function AdminProfilePage() {
                 <div className="text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wide mb-2">
                   Profile image
                 </div>
-                {displayImageUrl ? (
+                {displayImageUrl && !avatarBroken && (displayImageUrl.startsWith('blob:') || !!imageSrc(displayImageUrl)) ? (
                   <div className="relative w-20 h-20 rounded-full overflow-hidden border border-neutral-200 dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800">
                     <Image
-                      src={displayImageUrl}
+                      src={displayImageUrl.startsWith('blob:') ? displayImageUrl : imageSrc(displayImageUrl)}
                       alt="Profile"
                       fill
                       className="object-cover"
                       unoptimized={displayImageUrl.startsWith('blob:')}
                       sizes="80px"
+                      onError={() => setAvatarBroken(true)}
                     />
                   </div>
                 ) : (
