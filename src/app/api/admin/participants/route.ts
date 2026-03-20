@@ -6,6 +6,7 @@ import { effectiveRole, ROLES } from '@/lib/roles'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 import { handleApiError } from '@/lib/api-error'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -37,7 +38,12 @@ export async function GET() {
         opportunity: { select: { id: true, title: true, type: true } },
       },
     })
-    return NextResponse.json(list)
+    return NextResponse.json(
+      list.map((p) => ({
+        ...p,
+        imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
+      })),
+    )
   } catch (e) {
     return handleApiError('admin/participants GET', e, 'Failed to fetch participants')
   }

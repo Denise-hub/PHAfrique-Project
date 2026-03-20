@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,7 +45,12 @@ export async function GET(req: NextRequest) {
         endDate: true,
       },
     })
-    return NextResponse.json(list)
+    return NextResponse.json(
+      list.map((p) => ({
+        ...p,
+        imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
+      })),
+    )
   } catch (error) {
     console.error('[api/participants GET]', error)
     return NextResponse.json([])

@@ -4,6 +4,7 @@ import { requireSection } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
 import { ROLES, type Role } from '@/lib/roles'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,7 +28,12 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       select: { id: true, email: true, role: true, displayName: true, imageUrl: true, createdAt: true },
     })
-    return NextResponse.json(users)
+    return NextResponse.json(
+      users.map((u) => ({
+        ...u,
+        imageUrl: u.imageUrl ? imageSrc(u.imageUrl) || null : null,
+      })),
+    )
   } catch (error) {
     console.error('Error fetching admin users:', error)
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
@@ -123,7 +129,10 @@ export async function POST(req: NextRequest) {
       data: { email, role, passwordHash, displayName, imageUrl },
       select: { id: true, email: true, role: true, displayName: true, imageUrl: true, createdAt: true },
     })
-    return NextResponse.json(user)
+    return NextResponse.json({
+      ...user,
+      imageUrl: user.imageUrl ? imageSrc(user.imageUrl) || null : null,
+    })
   } catch (error) {
     const err = error as { code?: string; message?: string }
     console.error('Error creating admin user:', error)

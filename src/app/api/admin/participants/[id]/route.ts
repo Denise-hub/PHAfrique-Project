@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { effectiveRole, ROLES } from '@/lib/roles'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,7 +42,10 @@ export async function GET(
       },
     })
     if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    return NextResponse.json(p)
+    return NextResponse.json({
+      ...p,
+      imageUrl: p.imageUrl ? imageSrc(p.imageUrl) || null : null,
+    })
   } catch (error) {
     console.error('Error fetching participant:', error)
     return NextResponse.json({ error: 'Failed to fetch participant' }, { status: 500 })
@@ -123,7 +127,10 @@ export async function PATCH(
         opportunity: { select: { id: true, title: true, type: true } },
       },
     })
-    return NextResponse.json(participant)
+    return NextResponse.json({
+      ...participant,
+      imageUrl: participant.imageUrl ? imageSrc(participant.imageUrl) || null : null,
+    })
   } catch (error) {
     console.error('Error updating participant:', error)
     return NextResponse.json({ error: 'Failed to update participant' }, { status: 500 })

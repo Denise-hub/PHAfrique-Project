@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { requireAdmin } from '@/lib/admin'
 import { prisma } from '@/lib/db'
 import { saveImageFile } from '@/lib/upload'
+import { imageSrc } from '@/lib/image-url'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +23,10 @@ export async function GET() {
       select: { id: true, email: true, role: true, displayName: true, imageUrl: true },
     })
     if (!admin) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-    return NextResponse.json(admin)
+    return NextResponse.json({
+      ...admin,
+      imageUrl: admin.imageUrl ? imageSrc(admin.imageUrl) || null : null,
+    })
   } catch (error) {
     console.error('Error fetching current user:', error)
     return NextResponse.json({ error: 'Failed to fetch profile' }, { status: 500 })
@@ -72,7 +76,10 @@ export async function PATCH(req: NextRequest) {
       data: updates,
       select: { id: true, email: true, role: true, displayName: true, imageUrl: true },
     })
-    return NextResponse.json(updated)
+    return NextResponse.json({
+      ...updated,
+      imageUrl: updated.imageUrl ? imageSrc(updated.imageUrl) || null : null,
+    })
   } catch (error) {
     console.error('Error updating profile:', error)
     return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 })
