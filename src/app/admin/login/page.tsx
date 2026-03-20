@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
       // follows the redirect to callbackUrl on success (or to login?error=... on failure).
       // This avoids client-side parsing bugs with redirect: false and ensures the cookie is sent.
       await signIn('credentials', {
-        email: email.trim().toLowerCase(),
+        email: email.trim(),
         password,
         redirect: true,
         callbackUrl,

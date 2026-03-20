@@ -26,12 +26,22 @@ function getAdminUserModel() {
   }
 }
 
-async function findAdminByEmail(adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>, email: string) {
+async function findAdminByEmail(
+  adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>,
+  email: string,
+  rawEmail?: string
+) {
   try {
-    return await adminUser.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
+    const found = await adminUser.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
+    if (found) return found
   } catch {
-    return await adminUser.findUnique({ where: { email } })
+    // Fallback below for providers that do not support mode: 'insensitive'.
   }
+  if (rawEmail && rawEmail !== email) {
+    const exactRaw = await adminUser.findUnique({ where: { email: rawEmail } })
+    if (exactRaw) return exactRaw
+  }
+  return await adminUser.findUnique({ where: { email } })
 }
 
 export const authOptions: NextAuthOptions = {
@@ -57,7 +67,8 @@ export const authOptions: NextAuthOptions = {
           return null
         }
 
-        const email = (credentials.email ?? '').toString().toLowerCase().trim()
+        const rawEmail = (credentials.email ?? '').toString().trim()
+        const email = rawEmail.toLowerCase().trim()
         const adminUser = getAdminUserModel()
         if (!adminUser) {
           console.error('[auth] authorize RETURNING null: reason=Prisma adminUser model not available. Run: npx prisma generate')
@@ -76,7 +87,7 @@ export const authOptions: NextAuthOptions = {
 
         let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
         try {
-          admin = await findAdminByEmail(adminUser, email) as typeof admin
+          admin = await findAdminByEmail(adminUser, email, rawEmail) as typeof admin
         } catch (e) {
           console.error('[auth] authorize RETURNING null: reason=DB error during findUnique:', (e as Error).message)
           return null
