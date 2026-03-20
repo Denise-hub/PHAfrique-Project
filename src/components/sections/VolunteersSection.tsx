@@ -16,6 +16,7 @@ type Volunteer = {
 
 export default function VolunteersSection() {
   const [volunteers, setVolunteers] = useState<Volunteer[]>([])
+  const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     let cancelled = false
@@ -86,13 +87,16 @@ export default function VolunteersSection() {
                 className="group bg-white dark:bg-neutral-900/70 rounded-2xl p-6 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-center"
               >
                 <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-[#044444]/10 dark:ring-[#044444]/30 group-hover:ring-[#FF0000]/25 transition-all">
-                  {volunteer.imageUrl ? (
+                  {volunteer.imageUrl && !brokenImages[volunteer.id] ? (
                     <Image
                       src={imageSrc(volunteer.imageUrl)}
                       alt={volunteer.name}
                       fill
                       className="object-cover transition-transform duration-300 group-hover:scale-110"
                       sizes="112px"
+                      onError={() =>
+                        setBrokenImages((prev) => ({ ...prev, [volunteer.id]: true }))
+                      }
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#044444]/20 to-[#FF0000]/10 flex items-center justify-center text-[#044444] dark:text-[#44AAAA] font-bold text-2xl">
