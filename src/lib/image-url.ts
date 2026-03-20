@@ -5,6 +5,10 @@
  */
 export function imageSrc(url: string): string {
   if (!url || typeof url !== 'string') return ''
-  if (url.startsWith('http://') || url.startsWith('https://')) return url
-  return url.startsWith('/') ? url : `/${url}`
+  const value = url.trim()
+  if (value.startsWith('http://') || value.startsWith('https://')) return value
+  if (value.startsWith('//')) return `https:${value}`
+  if (/^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i.test(value)) return `https://${value}`
+  if (value.startsWith('res.cloudinary.com/')) return `https://${value}`
+  return value.startsWith('/') ? value : `/${value}`
 }

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { canAccessSection, effectiveRole, type AdminSection } from '@/lib/roles'
+import { imageSrc } from '@/lib/image-url'
 
 // Main navigation definition for the admin area. Each entry maps a route
 // to a label, an icon name, and the permission "section" it belongs to.
@@ -182,7 +183,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           >
             {session?.user?.image ? (
               <Image
-                src={session.user.image}
+                src={imageSrc(session.user.image)}
                 alt=""
                 width={40}
                 height={40}
