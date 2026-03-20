@@ -370,11 +370,11 @@ export default function DonationModal({ isOpen, onClose }: DonationModalProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-[#044444] dark:text-[#044444] mb-2">
+            <h3 className="text-xl font-bold text-[#044444] dark:text-[#44AAAA] mb-2">
               Thank You!
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-              Your contribution of <strong className="text-[#044444] dark:text-[#044444]">${getDonationAmount().toFixed(2)}</strong> will directly fund community health workers and medical supplies.
+              Your contribution of <strong className="text-[#044444] dark:text-[#44AAAA]">${getDonationAmount().toFixed(2)}</strong> will directly fund community health workers and medical supplies.
             </p>
             <div className="flex flex-col gap-2">
               <button
@@ -409,7 +409,7 @@ export default function DonationModal({ isOpen, onClose }: DonationModalProps) {
                   unoptimized
                 />
               </div>
-              <h2 className="text-xl font-bold text-[#044444] dark:text-[#044444] text-center">
+              <h2 className="text-xl font-bold text-[#044444] dark:text-[#44AAAA] text-center">
                 Support Public Health en Afrique
               </h2>
               <p className="text-xs text-neutral-600 dark:text-neutral-400 text-center mt-1">

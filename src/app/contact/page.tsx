@@ -9,10 +9,6 @@ const NEED_OPTIONS = [
   { value: 'partnership', label: 'Partnership opportunities' },
   { value: 'volunteer', label: 'Volunteering' },
   { value: 'internship', label: 'Internship' },
-  { value: 'donation', label: 'Support / Donation' },
-  { value: 'programs', label: 'Program information' },
-  { value: 'media', label: 'Media enquiry' },
-  { value: 'general', label: 'General inquiry' },
   { value: 'other', label: 'Other' },
 ]
 
@@ -110,7 +106,12 @@ export default function ContactPage() {
 
   return (
     <div className="pt-20">
-      <PageHero title="Get in Touch" />
+      <PageHero title="Get in touch with us">
+        <p className="mt-2 text-base md:text-lg text-neutral-700 dark:text-neutral-200 max-w-2xl mx-auto">
+          We&apos;d love to have you on board! If you&apos;re passionate about our cause and want to lend a helping hand
+          as a volunteer, email us or send a direct message to learn more about our volunteer opportunities.
+        </p>
+      </PageHero>
 
       {/* Form + Contact */}
       <section className="pt-8 md:pt-12 pb-16 md:pb-24 bg-neutral-50 dark:bg-neutral-950">
@@ -123,7 +124,7 @@ export default function ContactPage() {
                 <div className="mb-5">
                   <div className="flex items-center gap-2.5 mb-1.5">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#044444]/10 dark:bg-[#044444]/20">
-                      <svg className="h-4.5 w-4.5 text-[#044444] dark:text-[#044444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="h-4.5 w-4.5 text-[#044444] dark:text-[#44AAAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
@@ -329,6 +330,25 @@ export default function ContactPage() {
                         </a>
                       </div>
                     </div>
+                    {/* Email */}
+                    <div className="flex items-start gap-2.5">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 backdrop-blur-sm">
+                        <svg className="h-3.5 w-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-0.5">EMAIL</p>
+                        <a href="mailto:info@phafrique.com" className="text-white text-xs hover:text-white/80 transition-colors">
+                          info@phafrique.com
+                        </a>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Social Media Section */}
@@ -351,8 +371,48 @@ export default function ContactPage() {
                       ))}
                     </div>
                   </div>
+                  {/* Map */}
+                  <div className="mt-6">
+                    <p className="text-xs font-semibold text-white/80 uppercase tracking-wider mb-2.5">
+                      OUR LOCATION ON MAP
+                    </p>
+                    <div className="rounded-2xl overflow-hidden border border-white/15 shadow-lg shadow-black/20">
+                      <iframe
+                        title="PHAfrique location map"
+                        src="https://www.google.com/maps?q=Rosebank,+Johannesburg,+South+Africa&output=embed"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="w-full h-48 md:h-56 lg:h-64 border-0"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+        {/* Get Involved Section */}
+        <div className="mt-10 max-w-4xl mx-auto">
+          <div className="rounded-3xl bg-white dark:bg-neutral-900 shadow-xl p-6 md:p-8 border border-neutral-100 dark:border-neutral-800">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+              <div>
+                <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-50 mb-1">Get Involved</h3>
+                <p className="text-sm md:text-base text-neutral-600 dark:text-neutral-300 max-w-xl">
+                  Support our mission to strengthen public health across Africa by contributing to our projects and
+                  initiatives.
+                </p>
+              </div>
+              <a
+                href="https://linktr.ee/Publichealthenafrique"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#FF0000] hover:bg-[#E60000] px-6 py-3 text-sm md:text-base font-semibold text-white shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#FF0000]/40"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m0 0l-6-6m6 6l-6 6" />
+                </svg>
+                Donate
+              </a>
             </div>
           </div>
         </div>

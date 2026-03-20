@@ -1,28 +1,33 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { useInView } from '@/hooks/useInView'
 
-const VALUES = [
-  { 
-    label: 'Equity', 
-    short: 'Inclusive, fair access to healthcare',
-    icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+const GOALS = [
+  {
+    label: 'Maternal and Child Health',
+    short: 'Every mother and child is physically and mentally healthy',
+    icon: 'M12 14c1.657 0 3-1.567 3-3.5S13.657 7 12 7s-3 1.567-3 3.5 1.343 3.5 3 3.5zm0 0c-3.314 0-6 2.015-6 4.5V20h12v-1.5c0-2.485-2.686-4.5-6-4.5z',
+    image: '/assets/images/portfolios/UPDATED-MATERNAL-WHITE-BG-2048x2048.jpg',
   },
-  { 
-    label: 'Innovation', 
-    short: 'Technology and creative solutions',
-    icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'
+  {
+    label: 'Mental Health',
+    short: 'Every African has access to mental health support',
+    icon: 'M12 4a4 4 0 00-4 4v1H7a3 3 0 000 6h1v1a4 4 0 008 0v-1h1a3 3 0 000-6h-1V8a4 4 0 00-4-4z',
+    image: '/assets/images/portfolios/UPDATED-MENTAL-HEALTH-WHITE-BG-2048x2048.jpg',
   },
-  { 
-    label: 'Integrity', 
-    short: 'Transparency and accountability',
-    icon: 'M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z'
+  {
+    label: 'Environmental Health',
+    short: 'Every African lives in a safe clean environment',
+    icon: 'M12 3l4 4h-3v6h-2V7H8l4-4zm-6 9a4 4 0 104 4H6v-4zm12 0a4 4 0 11-4 4h4v-4z',
+    image: '/assets/images/portfolios/UPDATED-ENVIRONMENTAL-WHITE-BG-2048x2048.jpg',
   },
-  { 
-    label: 'Collaboration', 
-    short: 'Partnerships for greater impact',
-    icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z'
+  {
+    label: 'Ethics',
+    short: 'Every African has equitable access to healthcare',
+    icon: 'M12 4.5c-1.657 0-3 1.343-3 3V11H7v2h2v6h2v-6h2v-2h-2V7.5c0-.552.448-1 1-1H17V4.5h-5z',
+    image: '/assets/images/portfolios/UPDATED-ETHICS-WHITE-BG-2048x2048.jpg',
   },
 ]
 
@@ -32,49 +37,57 @@ export default function ValueStrip() {
   return (
     <section
       id="values-strip"
-      className="relative py-8 md:py-10 bg-white/95 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
-      aria-label="Our core values"
+      className="relative py-8 md:py-10 bg-white/95 backdrop-blur-sm shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
+      aria-label="Our goals"
     >
       
       <div className="container-custom relative z-10">
         <div
-          className={`text-center mb-6 md:mb-8 transition-all duration-600 ease-out ${
+          className={`text-center mb-4 md:mb-6 transition-all duration-600 ease-out ${
             visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
           }`}
         >
-              <div className="inline-flex items-center gap-4">
-                <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
-                <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444]">
-              Our values
-                </h2>
-                <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
+          <div className="inline-flex items-center gap-4">
+            <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
+            <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444] dark:text-[#44AAAA]">
+              Our Goals
+            </h2>
+            <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
           </div>
+          <p className="mt-3 max-w-3xl mx-auto text-xs sm:text-sm md:text-base text-neutral-600">
+            The overarching goal of Public Health en Afrique&apos;s plan is to drive results to
+            improve access to quality, safe and affordable healthcare for all Africans.
+          </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-          {VALUES.map((v, i) => (
+          {GOALS.map((v, i) => (
             <div
               key={v.label}
-              className={`group relative text-center p-4 md:p-5 rounded-xl bg-[#044444]/80 backdrop-blur-sm border border-[#044444]/30 shadow-[0_4px_16px_rgba(4,68,68,0.2)] transition-all duration-300 ease-out hover:bg-[#044444]/90 hover:border-[#FF0000]/40 hover:shadow-[0_6px_20px_rgba(4,68,68,0.3)] ${
+              className={`group relative text-center p-4 md:p-5 rounded-xl bg-white border border-neutral-200 shadow-[0_4px_16px_rgba(0,0,0,0.06)] transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-[#044444]/40 ${
                 visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
               }`}
               style={{ transitionDelay: visible ? `${80 + i * 60}ms` : '0ms' }}
             >
-              {/* Icon */}
-              <div className="flex justify-center mb-3">
-                <div className="p-2.5 rounded-lg bg-white/10 group-hover:bg-[#FF0000]/20 transition-colors">
-                  <svg className="h-5 w-5 text-white group-hover:text-[#FF0000] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d={v.icon} />
-                  </svg>
+              {/* Image */}
+              {v.image && (
+                <div className="mb-4">
+                  <div className="relative mx-auto h-24 w-24 sm:h-28 sm:w-28 rounded-full overflow-hidden border border-neutral-200 shadow-sm">
+                    <Image
+                      src={v.image}
+                      alt={v.label}
+                      fill
+                      className="object-contain"
+                      sizes="112px"
+                    />
+                  </div>
                 </div>
-              </div>
-              
+              )}
+
               {/* Content */}
-              <span className="block text-base font-bold text-white mb-1.5">
+              <span className="block text-lg sm:text-xl font-bold text-neutral-900 mb-2">
                 {v.label}
               </span>
-              <span className="block text-xs text-white/75 leading-relaxed">
-                {v.short}
-              </span>
+              <span className="block text-sm sm:text-base text-neutral-600 leading-relaxed">{v.short}</span>
             </div>
           ))}
         </div>

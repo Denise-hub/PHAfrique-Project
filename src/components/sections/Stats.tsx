@@ -41,7 +41,7 @@ export default function Stats() {
               }`}
               style={{ transitionDelay: visible ? `${80 + i * 100}ms` : '0ms' }}
             >
-              <div className="text-2xl sm:text-3xl font-bold text-[#044444] leading-tight">{s.value}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-[#044444] dark:text-[#44AAAA] leading-tight">{s.value}</div>
               <div className="mt-2 font-semibold text-neutral-900 dark:text-neutral-100">{s.label}</div>
               <div className="mt-2 text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">{s.description}</div>
             </div>

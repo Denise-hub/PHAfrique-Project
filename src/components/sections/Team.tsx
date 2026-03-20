@@ -40,7 +40,7 @@ export default function Team() {
         <div className="text-center mb-12 md:mb-16">
           <div className="inline-flex items-center gap-4">
             <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
-            <h2 id="team-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444]">
+            <h2 id="team-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444] dark:text-[#44AAAA]">
               Our Team
             </h2>
             <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
@@ -53,7 +53,7 @@ export default function Team() {
         {/* Co-Founders Section */}
         {coFounders.length > 0 && (
           <div className="mb-12 md:mb-16">
-            <h3 className="text-lg md:text-xl font-semibold text-[#044444] mb-6 text-center">Co-Founders</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-[#044444] dark:text-[#44AAAA] mb-6 text-center">Co-Founders</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
               {coFounders.map((member, i) => (
                 <div
@@ -73,7 +73,7 @@ export default function Team() {
                     />
                   </div>
                   <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-1">{member.name}</h4>
-                  <p className="text-sm text-[#044444] dark:text-[#044444] font-medium">{member.role}</p>
+                  <p className="text-sm text-[#044444] dark:text-[#44AAAA] font-medium">{member.role}</p>
                 </div>
               ))}
             </div>
@@ -82,7 +82,7 @@ export default function Team() {
 
         {/* Other Team Members Section */}
         <div>
-          <h3 className="text-lg md:text-xl font-semibold text-[#044444] mb-6 text-center">Team Members</h3>
+          <h3 className="text-lg md:text-xl font-semibold text-[#044444] dark:text-[#44AAAA] mb-6 text-center">Team Members</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
             {otherMembers.map((member, i) => (
               <div

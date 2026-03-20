@@ -227,6 +227,25 @@ export default function OpportunitiesPage() {
     setDone(false)
     setErr('')
   }
+  function openVolunteerApplication() {
+    const first = volunteering[0]
+    if (!first) return
+    setApplyFor(first)
+    setForm({
+      name: '',
+      email: '',
+      phone: '',
+      country: '',
+      publicHealthIssues: '',
+      qualification: '',
+      resumeUrl: '',
+      internshipInterest: '',
+      cvFile: null,
+      resumeFile: null,
+    })
+    setDone(false)
+    setErr('')
+  }
   function closeApply() {
     setApplyFor(null)
   }
@@ -242,16 +261,16 @@ export default function OpportunitiesPage() {
         setErr('Country of Residence is required'); 
         return 
       }
-      if (!form.internshipInterest.trim()) { 
-        setErr('Please select at least one portfolio area'); 
+      if (!form.qualification.trim()) {
+        setErr('School / University is required')
         return 
       }
-      if (!form.publicHealthIssues.trim()) { 
-        setErr('Please answer the public health issues question'); 
+      if (!form.publicHealthIssues.trim()) {
+        setErr('Major / Field of study is required')
         return 
       }
-      if (!form.qualification.trim()) { 
-        setErr('Please provide your highest qualification'); 
+      if (!form.internshipInterest.trim()) {
+        setErr('Year of study is required')
         return 
       }
       if (!form.cvFile) { 
@@ -338,64 +357,111 @@ export default function OpportunitiesPage() {
                 <div className="flex-1 p-8 md:p-10 flex flex-col justify-between">
                   <div>
                     <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-4">
-                      PHA Internship Program
+                      Internship Program
                     </h3>
                     <div className="prose prose-neutral dark:prose-invert max-w-none">
                       <p className="text-base md:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
-                        Public Health en Afrique&apos;s <strong>unpaid</strong> internship program provides interns with a minimum 3-month opportunity. Giving you the opportunity to participate in our industry-leading projects while gaining the practical skills relevant to your area of study within the public health field.
+                        The PHA Internship Program offers early-career public health students and graduates an
+                        opportunity to gain hands-on experience in community-focused public health across our four
+                        pillars: Mental Health, Environmental Health, Ethics, and Maternal &amp; Child Health. This fully
+                        online program connects interns across Africa giving them the flexibility to contribute
+                        meaningfully to real organisational projects while building practical skills in research,
+                        writing, content development, digital advocacy, teamwork, and professional communication.
+                      </p>
+                      <p className="text-base md:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+                        Interns work within their respective portfolios, completing weekly tasks, collaborating with
+                        peers, and producing tangible outputs such as educational materials, articles, social media
+                        content, campaign resources, newsletters, and grant-related documents. The program is designed
+                        to support personal and professional growth, offering mentorship, feedback, leadership
+                        opportunities, and the chance to remain involved with PHA after completion.
                       </p>
                       <p className="text-base md:text-lg text-neutral-700 dark:text-neutral-300 leading-relaxed mb-6">
-                        We also provide education and training support during the program to help grow your professional skills within a diverse, inclusive, supportive and collaborative space.
+                        If you are passionate about public health, eager to learn, and excited to contribute to a
+                        pan-African organisation rooted in the ethos “Put Africa First,” this program offers a
+                        meaningful space to grow, create, and make an impact. Download the full Internship Program
+                        Booklet below to learn more about the structure, expectations, and opportunities available.
                       </p>
                     </div>
                   </div>
 
-                  {/* Discover button or Coming Soon */}
+                  {/* Download booklet (or Coming Soon) */}
                   <div className="mt-6">
                     {!INTERNSHIP_CONFIG.internshipsOpen ? (
                       <div className="bg-gradient-to-r from-[#044444]/10 via-[#044444]/5 to-[#044444]/10 dark:from-[#044444]/20 dark:via-[#044444]/10 dark:to-[#044444]/20 rounded-xl p-6 border-2 border-[#044444]/30 dark:border-[#044444]/40">
                         <div className="flex items-center gap-3 mb-3">
                           <div className="flex-shrink-0">
-                            <svg className="h-7 w-7 text-[#044444] dark:text-[#044444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-7 w-7 text-[#044444] dark:text-[#44AAAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
-                          <h4 className="font-semibold text-[#044444] dark:text-[#044444] text-lg">
+                          <h4 className="font-semibold text-[#044444] dark:text-[#44AAAA] text-lg">
                             Coming Soon
                           </h4>
                         </div>
                         <div className="flex items-start gap-3">
                           <div className="flex-shrink-0 mt-0.5">
-                            <svg className="h-5 w-5 text-[#044444] dark:text-[#044444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-5 w-5 text-[#044444] dark:text-[#44AAAA]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                           </div>
                           <p className="text-neutral-700 dark:text-neutral-300">
-                            We will resume intake on <strong className="text-[#044444] dark:text-[#044444]">{INTERNSHIP_CONFIG.nextOpeningDate}</strong>.
+                            We will resume intake on <strong className="text-[#044444] dark:text-[#44AAAA]">{INTERNSHIP_CONFIG.nextOpeningDate}</strong>.
                           </p>
                         </div>
                       </div>
                     ) : (
-                      <button
-                        type="button"
-                        onClick={() => setDiscoverModalType('internship')}
-                        className="w-full md:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-[#044444] to-[#033333] hover:from-[#033333] hover:to-[#022222] text-white font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                      >
-                        Discover New Opportunities
-                      </button>
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <a
+                          href="https://drive.google.com/file/d/170YcjMbMM8SdgPQWk7xjnpVH1v2NxY-9/view"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex w-full md:w-auto items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-r from-[#044444] to-[#033333] hover:from-[#033333] hover:to-[#022222] text-white font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                        >
+                          Download Booklet
+                        </a>
+                        <button
+                          type="button"
+                          onClick={openInternshipApplication}
+                          className="inline-flex w-full md:w-auto items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-r from-[#FF0000] to-[#CC0000] hover:from-[#CC0000] hover:to-[#990000] text-white font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                        >
+                          Apply Today
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
                 
-                {/* Right Side - Static image */}
-                <div className="relative w-full md:w-1/2 h-64 md:h-auto overflow-hidden">
-                  <Image
-                    src="/assets/images/programs/public-health-research-intern.jpg"
-                    alt="PHA Internship Program"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
+                {/* Right Side - Sequential images (fully visible) */}
+                <div className="w-full md:w-1/2 p-4 sm:p-5">
+                  <div className="flex flex-col gap-3 h-64 md:h-full">
+                    <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
+                      <Image
+                        src="/uploads/2026/11243bf7-85d1-41ab-9391-e8121513abfa.jpg"
+                        alt="PHA internship program — interns collaborating"
+                        fill
+                        className="object-contain p-2"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                    <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
+                      <Image
+                        src="/assets/images/programs/capacity-building.jpg"
+                        alt="Capacity building session"
+                        fill
+                        className="object-contain p-2"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                    <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
+                      <Image
+                        src="/assets/images/programs/public-health-research-intern.jpg"
+                        alt="Public health research internship"
+                        fill
+                        className="object-contain p-2"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -403,61 +469,8 @@ export default function OpportunitiesPage() {
         </div>
       </section>
 
-      {/* Meet Our Interns Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-950">
-        <div className="container-custom">
-          <div className="text-center mb-10 md:mb-12">
-            <div className="inline-flex items-center justify-center gap-2 mb-3">
-              <div className="h-8 w-1 bg-gradient-to-b from-[#044444] to-[#FF0000] rounded-full" />
-              <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-800 dark:text-neutral-200">
-                meet our interns
-              </h2>
-            </div>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto text-sm">
-              Get to know the talented individuals who are making a difference through our internship program
-            </p>
-          </div>
-
-          {interns.length === 0 ? (
-            <div className="text-center py-12 rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900/50">
-              <p className="text-neutral-500">Intern profiles will appear here once added through the admin panel.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {interns.map((intern) => (
-                <div
-                  key={intern.id}
-                  className="group bg-white dark:bg-neutral-800/60 rounded-2xl p-6 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-center"
-                >
-                  <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-[#044444]/10 dark:ring-[#044444]/20 group-hover:ring-[#FF0000]/20 transition-all">
-                    {intern.imageUrl ? (
-                      <Image
-                        src={imageSrc(intern.imageUrl)}
-                        alt={intern.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        sizes="112px"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#044444]/20 to-[#FF0000]/10 flex items-center justify-center text-[#044444] font-bold text-2xl">
-                        {intern.name.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-1.5 group-hover:text-[#044444] transition-colors">{intern.name}</h4>
-                  <p className="text-sm text-[#FF0000] dark:text-[#FF0000] font-semibold mb-3">{intern.role}</p>
-                  {intern.bio && (
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">{intern.bio}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Volunteering Section - static hero card + Discover button (same pattern as Internship) */}
-      <section className="pt-12 md:pt-16 pb-12 md:pb-16 bg-white dark:bg-neutral-950">
+      <section id="volunteering-section" className="scroll-mt-28 pt-12 md:pt-16 pb-12 md:pb-16 bg-white dark:bg-neutral-950">
         <div className="container-custom">
           {/* Visual Hero Banner */}
           <div className="relative rounded-3xl overflow-hidden mb-12 md:mb-16 h-64 md:h-80">
@@ -506,16 +519,16 @@ export default function OpportunitiesPage() {
                   <div className="mt-6">
                     <button
                       type="button"
-                      onClick={() => setDiscoverModalType('volunteer')}
+                      onClick={openVolunteerApplication}
                       className="w-full md:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-[#FF0000] to-[#cc0000] hover:from-[#cc0000] hover:to-[#990000] text-white font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                     >
-                      Discover Volunteering
+                      Apply Today
                     </button>
                   </div>
                 </div>
                 <div className="relative w-full md:w-1/2 h-64 md:h-auto overflow-hidden">
                   <Image
-                    src="/assets/images/portfolios/2.jpg"
+                    src="/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5851.jpeg"
                     alt="Volunteer with PHA"
                     fill
                     className="object-cover"
@@ -528,65 +541,12 @@ export default function OpportunitiesPage() {
         </div>
       </section>
 
-      {/* Meet Our Volunteers Section */}
-      <section className="py-12 md:py-16 bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-950">
-        <div className="container-custom">
-          <div className="text-center mb-10 md:mb-12">
-            <div className="inline-flex items-center justify-center gap-2 mb-3">
-              <div className="h-8 w-1 bg-gradient-to-b from-[#044444] to-[#FF0000] rounded-full" />
-              <h2 className="text-2xl sm:text-3xl font-semibold text-neutral-800 dark:text-neutral-200">
-                meet our volunteers
-              </h2>
-            </div>
-            <p className="text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto text-sm">
-              Celebrating the dedicated volunteers who are driving positive change in communities across Africa
-            </p>
-          </div>
-
-          {volunteers.length === 0 ? (
-            <div className="text-center py-12 rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-900/50">
-              <p className="text-neutral-500">Volunteer profiles will appear here once added through the admin panel.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {volunteers.map((volunteer) => (
-                <div
-                  key={volunteer.id}
-                  className="group bg-white dark:bg-neutral-800/60 rounded-2xl p-6 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-center"
-                >
-                  <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden ring-4 ring-[#044444]/10 dark:ring-[#044444]/20 group-hover:ring-[#FF0000]/20 transition-all">
-                    {volunteer.imageUrl ? (
-                      <Image
-                        src={imageSrc(volunteer.imageUrl)}
-                        alt={volunteer.name}
-                        fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-110"
-                        sizes="112px"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-[#044444]/20 to-[#FF0000]/10 flex items-center justify-center text-[#044444] font-bold text-2xl">
-                        {volunteer.name.charAt(0)}
-                      </div>
-                    )}
-                  </div>
-                  <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-100 mb-1.5 group-hover:text-[#044444] transition-colors">{volunteer.name}</h4>
-                  <p className="text-sm text-[#044444] dark:text-[#044444] font-semibold mb-3">{volunteer.role}</p>
-                  {volunteer.bio && (
-                    <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">{volunteer.bio}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Discover Modal - internships or volunteering from admin (filtered by discoverModalType) */}
       {discoverModalType !== null && (
         <div className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 backdrop-blur-sm p-4 pt-20 md:pt-24">
           <div className="w-full max-w-4xl rounded-2xl bg-white dark:bg-neutral-800 shadow-2xl max-h-[calc(100vh-6rem)] border-2 border-[#044444]/20 flex flex-col overflow-hidden">
             <div className="flex items-center justify-between p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-700 shrink-0 bg-white dark:bg-neutral-800">
-              <h2 className="text-xl font-bold text-[#044444] dark:text-[#044444]">
+              <h2 className="text-xl font-bold text-[#044444] dark:text-[#44AAAA]">
                 {discoverModalType === 'internship' ? 'Discover Internship Opportunities' : 'Discover Volunteering Opportunities'}
               </h2>
               <button
@@ -728,28 +688,29 @@ export default function OpportunitiesPage() {
         </div>
       )}
 
-      {/* Application Sheet (side drawer) - full height, no scroll reset on close */}
+      {/* Application Modal */}
       {applyFor && (
-        <>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/55 backdrop-blur-sm p-4">
           <div
-            className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm transition-opacity"
-            aria-hidden
-            onClick={closeApply}
-          />
-          <div
-            className="fixed top-0 right-0 z-[110] h-full w-full max-w-[min(600px,100vw)] sm:w-[400px] md:w-[520px] bg-white dark:bg-neutral-800 shadow-2xl border-l-2 border-[#044444]/20 flex flex-col"
+            className="w-full max-w-2xl max-h-[92vh] rounded-2xl bg-white dark:bg-neutral-800 shadow-2xl border border-[#044444]/20 flex flex-col overflow-hidden"
             role="dialog"
             aria-labelledby="application-sheet-title"
           >
-            {/* Sheet Header */}
-            <div className="flex items-center justify-between shrink-0 p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800">
-              <div className="flex-1 min-w-0 pr-4">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between shrink-0 p-4 md:p-6 border-b border-neutral-200 dark:border-neutral-700 bg-gradient-to-r from-[#044444]/10 to-[#FF0000]/10 dark:from-[#044444]/20 dark:to-[#FF0000]/20">
+              <div className="flex-1 min-w-0 pr-3">
                 {isInternshipOpportunity(applyFor.type) ? (
-                  <h2 id="application-sheet-title" className="text-lg md:text-xl font-bold text-[#044444] dark:text-[#044444]">Internship Application Form</h2>
+                  <h2 id="application-sheet-title" className="text-lg md:text-2xl font-extrabold text-[#044444] dark:text-[#44AAAA]">
+                    Internship Application Form
+                  </h2>
                 ) : (
                   <>
-                    <h2 id="application-sheet-title" className="text-base md:text-lg font-semibold text-neutral-900 dark:text-neutral-100 truncate">Apply: {applyFor.title}</h2>
-                    <p className="text-xs md:text-sm text-neutral-500 capitalize">{applyFor.type}</p>
+                    <h2 id="application-sheet-title" className="text-lg md:text-2xl font-extrabold text-[#044444] dark:text-[#44AAAA]">
+                      Volunteer Application Form
+                    </h2>
+                    <p className="text-xs md:text-sm text-neutral-600 dark:text-neutral-300">
+                      Apply to volunteer with Public Health en Afrique
+                    </p>
                   </>
                 )}
               </div>
@@ -764,7 +725,7 @@ export default function OpportunitiesPage() {
               </button>
             </div>
             
-            {/* Scrollable Content - full height, responsive padding */}
+            {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto p-4 md:p-8 min-h-0">
             {done ? (
               <div className="py-6 md:py-8 text-center">
@@ -773,7 +734,7 @@ export default function OpportunitiesPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <p className="text-[#044444] dark:text-[#044444] font-semibold mb-2">Application submitted successfully!</p>
+                <p className="text-[#044444] dark:text-[#44AAAA] font-semibold mb-2">Application submitted successfully!</p>
                 <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">We&apos;ll review your application and get back to you soon.</p>
                 <button type="button" onClick={closeApply} className="rounded-xl bg-gradient-to-r from-[#044444] to-[#033333] hover:from-[#033333] hover:to-[#022222] text-white font-semibold px-5 py-2.5 text-sm shadow-md hover:shadow-lg transition-all duration-200">Close</button>
               </div>
@@ -804,51 +765,36 @@ export default function OpportunitiesPage() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
-                        Which PHA portfolio area are you interested in? (You may pick more than one) *
+                        School / University studying at *
                       </label>
-                      <div className="space-y-2">
-                        {['Ethics', 'Environmental Health', 'Maternal and Child Health', 'Mental Health', 'General'].map((area) => (
-                          <label key={area} className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={form.internshipInterest.includes(area)}
-                              onChange={(e) => {
-                                const current = form.internshipInterest.split(',').filter(Boolean)
-                                if (e.target.checked) {
-                                  setForm((f) => ({ ...f, internshipInterest: [...current, area].join(',') }))
-                                } else {
-                                  setForm((f) => ({ ...f, internshipInterest: current.filter(a => a !== area).join(',') }))
-                                }
-                              }}
-                              className="rounded border-neutral-300 text-[#044444] focus:ring-[#044444] focus:ring-2 focus:ring-offset-2 accent-[#044444]"
-                              required={form.internshipInterest === ''}
-                            />
-                            <span className="text-sm text-neutral-700 dark:text-neutral-300">{area}</span>
-                          </label>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
-                        What public health issues have you noticed? How would you contribute? *
-                      </label>
-                      <textarea 
-                        placeholder="Your answer" 
-                        value={form.publicHealthIssues} 
-                        onChange={(e) => setForm((f) => ({ ...f, publicHealthIssues: e.target.value }))} 
-                        className={inp} 
-                        rows={4}
+                      <input
+                        placeholder="e.g. University of Johannesburg"
+                        value={form.qualification}
+                        onChange={(e) => setForm((f) => ({ ...f, qualification: e.target.value }))}
+                        className={inp}
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
-                        Highest qualification (name of qualification) *
+                        Major / Field of study *
                       </label>
-                      <input 
-                        placeholder="e.g. BSc Public Health" 
-                        value={form.qualification} 
-                        onChange={(e) => setForm((f) => ({ ...f, qualification: e.target.value }))} 
+                      <input
+                        placeholder="e.g. Public Health"
+                        value={form.publicHealthIssues}
+                        onChange={(e) => setForm((f) => ({ ...f, publicHealthIssues: e.target.value }))}
+                        className={inp}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-neutral-800 dark:text-neutral-200 mb-2">
+                        Year of study *
+                      </label>
+                      <input
+                        placeholder="e.g. Year 2 / 2026"
+                        value={form.internshipInterest}
+                        onChange={(e) => setForm((f) => ({ ...f, internshipInterest: e.target.value }))}
                         className={inp}
                         required
                       />
@@ -895,35 +841,15 @@ export default function OpportunitiesPage() {
                         Upload your resume / CV
                       </label>
                       <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-1.5">One file, max 10 MB. PDF or Word.</p>
-                      {form.resumeFile ? (
-                        <div className="flex items-center gap-2 rounded-lg border-2 border-dashed border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60 px-4 py-3">
-                          <span className="flex-1 min-w-0 truncate text-sm text-neutral-700 dark:text-neutral-300" title={form.resumeFile.name}>
-                            {form.resumeFile.name}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => setForm((f) => ({ ...f, resumeFile: null }))}
-                            className="shrink-0 p-1.5 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-600 text-neutral-500 hover:text-neutral-800 dark:hover:text-neutral-200 transition-colors"
-                            aria-label="Clear file"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="rounded-lg border-2 border-dashed border-neutral-200 dark:border-neutral-600 bg-neutral-50 dark:bg-neutral-800/60 px-4 py-3">
-                          <input
-                            type="file"
-                            accept=".pdf,.doc,.docx"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0]
-                              if (file) setForm((f) => ({ ...f, resumeFile: file }))
-                            }}
-                            className="block w-full text-sm text-neutral-500 dark:text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#044444] file:text-white hover:file:bg-[#033333] cursor-pointer"
-                          />
-                        </div>
-                      )}
+                      <input
+                        type="file"
+                        accept=".pdf,.doc,.docx"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] ?? null
+                          setForm((f) => ({ ...f, resumeFile: file }))
+                        }}
+                        className="block w-full text-sm text-neutral-500 dark:text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#044444] file:text-white hover:file:bg-[#033333] cursor-pointer"
+                      />
                     </div>
                   </>
                 )}
@@ -939,7 +865,7 @@ export default function OpportunitiesPage() {
             )}
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   )

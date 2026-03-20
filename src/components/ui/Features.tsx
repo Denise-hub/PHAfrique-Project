@@ -55,7 +55,7 @@ export default function Features() {
         <div className="text-center mb-12 md:mb-16">
           <div className="inline-flex items-center gap-4">
             <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
-            <h2 id="portfolio-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444]">
+            <h2 id="portfolio-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444] dark:text-[#44AAAA]">
               Our Programs
             </h2>
             <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
@@ -127,12 +127,12 @@ export default function Features() {
                         </div>
                         
                         <div className="mb-4">
-                          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#044444]/10 text-[#044444] border border-[#044444]/20">
+                          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#044444]/10 text-[#044444] border border-[#044444]/20 dark:bg-[#44AAAA]/10 dark:text-[#44AAAA] dark:border-[#44AAAA]/20">
                             Program
                           </span>
                         </div>
                         
-                        <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-3 group-hover:text-[#044444] dark:group-hover:text-[#044444] transition-colors duration-300">
+                        <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-neutral-100 mb-3 group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors duration-300">
                           {programs[0].title}
                         </h3>
                         
@@ -143,10 +143,10 @@ export default function Features() {
                         )}
                         
                         <div className="inline-flex items-center gap-3 px-5 py-3 rounded-lg bg-gradient-to-r from-[#FF0000]/10 via-[#FF0000]/5 to-[#044444]/10 border-2 border-[#FF0000]/30 group-hover:border-[#044444]/50 transition-all duration-300 group-hover:shadow-lg">
-                          <span className="text-[#FF0000] font-bold text-sm group-hover:text-[#044444] transition-colors duration-300">
+                          <span className="text-[#FF0000] font-bold text-sm group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors duration-300">
                             Explore Program
                           </span>
-                          <svg className="h-5 w-5 text-[#044444] transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="h-5 w-5 text-[#044444] dark:text-[#44AAAA] transition-transform duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                           </svg>
                         </div>
@@ -192,7 +192,7 @@ export default function Features() {
                             <div className="h-1/2 bg-[#044444]" />
                           </div>
                           
-                          <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-[#044444] dark:group-hover:text-[#044444] transition-colors duration-300">
+                          <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors duration-300">
                             {program.title}
                           </h3>
                           {program.description && (
@@ -202,10 +202,10 @@ export default function Features() {
                           )}
                           
                           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-gradient-to-r from-[#FF0000]/10 to-[#044444]/10 border border-[#FF0000]/20 group-hover:border-[#044444]/30 transition-all duration-300">
-                            <span className="text-[#FF0000] font-semibold text-sm group-hover:text-[#044444] transition-colors duration-300">
+                            <span className="text-[#FF0000] font-semibold text-sm group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors duration-300">
                               View program
                             </span>
-                            <svg className="h-4 w-4 text-[#044444] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="h-4 w-4 text-[#044444] dark:text-[#44AAAA] transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                             </svg>
                           </div>

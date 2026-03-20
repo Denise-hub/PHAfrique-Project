@@ -2,10 +2,12 @@ import React from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
+import VolunteersSection from '@/components/sections/VolunteersSection'
 
 export const metadata: Metadata = {
-  title: 'About Us | Public Health Corps Africa',
-  description: 'Our mission, vision, and values: advancing public health in Africa through innovation, equity, and partnership.',
+  title: 'About Us | Public Health en Afrique',
+  description:
+    'Our mission, vision, and values: advancing public health in Africa through innovation, equity, and partnership.',
 }
 
 const MISSION = 'Public Health en Afrique is dedicated to leading and collaborating with Africans to create a sustainable health system that ensures healthier lives for all. PHA focuses on equitable access to healthcare through partnerships, awareness campaigns, and community projects.'
@@ -25,7 +27,7 @@ const VALUES = [
 export default function AboutPage() {
   return (
     <div className="pt-20">
-      <PageHero title="About Public Health Corps" titleLine2="Africa" />
+      <PageHero title="About Us" />
 
       <section className="section-padding bg-gradient-to-b from-white to-neutral-50 dark:from-neutral-950 dark:to-neutral-900">
         <div className="container-custom">
@@ -36,9 +38,11 @@ export default function AboutPage() {
               <div className="bg-white dark:bg-neutral-800/60 rounded-xl p-5 sm:p-6 md:p-8 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-xl transition-shadow duration-300 flex-1 flex flex-col justify-center">
                 <div className="flex items-center gap-3 mb-3 sm:mb-4">
                   <div className="h-1 w-10 sm:w-12 bg-[#044444] rounded-full" aria-hidden />
-                  <h3 className="text-lg sm:text-xl font-bold text-[#044444]">Our Mission</h3>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#044444] dark:text-[#44AAAA]">Our Mission</h3>
                 </div>
-                <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">{MISSION}</p>
+                <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">
+                  {MISSION}
+                </p>
               </div>
 
               {/* Vision Card */}
@@ -47,16 +51,9 @@ export default function AboutPage() {
                   <div className="h-1 w-10 sm:w-12 bg-[#FF0000] rounded-full" aria-hidden />
                   <h3 className="text-lg sm:text-xl font-bold text-[#FF0000]">Our Vision</h3>
                 </div>
-                <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">{VISION}</p>
-              </div>
-
-              {/* Goals Card */}
-              <div className="bg-white dark:bg-neutral-800/60 rounded-xl p-5 sm:p-6 md:p-8 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-xl transition-shadow duration-300 flex-1 flex flex-col justify-center">
-                <div className="flex items-center gap-3 mb-3 sm:mb-4">
-                  <div className="h-1 w-10 sm:w-12 bg-[#044444] rounded-full" aria-hidden />
-                  <h3 className="text-lg sm:text-xl font-bold text-[#044444]">Our Goals</h3>
-                </div>
-                <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">{GOALS}</p>
+                <p className="text-neutral-700 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">
+                  {VISION}
+                </p>
               </div>
             </div>
 
@@ -86,88 +83,391 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Our Impact & Approach Section - Replacing Values with a different focus */}
-      <section className="pt-12 md:pt-16 pb-16 md:pb-24 bg-gradient-to-b from-neutral-50 via-white to-neutral-50 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900">
-        <div className="container-custom">
-          <div className="mx-auto max-w-4xl text-center mb-12 md:mb-16">
-            <div className="inline-flex items-center justify-center gap-2 mb-4">
-              <div className="h-8 w-1 bg-gradient-to-b from-[#044444] to-[#FF0000] rounded-full" />
-              <h2 className="text-3xl sm:text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-                Our Approach
-              </h2>
-            </div>
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-2xl mx-auto">
-              How we work to create sustainable health solutions across Africa
-            </p>
+      {/* Our Objectives Section */}
+      <section className="pt-12 md:pt-16 pb-16 md:pb-24 bg-[#F5F5F7] dark:bg-neutral-950">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl text-center mb-12 md:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
+              Our <span className="text-[#FF0000]">Objectives</span>
+            </h2>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
-            {/* Community-Centered Approach */}
-            <div className="group relative bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800/60 dark:to-neutral-900/40 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#044444]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" aria-hidden />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#044444] to-[#033333] flex items-center justify-center mb-6 shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">Community-Centered</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  We work directly with local communities, understanding their unique needs and co-creating solutions that are culturally relevant and sustainable.
-                </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Left: image with layered cards */}
+            <div className="relative">
+              <div
+                className="absolute -top-8 -left-6 w-36 h-36 rounded-[32px] bg-[#FF0000] shadow-2xl"
+                aria-hidden
+              />
+              <div
+                className="absolute -bottom-10 -right-6 w-40 h-40 rounded-[32px] bg-black/70 shadow-2xl"
+                aria-hidden
+              />
+              <div className="relative rounded-[32px] overflow-hidden shadow-2xl">
+                <Image
+                  src="/uploads/images/1771260229072-hj6w66nzekt.jpg"
+                  alt="Public Health en Afrique team engaging with community"
+                  width={1200}
+                  height={900}
+                  className="w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-[560px] object-cover"
+                />
               </div>
             </div>
 
-            {/* Evidence-Based Solutions */}
-            <div className="group relative bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800/60 dark:to-neutral-900/40 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF0000]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" aria-hidden />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#FF0000] to-[#E60000] flex items-center justify-center mb-6 shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
+            {/* Right: objectives cards */}
+            <div className="flex flex-col gap-6">
+              {/* Improved Health Outcomes */}
+              <article className="bg-white dark:bg-neutral-900 rounded-3xl px-6 py-5 md:px-8 md:py-6 shadow-xl border border-neutral-200/80 dark:border-neutral-700/60">
+                <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
+                  Improved Health Outcomes
+                </h3>
+                <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  Over the long term, Public Health en Afrique (PHA) envisions significant improvements in
+                  health outcomes across Africa. This includes reductions in maternal and child mortality
+                  rates, improvements in environmental health indicators, advancements in mental health care
+                  accessibility and outcomes, and overall enhancements in population health.
+                </p>
+              </article>
+
+              {/* Empowered Communities */}
+              <article className="bg-white dark:bg-neutral-900 rounded-3xl px-6 py-5 md:px-8 md:py-6 shadow-xl border border-neutral-200/80 dark:border-neutral-700/60">
+                <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
+                  Empowered Communities
+                </h3>
+                <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  African communities are actively involved in decision-making processes, equipped with the
+                  knowledge and resources to advocate for their health priorities and participate in health
+                  promotion activities.
+                </p>
+              </article>
+
+              {/* Equitable Access To Healthcare */}
+              <article className="bg-white dark:bg-neutral-900 rounded-3xl px-6 py-5 md:px-8 md:py-6 shadow-xl border border-neutral-200/80 dark:border-neutral-700/60">
+                <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-1">
+                  Equitable Access To Healthcare
+                </h3>
+                <p className="text-sm md:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                  PHA&apos;s focus on removing barriers to healthcare access and promoting health among
+                  vulnerable populations aims to achieve the long-term outcome of equitable access to
+                  quality, safe, and affordable healthcare for all Africans. This includes addressing
+                  disparities in access based on geography, socio-economic status, gender, and other factors.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* PH Afrique Aims & Countries Section */}
+      <section className="pb-16 md:pb-24 bg-white dark:bg-neutral-950">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          {/* Aims */}
+          <div className="pt-4 sm:pt-6 mb-10 text-center">
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
+              PH Afrique <span className="text-[#FF0000]">Aims</span>
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 max-w-2xl mx-auto">
+              To contribute to the long-term strengthening of health systems across the continent. This includes, but is
+              not limited to:
+            </p>
+
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+              {/* Aim 1 */}
+              <div className="rounded-2xl bg-gradient-to-r from-[#044444]/90 to-[#022222] text-white px-5 py-6 shadow-lg">
+                <div className="flex justify-center mb-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black">
+                    <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M9 12.5l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">Evidence-Based</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  Our programs are grounded in research and data, ensuring that every initiative delivers measurable impact and addresses real health challenges.
+                <p className="text-sm sm:text-base leading-relaxed text-center">
+                  Improvements providing experience opportunities for public health students and recent graduates.
+                </p>
+              </div>
+
+              {/* Aim 2 */}
+              <div className="rounded-2xl bg-gradient-to-r from-[#FF0000]/90 to-[#CC0000] text-white px-5 py-6 shadow-lg">
+                <div className="flex justify-center mb-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black">
+                    <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M9 12.5l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-sm sm:text-base leading-relaxed text-center">
+                  Strengthening early-career public health partnerships across the continent.
+                </p>
+              </div>
+
+              {/* Aim 3 */}
+              <div className="rounded-2xl bg-gradient-to-r from-[#044444]/90 to-[#0A7373] text-white px-5 py-6 shadow-lg">
+                <div className="flex justify-center mb-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black">
+                    <svg className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="9" />
+                      <path d="M9 12.5l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                </div>
+                <p className="text-sm sm:text-base leading-relaxed text-center">
+                  PHA establishment across <span className="font-semibold">all African countries</span>, building a
+                  network of public health advocates and practitioners.
                 </p>
               </div>
             </div>
+          </div>
 
-            {/* Partnership-Driven */}
-            <div className="group relative bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800/60 dark:to-neutral-900/40 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#044444]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" aria-hidden />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#044444] to-[#033333] flex items-center justify-center mb-6 shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">Partnership-Driven</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  We believe in the power of collaboration, working alongside governments, NGOs, healthcare providers, and communities to amplify our collective impact.
+          {/* Countries We Are Working In */}
+          <div className="mt-8 max-w-5xl mx-auto">
+            <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg px-4 py-5 sm:px-6 sm:py-6">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-100">
+                  Countries We Are <span className="text-[#FF0000]">Working In</span>
+                </h2>
+                <p className="mt-2 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 max-w-3xl mx-auto">
+                  PHA is actively working and expanding its reach in{' '}
+                  <span className="font-semibold">South Africa, Zimbabwe, eSwatini, and Nigeria</span>. Our remote teams
+                  in these four countries are driving PHA’s mission forward by addressing health challenges through our
+                  four key pillars: raising awareness of health issues, enhancing communication, advocating for health,
+                  and implementing impactful projects.
                 </p>
               </div>
-            </div>
 
-            {/* Long-Term Impact */}
-            <div className="group relative bg-gradient-to-br from-white to-neutral-50 dark:from-neutral-800/60 dark:to-neutral-900/40 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-neutral-200/50 dark:border-neutral-700/50 overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF0000]/5 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" aria-hidden />
-              <div className="relative z-10">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#FF0000] to-[#E60000] flex items-center justify-center mb-6 shadow-lg">
-                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-3">Long-Term Impact</h3>
-                <p className="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                  We design programs that create lasting change, building capacity within communities and systems to ensure health improvements continue for generations.
-                </p>
+              <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                {['South Africa', 'Zimbabwe', 'eSwatini', 'Nigeria'].map((country) => (
+                  <div
+                    key={country}
+                    className="rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 px-3 py-3 sm:px-4 sm:py-4 shadow-sm flex items-center justify-center text-center"
+                  >
+                    <span className="text-xs sm:text-sm font-semibold text-neutral-800 dark:text-neutral-100">
+                      {country}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Co-founders Section */}
+      <section className="py-16 md:py-24 bg-gradient-to-b from-neutral-50 via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
+        <div className="container-custom px-4 sm:px-6 lg:px-8">
+          <div className="mb-10 text-center">
+            <div className="inline-flex items-center gap-3">
+              <span className="hidden sm:inline-block h-[2px] w-10 sm:w-16 rounded-full bg-gradient-to-r from-[#044444] to-[#FF0000]" />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-neutral-50">
+                Meet the Co-founders
+              </h2>
+              <span className="hidden sm:inline-block h-[2px] w-10 sm:w-16 rounded-full bg-gradient-to-r from-[#FF0000] to-[#044444]" />
+            </div>
+          </div>
+
+          {/* Intro text + image */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center mb-14">
+            <div className="bg-white/90 dark:bg-neutral-900/90 rounded-3xl shadow-lg px-5 py-6 sm:px-7 sm:py-8">
+              <h3 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
+                Putting Africa First in Public Health
+              </h3>
+              <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+                We, as the co-founders, have a strong love for public health and Africa. We have a passion for Public
+                Health and want to see the improvement of this sector in Africa. We originally had our own initiatives
+                but decided to join forces for a more effective and sustainable outcome.
+              </p>
+              <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+                Africa faces a few health problems – inadequate health services, poor health infrastructure, limited
+                access to water and electricity, and barriers to accessing quality, safe and affordable healthcare. To
+                address these challenges in service delivery in the health sector, we aim to partner with African
+                established organisations that share the same vision as us and collaborate with them to address these
+                gaps.
+              </p>
+              <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed mb-4">
+                We will raise awareness of these issues through our projects as well as on our social media platforms,
+                in alignment with our four main portfolios:
+              </p>
+              <ul className="text-sm sm:text-base text-neutral-800 dark:text-neutral-100 grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                <li className="flex items-center gap-2">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000]/10 text-[#FF0000] text-xs">
+                    ●
+                  </span>
+                  Mental health
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000]/10 text-[#FF0000] text-xs">
+                    ●
+                  </span>
+                  Environmental health
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000]/10 text-[#FF0000] text-xs">
+                    ●
+                  </span>
+                  Ethics
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#FF0000]/10 text-[#FF0000] text-xs">
+                    ●
+                  </span>
+                  Maternal and child health
+                </li>
+              </ul>
+              <p className="text-sm sm:text-base text-neutral-700 dark:text-neutral-300 leading-relaxed">
+                Through these services, we envision an Africa with access to quality safe and affordable healthcare.
+                The right to health is the right to the enjoyable of the highest attainable standard of physical and
+                mental health. Thus, through our service deliveries, barriers to healthcare may be removed, and health
+                may be promoted amongst the most vulnerable populations.
+              </p>
+            </div>
+
+            <div className="relative">
+              <div
+                className="absolute -top-6 -left-4 w-32 h-32 rounded-[32px] bg-[#FF0000]/80 shadow-2xl"
+                aria-hidden
+              />
+              <div
+                className="absolute -bottom-10 -right-6 w-40 h-40 rounded-[32px] bg-[#044444]/80 shadow-2xl"
+                aria-hidden
+              />
+              <div className="relative rounded-[32px] overflow-hidden shadow-2xl">
+                <Image
+                  src="/assets/logos/pha.jpg"
+                  alt="Public Health en Afrique co-founders"
+                  width={1200}
+                  height={900}
+                  className="w-full h-[320px] sm:h-[380px] md:h-[420px] lg:h-[460px] object-cover"
+                />
+              </div>
+
+              {/* Floating Request strategic plan pill over image, linking to contact message area */}
+              <a
+                href="/contact#message"
+                className="absolute -bottom-6 left-6 inline-flex items-center gap-2 rounded-full border border-transparent bg-[#044444] px-5 py-2 text-xs sm:text-sm font-semibold text-[#FF0000] shadow-lg hover:shadow-xl hover:bg-[#055555] transition-colors transition-shadow"
+              >
+                Request our strategic plan
+              </a>
+            </div>
+          </div>
+
+          {/* Co-founder videos */}
+          <div className="mb-14">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="rounded-3xl bg-white/95 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-700/80 shadow-xl overflow-hidden">
+                <div className="px-5 pt-5">
+                  <p className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[#FF0000]">
+                    Our story
+                  </p>
+                  <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-300">
+                    Learn more about the vision and path of Public Health en Afrique directly from the co-founders.
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <video
+                    className="w-full h-[220px] sm:h-[260px] md:h-[280px] object-cover"
+                    src="/assets/images/about/Co-founder%20english%20video.mp4"
+                    controls
+                    playsInline
+                  />
+                </div>
+              </div>
+
+              <div className="rounded-3xl bg-white/95 dark:bg-neutral-900 border border-neutral-200/80 dark:border-neutral-700/80 shadow-xl overflow-hidden">
+                <div className="px-5 pt-5">
+                  <p className="text-[11px] sm:text-xs font-semibold tracking-[0.18em] uppercase text-[#FF0000]">
+                    Notre histoire
+                  </p>
+                  <p className="mt-1 text-xs sm:text-sm text-neutral-600 dark:text-neutral-300">
+                    Découvrez la vision et le parcours de Public Health en Afrique racontés par les co-fondatrices.
+                  </p>
+                </div>
+                <div className="mt-4">
+                  <video
+                    className="w-full h-[220px] sm:h-[260px] md:h-[280px] object-cover"
+                    src="/assets/images/about/co-founder%20french%20video.mp4"
+                    controls
+                    playsInline
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Founders cards */}
+          <div>
+            <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-neutral-50 mb-6 text-center">
+              Founders
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Kabala */}
+              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
+                <div className="mb-4">
+                  <Image
+                    src="/assets/images/team/Tshowa Kabala Co-Founder (Ethics & Mental Health).jpg"
+                    alt="Tshowa Kabala"
+                    width={160}
+                    height={160}
+                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
+                  />
+                </div>
+                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Tshowa Kabala</h4>
+                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
+                <a
+                  href="mailto:tshowa@phafrique.com"
+                    className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
+                >
+                  tshowa@phafrique.com
+                </a>
+              </div>
+
+              {/* Jemima */}
+              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
+                <div className="mb-4">
+                  <Image
+                    src="/assets/images/team/Jemima%20Lotika%20Co-Founder%20(Maternal%20&%20Child%20Health).jpeg"
+                    alt="Jemima Lotika"
+                    width={160}
+                    height={160}
+                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
+                  />
+                </div>
+                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Jemima Lotika</h4>
+                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
+                <a
+                  href="mailto:jemima@phafrique.com"
+                    className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
+                >
+                  jemima@phafrique.com
+                </a>
+              </div>
+
+              {/* Eunice */}
+              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
+                <div className="mb-4">
+                  <Image
+                    src="/assets/images/team/Eunice%20Tshilengu%20Co-Founder%20%28Environmental%20Health%29.jpg"
+                    alt="Eunice Tshilengu"
+                    width={160}
+                    height={160}
+                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
+                  />
+                </div>
+                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Eunice Tshilengu</h4>
+                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
+                <a
+                  href="mailto:eunice@phafrique.com"
+                    className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
+                >
+                  eunice@phafrique.com
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <VolunteersSection />
     </div>
   )
 }

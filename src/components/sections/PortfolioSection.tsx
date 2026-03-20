@@ -24,11 +24,21 @@ type PortfolioSectionProps = {
   isFullPage?: boolean
   /** When false, omits the section heading (e.g. on /portfolios where the page has a hero). Default true. */
   showHeading?: boolean
+  /** Hides action buttons on cards. */
+  hideActions?: boolean
+  /** Uses large image-first cards for portfolio page layout. */
+  fullImageCards?: boolean
 }
 
 const PLACEHOLDER_IMAGE = '/assets/images/portfolios/UPDATED-MATERNAL-WHITE-BG-2048x2048.jpg'
 
-export default function PortfolioSection({ portfolios = [], isFullPage = false, showHeading = true }: PortfolioSectionProps) {
+export default function PortfolioSection({
+  portfolios = [],
+  isFullPage = false,
+  showHeading = true,
+  hideActions = false,
+  fullImageCards = false,
+}: PortfolioSectionProps) {
   const visible = useInView('portfolios-section', { threshold: 0.1 })
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const list = Array.isArray(portfolios) ? portfolios : []
@@ -44,7 +54,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
           <div className="text-center mb-12 md:mb-16">
             <div className="inline-flex items-center gap-4">
               <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
-              <h2 id="portfolios-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444]">
+              <h2 id="portfolios-heading" className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-[#044444] dark:text-[#44AAAA]">
                 Our Portfolios
               </h2>
               <div className="h-0.5 w-16 bg-[#FF0000]" aria-hidden />
@@ -69,7 +79,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                 const imageUrl = item.updatedAt
                   ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}t=${typeof item.updatedAt === 'string' ? new Date(item.updatedAt).getTime() : (item.updatedAt as Date).getTime()}`
                   : baseUrl
-                const isExpanded = isFullPage && expandedId === item.id
+                const isExpanded = isFullPage && expandedId === item.id && !hideActions
 
                 return (
                   <div
@@ -89,7 +99,27 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                     }}
                   >
                     <div className="p-4 md:p-5 flex flex-col relative z-10">
-                      {isExpanded ? (
+                      {fullImageCards ? (
+                        <>
+                          <div className="relative w-full h-56 md:h-64 rounded-xl overflow-hidden shadow-md ring-1 ring-neutral-200 dark:ring-neutral-700 mb-4">
+                            <Image
+                              key={imageUrl}
+                              src={imageUrl}
+                              alt={item.title}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, 50vw"
+                              unoptimized={imageUrl.startsWith('/uploads/')}
+                            />
+                          </div>
+                          <h3 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-neutral-100 mb-2 leading-tight">
+                            {item.title}
+                          </h3>
+                          <p className="text-neutral-600 dark:text-neutral-400 text-sm md:text-base leading-relaxed">
+                            {item.description || 'No description available.'}
+                          </p>
+                        </>
+                      ) : isExpanded ? (
                         <div className="overflow-hidden w-full">
                           <div className="relative float-right w-20 h-20 md:w-24 md:h-24 ml-3 md:ml-4 mb-3 md:mb-4 shrink-0 rounded-xl overflow-hidden shadow-md ring-1 ring-neutral-200 dark:ring-neutral-700">
                             <Image
@@ -108,7 +138,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                           <p className="text-neutral-600 dark:text-neutral-400 text-xs md:text-sm text-justify leading-relaxed mb-4 w-full">
                             {item.description || 'No description available.'}
                           </p>
-                          {isFullPage && (
+                          {isFullPage && !hideActions && (
                             <button
                               type="button"
                               onClick={(e) => {
@@ -145,6 +175,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                               {item.description || 'No description available.'}
                             </p>
                             {isFullPage ? (
+                              !hideActions && (
                               <button
                                 type="button"
                                 onClick={(e) => {
@@ -156,7 +187,9 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                               >
                                 Learn more
                               </button>
+                              )
                             ) : (
+                              !hideActions && (
                               <Link
                                 href="/portfolios"
                                 className="self-start py-2 px-4 text-xs md:text-sm rounded-lg font-semibold text-white transition-all duration-200 hover:opacity-90"
@@ -164,6 +197,7 @@ export default function PortfolioSection({ portfolios = [], isFullPage = false, 
                               >
                                 Learn more
                               </Link>
+                              )
                             )}
                           </div>
                         </>
