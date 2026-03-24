@@ -9,6 +9,17 @@ import { prisma } from '@/lib/db'
 // there is always at least one account able to reach the admin panel.
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
+function canonicalAdminEmail(input: string) {
+  const email = input.toLowerCase().trim()
+  const aliases: Record<string, string> = {
+    'munashe@phafrique.com': 'munashe.faranisi@phafrique.org',
+    'tshowa@phafrique.com': 'kabala@phafrique.org',
+    'jemima@phafrique.com': 'jemima.lotika@phafrique.org',
+    'eunice@phafrique.com': 'eunice.tshilengu@phafrique.org',
+  }
+  return aliases[email] || email
+}
+
 // Defensive helper around the Prisma client. In some environments Prisma
 // may not yet be generated; returning null here lets the calling code fail
 // gracefully instead of throwing at import time.
@@ -68,7 +79,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const rawEmail = (credentials.email ?? '').toString().trim()
-        const email = rawEmail.toLowerCase().trim()
+        const email = canonicalAdminEmail(rawEmail)
         const adminUser = getAdminUserModel()
         if (!adminUser) {
           console.error('[auth] authorize RETURNING null: reason=Prisma adminUser model not available. Run: npx prisma generate')
@@ -87,7 +98,7 @@ export const authOptions: NextAuthOptions = {
 
         let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
         try {
-          admin = await findAdminByEmail(adminUser, email, rawEmail) as typeof admin
+          admin = await findAdminByEmail(adminUser, email, canonicalAdminEmail(rawEmail)) as typeof admin
         } catch (e) {
           console.error('[auth] authorize RETURNING null: reason=DB error during findUnique:', (e as Error).message)
           return null
@@ -110,7 +121,7 @@ export const authOptions: NextAuthOptions = {
             isSuperAdminEmail ? 'super-admin-recovery' : 'admin-recovery',
           )
           const newHash = await hash(pwNorm.length ? pwNorm : rawPassword, 10)
-          prisma.adminUser.update({ where: { email }, data: { passwordHash: newHash } }).catch((e) => console.error('[auth] Failed to save password to DB:', e))
+          prisma.adminUser.update({ where: { email: admin.email }, data: { passwordHash: newHash } }).catch((e) => console.error('[auth] Failed to save password to DB:', e))
           const userObj = { id: admin.id, email: admin.email, name: (admin as { displayName?: string | null }).displayName || 'Admin', image: (admin as { imageUrl?: string | null }).imageUrl ?? undefined, role: admin.role }
           return userObj
         }
@@ -123,7 +134,7 @@ export const authOptions: NextAuthOptions = {
         // For SUPER_ADMIN: if there is no password set in the DB yet, initialize it from ADMIN_PASSWORD
         if (isSuperAdminEmail && envPassword.length >= 8 && !admin.passwordHash) {
           const envHashForDb = await hash(envPassword, 10)
-          await prisma.adminUser.update({ where: { email }, data: { passwordHash: envHashForDb } }).catch(() => {})
+          await prisma.adminUser.update({ where: { email: admin.email }, data: { passwordHash: envHashForDb } }).catch(() => {})
           admin = { ...admin, passwordHash: envHashForDb }
           console.log('[auth] SUPER_ADMIN: initialised DB password from ADMIN_PASSWORD')
         }
@@ -144,7 +155,7 @@ export const authOptions: NextAuthOptions = {
             const matchesEnvHash = await compare(rawPassword, envHash)
             if (matchesEnvHash) {
               console.log('[auth] Result: SUCCESS (env hash match)')
-              prisma.adminUser.update({ where: { email }, data: { passwordHash: envHash } }).catch(() => {})
+              prisma.adminUser.update({ where: { email: admin.email }, data: { passwordHash: envHash } }).catch(() => {})
               return {
                 id: admin.id,
                 email: admin.email,
@@ -176,7 +187,7 @@ export const authOptions: NextAuthOptions = {
       try {
         console.log('[auth] signIn callback | provider:', account?.provider, '| user:', user ? { id: user.id, email: user.email } : null)
         if (account?.provider === 'google') {
-          const email = (user.email || (profile as { email?: string })?.email || '').toLowerCase().trim()
+          const email = canonicalAdminEmail((user.email || (profile as { email?: string })?.email || '').toLowerCase().trim())
         if (!email) {
           console.error('[auth] Google sign-in: no email in profile')
           return false

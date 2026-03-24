@@ -13,15 +13,21 @@ const ROLES = {
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
 async function main() {
-  // RBAC: Admin users and roles (emails stored lowercase)
+  // RBAC: keep seed safe by default.
+  // We always ensure SUPER_ADMIN exists, but do not recreate other admins unless explicitly requested.
   const adminUsers = [
     { email: SUPER_ADMIN_EMAIL, role: ROLES.SUPER_ADMIN, passwordHash: process.env.ADMIN_PASSWORD_HASH || null },
-    { email: 'eunice.tshilengu@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-    { email: 'jemima.lotika@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-    { email: 'kabala@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-    { email: 'munashe.faranisi@phafrique.org', role: ROLES.SOCIAL_MEDIA_MANAGER, passwordHash: null },
-    { email: 'queren.basemenane@phafrique.org', role: ROLES.NEWSLETTER_MANAGER, passwordHash: null },
   ]
+
+  if (process.env.SEED_DEFAULT_ADMIN_TEAM === 'true') {
+    adminUsers.push(
+      { email: 'eunice.tshilengu@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
+      { email: 'jemima.lotika@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
+      { email: 'kabala@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
+      { email: 'munashe.faranisi@phafrique.org', role: ROLES.SOCIAL_MEDIA_MANAGER, passwordHash: null },
+      { email: 'queren.basemenane@phafrique.org', role: ROLES.NEWSLETTER_MANAGER, passwordHash: null },
+    )
+  }
   for (const u of adminUsers) {
     const email = u.email.toLowerCase().trim()
     await prisma.adminUser.upsert({
