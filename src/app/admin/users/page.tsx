@@ -32,7 +32,8 @@ export default function AdminUsersPage() {
   const role = (session?.user as { role?: string })?.role
   const isSuperAdmin = role === 'SUPER_ADMIN'
   const isAdmin = role === 'ADMIN'
-  const canManageUsers = isSuperAdmin || isAdmin
+  const isCoFounder = role === 'CO_FOUNDER'
+  const canManageUsers = isSuperAdmin || isAdmin || isCoFounder
 
   const [list, setList] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)

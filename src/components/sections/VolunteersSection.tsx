@@ -93,53 +93,72 @@ export default function VolunteersSection() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {volunteers.map((volunteer) => (
-              <article
-                key={volunteer.id}
-                className="group bg-white dark:bg-neutral-900/70 rounded-2xl p-6 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-center"
-              >
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full overflow-hidden bg-white ring-4 ring-[#044444]/10 dark:ring-[#044444]/30 group-hover:ring-[#FF0000]/25 transition-all">
-                  {volunteer.imageUrl && !brokenImages[volunteer.id] ? (
-                    <Image
-                      src={imageSrc(volunteer.imageUrl)}
-                      alt={volunteer.name}
-                      fill
-                      className="object-contain p-1 transition-transform duration-300 group-hover:scale-105"
-                      sizes="112px"
-                      onError={() =>
-                        setBrokenImages((prev) => ({ ...prev, [volunteer.id]: true }))
-                      }
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-[#044444]/20 to-[#FF0000]/10 flex items-center justify-center text-[#044444] dark:text-[#44AAAA] font-bold text-2xl">
-                      {volunteer.name.charAt(0)}
-                    </div>
-                  )}
-                </div>
-                <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 mb-1.5 group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors">
-                  {volunteer.name}
-                </h3>
-                {volunteerGroup(volunteer.role) !== 2 && (
-                  <p className="text-sm text-[#044444] dark:text-[#44AAAA] font-semibold mb-2">{volunteer.role}</p>
-                )}
-                {volunteer.bio && (
-                  <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">
-                    {volunteer.bio}
-                  </p>
-                )}
-                {volunteer.linkedInUrl && (
-                  <a
-                    href={volunteer.linkedInUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-3 inline-flex items-center justify-center text-xs font-medium text-[#044444] dark:text-[#44AAAA] hover:underline"
+          <div className="space-y-6">
+            {[0, 1, 2].map((group) => {
+              const grouped = volunteers.filter((v) => volunteerGroup(v.role) === group)
+              if (grouped.length === 0) return null
+
+              return (
+                <div key={group} className={group === 2 ? 'pt-2' : ''}>
+                  <div
+                    className={
+                      group === 0 && grouped.length === 1
+                        ? 'flex justify-center'
+                        : 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'
+                    }
                   >
-                    View profile
-                  </a>
-                )}
-              </article>
-            ))}
+                    {grouped.map((volunteer) => (
+                      <article
+                        key={volunteer.id}
+                        className={`group bg-white dark:bg-neutral-900/70 rounded-2xl p-6 shadow-lg border border-neutral-100 dark:border-neutral-700/60 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 text-center ${
+                          group === 0 && grouped.length === 1 ? 'w-full max-w-sm' : ''
+                        }`}
+                      >
+                        <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 rounded-full overflow-hidden bg-neutral-50 dark:bg-neutral-800 ring-4 ring-[#044444]/10 dark:ring-[#044444]/30 group-hover:ring-[#FF0000]/25 transition-all">
+                          {volunteer.imageUrl && !brokenImages[volunteer.id] ? (
+                            <Image
+                              src={imageSrc(volunteer.imageUrl)}
+                              alt={volunteer.name}
+                              fill
+                              className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                              sizes="112px"
+                              onError={() =>
+                                setBrokenImages((prev) => ({ ...prev, [volunteer.id]: true }))
+                              }
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-[#044444]/20 to-[#FF0000]/10 flex items-center justify-center text-[#044444] dark:text-[#44AAAA] font-bold text-2xl">
+                              {volunteer.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                        <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-50 mb-1.5 group-hover:text-[#044444] dark:group-hover:text-[#44AAAA] transition-colors">
+                          {volunteer.name}
+                        </h3>
+                        <p className="text-sm text-[#044444] dark:text-[#44AAAA] font-semibold mb-2">
+                          {group === 2 ? 'Volunteer' : volunteer.role}
+                        </p>
+                        {volunteer.bio && (
+                          <p className="text-xs text-neutral-600 dark:text-neutral-400 leading-relaxed line-clamp-3">
+                            {volunteer.bio}
+                          </p>
+                        )}
+                        {volunteer.linkedInUrl && (
+                          <a
+                            href={volunteer.linkedInUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-3 inline-flex items-center justify-center text-xs font-medium text-[#044444] dark:text-[#44AAAA] hover:underline"
+                          >
+                            View profile
+                          </a>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

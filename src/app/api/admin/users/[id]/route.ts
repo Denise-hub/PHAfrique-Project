@@ -38,7 +38,8 @@ export async function PATCH(
     if (!admin) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
     const isSelf = currentEmail === admin.email
-    const canEditOthers = currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN
+    const canEditOthers =
+      currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN || currentRole === ROLES.CO_FOUNDER
 
     if (!isSelf && !canEditOthers) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -139,7 +140,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'You cannot delete your own account' }, { status: 400 })
     }
 
-    const canDelete = currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN
+    const canDelete =
+      currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN || currentRole === ROLES.CO_FOUNDER
     if (!canDelete) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
