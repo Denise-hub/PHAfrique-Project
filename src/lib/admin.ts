@@ -13,12 +13,34 @@ function getAdminUserModel() {
   }).adminUser ?? null
 }
 
-async function findAdminByEmail(adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>, email: string) {
-  try {
-    return await adminUser.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } })
-  } catch {
-    return await adminUser.findUnique({ where: { email } })
+function adminEmailCandidates(input: string) {
+  const raw = input.toLowerCase().trim()
+  const local = raw.split('@')[0] || ''
+  const aliases = new Set<string>([
+    raw,
+    `${local}@phafrique.com`,
+    `${local}@phafrique.org`,
+  ])
+  if (local === 'munashe' || local === 'munashe.faranisi') {
+    aliases.add('munashe@phafrique.com')
+    aliases.add('munashe@phafrique.org')
+    aliases.add('munashe.faranisi@phafrique.com')
+    aliases.add('munashe.faranisi@phafrique.org')
   }
+  return Array.from(aliases)
+}
+
+async function findAdminByEmail(adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>, email: string) {
+  for (const candidate of adminEmailCandidates(email)) {
+    try {
+      const found = await adminUser.findFirst({ where: { email: { equals: candidate, mode: 'insensitive' } } })
+      if (found) return found
+    } catch {
+      const exact = await adminUser.findUnique({ where: { email: candidate } })
+      if (exact) return exact
+    }
+  }
+  return null
 }
 
 /**

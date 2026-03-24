@@ -13,11 +13,32 @@ function canonicalAdminEmail(input: string) {
   const email = input.toLowerCase().trim()
   const aliases: Record<string, string> = {
     'munashe@phafrique.com': 'munashe.faranisi@phafrique.org',
+    'munashe@phafrique.org': 'munashe.faranisi@phafrique.org',
+    'munashe.faranisi@phafrique.com': 'munashe.faranisi@phafrique.org',
     'tshowa@phafrique.com': 'kabala@phafrique.org',
     'jemima@phafrique.com': 'jemima.lotika@phafrique.org',
     'eunice@phafrique.com': 'eunice.tshilengu@phafrique.org',
   }
   return aliases[email] || email
+}
+
+function adminEmailCandidates(input: string) {
+  const raw = input.toLowerCase().trim()
+  const canonical = canonicalAdminEmail(raw)
+  const local = raw.split('@')[0] || ''
+  const candidates = new Set<string>([
+    raw,
+    canonical,
+    `${local}@phafrique.com`,
+    `${local}@phafrique.org`,
+  ])
+  if (local === 'munashe' || local === 'munashe.faranisi') {
+    candidates.add('munashe@phafrique.com')
+    candidates.add('munashe@phafrique.org')
+    candidates.add('munashe.faranisi@phafrique.com')
+    candidates.add('munashe.faranisi@phafrique.org')
+  }
+  return Array.from(candidates).filter(Boolean)
 }
 
 // Defensive helper around the Prisma client. In some environments Prisma
@@ -55,6 +76,18 @@ async function findAdminByEmail(
   return await adminUser.findUnique({ where: { email } })
 }
 
+async function findAdminByAnyEmail(
+  adminUser: NonNullable<ReturnType<typeof getAdminUserModel>>,
+  inputEmail: string
+) {
+  const candidates = adminEmailCandidates(inputEmail)
+  for (const candidate of candidates) {
+    const found = await findAdminByEmail(adminUser, candidate, inputEmail)
+    if (found) return found
+  }
+  return null
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
@@ -90,7 +123,7 @@ export const authOptions: NextAuthOptions = {
         const envPassword = (envPasswordRaw || '').replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').replace(/\r\n?|\n/g, ' ').replace(/\s+/g, ' ').trim()
         const envHashRaw = process.env.ADMIN_PASSWORD_HASH
         const envHash = (envHashRaw || '').replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '').trim()
-        const isSuperAdminEmail = email === SUPER_ADMIN_EMAIL
+        const isSuperAdminEmail = adminEmailCandidates(rawEmail).includes(SUPER_ADMIN_EMAIL)
 
         console.log('[auth] --- credentials login ---')
         console.log('[auth] email:', email, '| isSuperAdminEmail:', isSuperAdminEmail)
@@ -98,7 +131,7 @@ export const authOptions: NextAuthOptions = {
 
         let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
         try {
-          admin = await findAdminByEmail(adminUser, email, canonicalAdminEmail(rawEmail)) as typeof admin
+          admin = await findAdminByAnyEmail(adminUser, rawEmail) as typeof admin
         } catch (e) {
           console.error('[auth] authorize RETURNING null: reason=DB error during findUnique:', (e as Error).message)
           return null
@@ -198,7 +231,7 @@ export const authOptions: NextAuthOptions = {
           return false
         }
         try {
-          let admin = await findAdminByEmail(adminUser, email)
+          let admin = await findAdminByAnyEmail(adminUser, email)
           if (!admin && email === SUPER_ADMIN_EMAIL) {
             console.log('[auth] Google sign-in: SUPER_ADMIN not in DB, creating now')
             admin = await prisma.adminUser.upsert({
@@ -245,7 +278,7 @@ export const authOptions: NextAuthOptions = {
           const adminUser = getAdminUserModel()
           if (adminUser) {
             try {
-              const admin = await findAdminByEmail(
+              const admin = await findAdminByAnyEmail(
                 adminUser,
                 (token.email as string).toLowerCase().trim()
               ) as { role?: string; displayName?: string; imageUrl?: string } | null
