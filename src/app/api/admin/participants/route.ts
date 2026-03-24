@@ -50,7 +50,9 @@ export async function GET() {
         .map((row) => prisma.participant.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
 
-    return NextResponse.json(normalized)
+    return NextResponse.json(normalized, {
+      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' },
+    })
   } catch (e) {
     return handleApiError('admin/participants GET', e, 'Failed to fetch participants')
   }

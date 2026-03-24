@@ -16,7 +16,7 @@ type Volunteer = {
 
 function volunteerGroup(role: string): 0 | 1 | 2 {
   const r = role.toLowerCase()
-  if (r.includes('advisor') || r.includes('adviser')) return 0
+  if (r.includes('advisor') || r.includes('adviser') || r.includes('consultant')) return 0
   if (r.includes('manager')) return 1
   return 2
 }
@@ -27,7 +27,7 @@ export default function VolunteersSection() {
 
   useEffect(() => {
     let cancelled = false
-    fetch('/api/participants?type=VOLUNTEER')
+    fetch('/api/participants?type=VOLUNTEER', { cache: 'no-store' })
       .then(async (r) => {
         if (!r.ok) return []
         const j = await r.json()

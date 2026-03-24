@@ -40,7 +40,9 @@ export async function GET() {
         .map((row) => prisma.adminUser.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
 
-    return NextResponse.json(normalized)
+    return NextResponse.json(normalized, {
+      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' },
+    })
   } catch (error) {
     console.error('Error fetching admin users:', error)
     return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })

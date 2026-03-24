@@ -57,7 +57,9 @@ export async function GET(req: NextRequest) {
         .map((row) => prisma.participant.update({ where: { id: row.id }, data: { imageUrl: row.imageUrl } })),
     )
 
-    return NextResponse.json(normalized)
+    return NextResponse.json(normalized, {
+      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0' },
+    })
   } catch (error) {
     console.error('[api/participants GET]', error)
     return NextResponse.json([])

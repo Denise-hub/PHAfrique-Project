@@ -54,7 +54,7 @@ export default function AdminUsersPage() {
 
   function load() {
     setLoading(true)
-    fetch('/api/admin/users', { credentials: 'include' })
+    fetch('/api/admin/users', { credentials: 'include', cache: 'no-store' })
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
         return r.json()

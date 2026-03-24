@@ -61,8 +61,8 @@ function AdminParticipantsPageInner() {
   function load() {
     setErr('')
     Promise.all([
-      fetch('/api/admin/participants', { credentials: 'include' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
-      fetch('/api/admin/opportunities', { credentials: 'include' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
+      fetch('/api/admin/participants', { credentials: 'include', cache: 'no-store' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
+      fetch('/api/admin/opportunities', { credentials: 'include', cache: 'no-store' }).then((r) => r.json()).then((d) => (Array.isArray(d) ? d : [])).catch(() => []),
     ]).then(([participants, opps]) => {
       // Show active website volunteers only (matches user-side workflow).
       setList(
