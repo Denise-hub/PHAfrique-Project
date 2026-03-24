@@ -35,6 +35,19 @@ type FounderCard = {
   imageUrl: string
 }
 
+function normalizeFounderName(value: string) {
+  return value.toLowerCase().replace(/[^a-z]/g, '')
+}
+
+function canonicalFounderKey(name: string, email: string) {
+  const n = normalizeFounderName(name)
+  const e = email.trim().toLowerCase()
+  if (n.includes('tshowa') || e.startsWith('tshowa@')) return 'tshowa'
+  if (n.includes('jemima') || e.startsWith('jemima@')) return 'jemima'
+  if (n.includes('eunice') || e.startsWith('eunice@')) return 'eunice'
+  return ''
+}
+
 const DEFAULT_FOUNDERS: FounderCard[] = [
   {
     name: 'Tshowa Kabala',
@@ -87,8 +100,15 @@ async function getFounders(): Promise<FounderCard[]> {
       }
     })
     const deduped = mapped.filter((founder, index, arr) => {
-      const key = founder.email.trim().toLowerCase()
-      return arr.findIndex((f) => f.email.trim().toLowerCase() === key) === index
+      const canonical = canonicalFounderKey(founder.name, founder.email)
+      const key = canonical || founder.email.trim().toLowerCase() || normalizeFounderName(founder.name)
+      return (
+        arr.findIndex((f) => {
+          const fCanonical = canonicalFounderKey(f.name, f.email)
+          const fKey = fCanonical || f.email.trim().toLowerCase() || normalizeFounderName(f.name)
+          return fKey === key
+        }) === index
+      )
     })
 
     const sorted = [...deduped].sort((a, b) => {
