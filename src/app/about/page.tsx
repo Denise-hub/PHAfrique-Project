@@ -42,7 +42,7 @@ function normalizeFounderName(value: string) {
 function canonicalFounderKey(name: string, email: string) {
   const n = normalizeFounderName(name)
   const e = email.trim().toLowerCase()
-  if (n.includes('tshowa') || e.startsWith('tshowa@')) return 'tshowa'
+  if (n.includes('tshowa') || n.includes('kabala') || e.startsWith('tshowa@') || e.startsWith('kabala@')) return 'tshowa'
   if (n.includes('jemima') || e.startsWith('jemima@')) return 'jemima'
   if (n.includes('eunice') || e.startsWith('eunice@')) return 'eunice'
   return ''
@@ -79,7 +79,11 @@ async function getFounders(): Promise<FounderCard[]> {
     const mapped = rows.map((row) => {
       const name = (row.displayName || row.email.split('@')[0] || 'Co-founder').trim()
       const lower = name.toLowerCase()
-      const isTshowa = lower.includes('tshowa') || row.email.toLowerCase().startsWith('tshowa@')
+      const isTshowa =
+        lower.includes('tshowa') ||
+        lower.includes('kabala') ||
+        row.email.toLowerCase().startsWith('tshowa@') ||
+        row.email.toLowerCase().startsWith('kabala@')
       const isJemima = lower.includes('jemima') || row.email.toLowerCase().startsWith('jemima@')
       const isEunice = lower.includes('eunice') || row.email.toLowerCase().startsWith('eunice@')
 
@@ -111,7 +115,24 @@ async function getFounders(): Promise<FounderCard[]> {
       )
     })
 
-    const sorted = [...deduped].sort((a, b) => {
+    const canonicalProfile: Record<string, { name: string; email: string }> = {
+      tshowa: { name: 'Tshowa Kabala', email: 'tshowa@phafrique.com' },
+      jemima: { name: 'Jemima Lotika', email: 'jemima@phafrique.com' },
+      eunice: { name: 'Eunice Tshilengu', email: 'eunice@phafrique.com' },
+    }
+
+    const canonicalized = deduped.map((founder) => {
+      const key = canonicalFounderKey(founder.name, founder.email)
+      if (!key) return founder
+      const profile = canonicalProfile[key]
+      return {
+        ...founder,
+        name: profile.name,
+        email: profile.email,
+      }
+    })
+
+    const sorted = [...canonicalized].sort((a, b) => {
       const aIsTshowa = a.name.toLowerCase().includes('tshowa') || a.email.toLowerCase().startsWith('tshowa@')
       const bIsTshowa = b.name.toLowerCase().includes('tshowa') || b.email.toLowerCase().startsWith('tshowa@')
       if (aIsTshowa && !bIsTshowa) return -1
