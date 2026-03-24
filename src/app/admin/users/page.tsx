@@ -33,7 +33,8 @@ export default function AdminUsersPage() {
   const isSuperAdmin = role === 'SUPER_ADMIN'
   const isAdmin = role === 'ADMIN'
   const isCoFounder = role === 'CO_FOUNDER'
-  const canManageUsers = isSuperAdmin || isAdmin || isCoFounder
+  const isSocialMediaManager = role === 'SOCIAL_MEDIA_MANAGER'
+  const canManageUsers = isSuperAdmin || isAdmin || isCoFounder || isSocialMediaManager
 
   const [list, setList] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)

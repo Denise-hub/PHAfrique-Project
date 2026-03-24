@@ -39,7 +39,10 @@ export async function PATCH(
 
     const isSelf = currentEmail === admin.email
     const canEditOthers =
-      currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN || currentRole === ROLES.CO_FOUNDER
+      currentRole === ROLES.SUPER_ADMIN ||
+      currentRole === ROLES.ADMIN ||
+      currentRole === ROLES.CO_FOUNDER ||
+      currentRole === ROLES.SOCIAL_MEDIA_MANAGER
 
     if (!isSelf && !canEditOthers) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
@@ -141,7 +144,10 @@ export async function DELETE(
     }
 
     const canDelete =
-      currentRole === ROLES.SUPER_ADMIN || currentRole === ROLES.ADMIN || currentRole === ROLES.CO_FOUNDER
+      currentRole === ROLES.SUPER_ADMIN ||
+      currentRole === ROLES.ADMIN ||
+      currentRole === ROLES.CO_FOUNDER ||
+      currentRole === ROLES.SOCIAL_MEDIA_MANAGER
     if (!canDelete) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }

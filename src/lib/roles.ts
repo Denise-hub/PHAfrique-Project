@@ -51,9 +51,14 @@ const SECTION_ACCESS: Record<Role, AdminSection[]> = {
     'users',
     'profile',
   ],
-  // Limited roles: no access to application review or content editing.
-  // They can still view volunteer opportunities to support workflow visibility.
-  [ROLES.SOCIAL_MEDIA_MANAGER]: ['dashboard', 'opportunities', 'applications', 'profile'],
+  [ROLES.SOCIAL_MEDIA_MANAGER]: [
+    'dashboard',
+    'opportunities',
+    'applications',
+    'content',
+    'users',
+    'profile',
+  ],
   [ROLES.NEWSLETTER_MANAGER]: ['dashboard', 'opportunities', 'profile'],
 }
 
