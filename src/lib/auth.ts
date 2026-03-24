@@ -182,12 +182,13 @@ export const authOptions: NextAuthOptions = {
           }
         }
 
-        // Fallback: SUPER_ADMIN with ADMIN_PASSWORD_HASH from .env (bcrypt compare)
-        if (isSuperAdminEmail && envHash.length > 0) {
+        // Fallback recovery with ADMIN_PASSWORD_HASH from .env (bcrypt compare)
+        // Applies to any existing admin account so non-super-admin users can recover too.
+        if (admin && envHash.length > 0) {
           try {
             const matchesEnvHash = await compare(rawPassword, envHash)
             if (matchesEnvHash) {
-              console.log('[auth] Result: SUCCESS (env hash match)')
+              console.log('[auth] Result: SUCCESS (env hash match)', '| mode:', isSuperAdminEmail ? 'super-admin-recovery' : 'admin-recovery')
               prisma.adminUser.update({ where: { email: admin.email }, data: { passwordHash: envHash } }).catch(() => {})
               return {
                 id: admin.id,

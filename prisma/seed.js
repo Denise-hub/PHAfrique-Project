@@ -30,9 +30,13 @@ async function main() {
   }
   for (const u of adminUsers) {
     const email = u.email.toLowerCase().trim()
+    const updateData = { role: u.role }
+    if (u.passwordHash) {
+      updateData.passwordHash = u.passwordHash
+    }
     await prisma.adminUser.upsert({
       where: { email },
-      update: { role: u.role, passwordHash: u.passwordHash },
+      update: updateData,
       create: { email, role: u.role, passwordHash: u.passwordHash },
     })
   }
