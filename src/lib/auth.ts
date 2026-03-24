@@ -8,14 +8,6 @@ import { prisma } from '@/lib/db'
 // treated specially when seeding and when validating credentials so that
 // there is always at least one account able to reach the admin panel.
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
-const DEFAULT_ADMIN_ROLE_BY_EMAIL: Record<string, string> = {
-  'denmaombi@gmail.com': 'SUPER_ADMIN',
-  'eunice.tshilengu@phafrique.org': 'CO_FOUNDER',
-  'jemima.lotika@phafrique.org': 'CO_FOUNDER',
-  'kabala@phafrique.org': 'CO_FOUNDER',
-  'munashe.faranisi@phafrique.org': 'SOCIAL_MEDIA_MANAGER',
-  'queren.basemenane@phafrique.org': 'NEWSLETTER_MANAGER',
-}
 
 function canonicalAdminEmail(input: string) {
   const email = input.toLowerCase().trim()
@@ -47,15 +39,6 @@ function adminEmailCandidates(input: string) {
     candidates.add('munashe.faranisi@phafrique.org')
   }
   return Array.from(candidates).filter(Boolean)
-}
-
-function resolveDefaultAdminByAlias(input: string) {
-  const candidates = adminEmailCandidates(input)
-  for (const candidate of candidates) {
-    const role = DEFAULT_ADMIN_ROLE_BY_EMAIL[candidate]
-    if (role) return { email: candidate, role }
-  }
-  return null
 }
 
 // Defensive helper around the Prisma client. In some environments Prisma
@@ -177,24 +160,20 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (!admin) {
-          const fallbackAdmin = resolveDefaultAdminByAlias(rawEmail)
-          if (fallbackAdmin) {
-            try {
-              admin = await prisma.adminUser.upsert({
-                where: { email: fallbackAdmin.email },
-                create: { email: fallbackAdmin.email, role: fallbackAdmin.role, passwordHash: null },
-                update: { role: fallbackAdmin.role },
-              }) as typeof admin
-              console.log('[auth] created missing core admin account:', fallbackAdmin.email, '| role:', fallbackAdmin.role)
-            } catch (e) {
-              console.error('[auth] failed creating fallback admin account:', (e as Error).message)
-            }
-          }
-        }
-
-        if (!admin) {
           console.error('[auth] authorize RETURNING null: reason=No admin user for email:', email)
           return null
+        }
+
+        // If an existing admin has no password hash (legacy record),
+        // initialize it from ADMIN_PASSWORD_HASH once.
+        if (!admin.passwordHash && envHash.length > 0) {
+          try {
+            await prisma.adminUser.update({ where: { email: admin.email }, data: { passwordHash: envHash } })
+            admin = { ...admin, passwordHash: envHash }
+            console.log('[auth] initialized missing password hash from env hash for:', admin.email)
+          } catch (e) {
+            console.error('[auth] failed to initialize missing password hash:', (e as Error).message)
+          }
         }
 
         // For SUPER_ADMIN: if there is no password set in the DB yet, initialize it from ADMIN_PASSWORD
@@ -266,16 +245,6 @@ export const authOptions: NextAuthOptions = {
         }
         try {
           let admin = await findAdminByAnyEmail(adminUser, email)
-          if (!admin) {
-            const fallbackAdmin = resolveDefaultAdminByAlias(email)
-            if (fallbackAdmin) {
-              admin = await prisma.adminUser.upsert({
-                where: { email: fallbackAdmin.email },
-                create: { email: fallbackAdmin.email, role: fallbackAdmin.role, passwordHash: null },
-                update: { role: fallbackAdmin.role },
-              }) as typeof admin
-            }
-          }
           if (!admin && email === SUPER_ADMIN_EMAIL) {
             console.log('[auth] Google sign-in: SUPER_ADMIN not in DB, creating now')
             admin = await prisma.adminUser.upsert({
