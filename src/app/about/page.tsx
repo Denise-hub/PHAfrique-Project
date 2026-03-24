@@ -70,7 +70,20 @@ async function getFounders(): Promise<FounderCard[]> {
         imageUrl: resolved || '/assets/logos/pha.jpg',
       }
     })
-    return mapped
+    const sorted = [...mapped].sort((a, b) => {
+      const aIsTshowa = a.name.toLowerCase().includes('tshowa') || a.email.toLowerCase().startsWith('tshowa@')
+      const bIsTshowa = b.name.toLowerCase().includes('tshowa') || b.email.toLowerCase().startsWith('tshowa@')
+      if (aIsTshowa && !bIsTshowa) return -1
+      if (!aIsTshowa && bIsTshowa) return 1
+      return 0
+    })
+
+    // Ensure the first founder card always uses the requested canonical image.
+    if (sorted[0] && (sorted[0].name.toLowerCase().includes('tshowa') || sorted[0].email.toLowerCase().startsWith('tshowa@'))) {
+      sorted[0].imageUrl = '/assets/images/team/Tshowa_Kabala.png'
+    }
+
+    return sorted
   } catch {
     return DEFAULT_FOUNDERS
   }
