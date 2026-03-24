@@ -41,12 +41,12 @@ const DEFAULT_FOUNDERS: FounderCard[] = [
   {
     name: 'Jemima Lotika',
     email: 'jemima@phafrique.com',
-    imageUrl: '/assets/images/team/Jemima%20Lotika%20Co-Founder%20(Maternal%20&%20Child%20Health).jpeg',
+    imageUrl: '/assets/images/team/Jemima_Lotika.png',
   },
   {
     name: 'Eunice Tshilengu',
     email: 'eunice@phafrique.com',
-    imageUrl: '/assets/images/team/Eunice%20Tshilengu%20Co-Founder%20%28Environmental%20Health%29.jpg',
+    imageUrl: '/assets/images/team/Eunice_Tshilengu_Co-Founder.png',
   },
 ]
 
@@ -62,8 +62,20 @@ async function getFounders(): Promise<FounderCard[]> {
     const mapped = rows.map((row) => {
       const name = (row.displayName || row.email.split('@')[0] || 'Co-founder').trim()
       const lower = name.toLowerCase()
-      const forcedTshowa = lower.includes('tshowa') ? '/assets/images/team/Tshowa_Kabala.png' : null
-      const resolved = forcedTshowa || (row.imageUrl ? imageSrc(row.imageUrl) : '')
+      const isTshowa = lower.includes('tshowa') || row.email.toLowerCase().startsWith('tshowa@')
+      const isJemima = lower.includes('jemima') || row.email.toLowerCase().startsWith('jemima@')
+      const isEunice = lower.includes('eunice') || row.email.toLowerCase().startsWith('eunice@')
+
+      const forcedCanonical =
+        isTshowa
+          ? '/assets/images/team/Tshowa_Kabala.png'
+          : isJemima
+            ? '/assets/images/team/Jemima_Lotika.png'
+            : isEunice
+              ? '/assets/images/team/Eunice_Tshilengu_Co-Founder.png'
+              : null
+
+      const resolved = forcedCanonical || (row.imageUrl ? imageSrc(row.imageUrl) : '')
       return {
         name,
         email: row.email,
