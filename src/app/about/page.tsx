@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import Image from 'next/image'
+import { unstable_noStore as noStore } from 'next/cache'
 import PageHero from '@/components/ui/PageHero'
 import VolunteersSection from '@/components/sections/VolunteersSection'
 import { prisma } from '@/lib/db'
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   description:
     'Our mission, vision, and values: advancing public health in Africa through innovation, equity, and partnership.',
 }
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 const MISSION = 'Public Health en Afrique is dedicated to leading and collaborating with Africans to create a sustainable health system that ensures healthier lives for all. PHA focuses on equitable access to healthcare through partnerships, awareness campaigns, and community projects.'
 
@@ -52,6 +55,7 @@ const DEFAULT_FOUNDERS: FounderCard[] = [
 
 async function getFounders(): Promise<FounderCard[]> {
   try {
+    noStore()
     const rows = await prisma.adminUser.findMany({
       where: { role: 'CO_FOUNDER' },
       orderBy: { createdAt: 'asc' },
@@ -82,7 +86,12 @@ async function getFounders(): Promise<FounderCard[]> {
         imageUrl: resolved || '/assets/logos/pha.jpg',
       }
     })
-    const sorted = [...mapped].sort((a, b) => {
+    const deduped = mapped.filter((founder, index, arr) => {
+      const key = founder.email.trim().toLowerCase()
+      return arr.findIndex((f) => f.email.trim().toLowerCase() === key) === index
+    })
+
+    const sorted = [...deduped].sort((a, b) => {
       const aIsTshowa = a.name.toLowerCase().includes('tshowa') || a.email.toLowerCase().startsWith('tshowa@')
       const bIsTshowa = b.name.toLowerCase().includes('tshowa') || b.email.toLowerCase().startsWith('tshowa@')
       if (aIsTshowa && !bIsTshowa) return -1
