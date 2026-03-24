@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
 import VolunteersSection from '@/components/sections/VolunteersSection'
+import { prisma } from '@/lib/db'
+import { imageSrc } from '@/lib/image-url'
 
 export const metadata: Metadata = {
   title: 'About Us | Public Health en Afrique',
@@ -24,7 +26,58 @@ const VALUES = [
   { title: 'Compassion', desc: 'Approaching initiatives with empathy and dedication.' },
 ]
 
-export default function AboutPage() {
+type FounderCard = {
+  name: string
+  email: string
+  imageUrl: string
+}
+
+const DEFAULT_FOUNDERS: FounderCard[] = [
+  {
+    name: 'Tshowa Kabala',
+    email: 'tshowa@phafrique.com',
+    imageUrl: '/assets/images/team/Tshowa_Kabala.png',
+  },
+  {
+    name: 'Jemima Lotika',
+    email: 'jemima@phafrique.com',
+    imageUrl: '/assets/images/team/Jemima%20Lotika%20Co-Founder%20(Maternal%20&%20Child%20Health).jpeg',
+  },
+  {
+    name: 'Eunice Tshilengu',
+    email: 'eunice@phafrique.com',
+    imageUrl: '/assets/images/team/Eunice%20Tshilengu%20Co-Founder%20%28Environmental%20Health%29.jpg',
+  },
+]
+
+async function getFounders(): Promise<FounderCard[]> {
+  try {
+    const rows = await prisma.adminUser.findMany({
+      where: { role: 'CO_FOUNDER' },
+      orderBy: { createdAt: 'asc' },
+      select: { displayName: true, email: true, imageUrl: true },
+    })
+    if (!rows.length) return DEFAULT_FOUNDERS
+
+    const mapped = rows.map((row) => {
+      const name = (row.displayName || row.email.split('@')[0] || 'Co-founder').trim()
+      const lower = name.toLowerCase()
+      const forcedTshowa = lower.includes('tshowa') ? '/assets/images/team/Tshowa_Kabala.png' : null
+      const resolved = forcedTshowa || (row.imageUrl ? imageSrc(row.imageUrl) : '')
+      return {
+        name,
+        email: row.email,
+        imageUrl: resolved || '/assets/logos/pha.jpg',
+      }
+    })
+    return mapped
+  } catch {
+    return DEFAULT_FOUNDERS
+  }
+}
+
+export default async function AboutPage() {
+  const founders = await getFounders()
   return (
     <div className="pt-20">
       <PageHero title="About Us" />
@@ -400,68 +453,30 @@ export default function AboutPage() {
               Founders
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Kabala */}
-              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
-                <div className="mb-4">
-                  <Image
-                    src="/assets/images/team/Tshowa Kabala Co-Founder (Ethics & Mental Health).jpg"
-                    alt="Tshowa Kabala"
-                    width={160}
-                    height={160}
-                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
-                  />
-                </div>
-                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Tshowa Kabala</h4>
-                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
-                <a
-                  href="mailto:tshowa@phafrique.com"
-                    className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
+              {founders.map((founder) => (
+                <div
+                  key={founder.email}
+                  className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center"
                 >
-                  tshowa@phafrique.com
-                </a>
-              </div>
-
-              {/* Jemima */}
-              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
-                <div className="mb-4">
-                  <Image
-                    src="/assets/images/team/Jemima%20Lotika%20Co-Founder%20(Maternal%20&%20Child%20Health).jpeg"
-                    alt="Jemima Lotika"
-                    width={160}
-                    height={160}
-                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
-                  />
-                </div>
-                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Jemima Lotika</h4>
-                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
-                <a
-                  href="mailto:jemima@phafrique.com"
+                  <div className="mb-4 rounded-full border border-neutral-200 dark:border-neutral-700 bg-white h-28 w-28 sm:h-32 sm:w-32 flex items-center justify-center overflow-hidden p-1">
+                    <Image
+                      src={founder.imageUrl}
+                      alt={founder.name}
+                      width={160}
+                      height={160}
+                      className="h-full w-full rounded-full object-contain"
+                    />
+                  </div>
+                  <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{founder.name}</h4>
+                  <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
+                  <a
+                    href={`mailto:${founder.email}`}
                     className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
-                >
-                  jemima@phafrique.com
-                </a>
-              </div>
-
-              {/* Eunice */}
-              <div className="rounded-3xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 shadow-lg p-6 flex flex-col items-center text-center">
-                <div className="mb-4">
-                  <Image
-                    src="/assets/images/team/Eunice%20Tshilengu%20Co-Founder%20%28Environmental%20Health%29.jpg"
-                    alt="Eunice Tshilengu"
-                    width={160}
-                    height={160}
-                    className="h-28 w-28 sm:h-32 sm:w-32 rounded-full object-cover"
-                  />
+                  >
+                    {founder.email}
+                  </a>
                 </div>
-                <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">Eunice Tshilengu</h4>
-                <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
-                <a
-                  href="mailto:eunice@phafrique.com"
-                    className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"
-                >
-                  eunice@phafrique.com
-                </a>
-              </div>
+              ))}
             </div>
           </div>
         </div>

@@ -17,6 +17,10 @@ const ALLOWED_ROLES: Role[] = [
   ROLES.NEWSLETTER_MANAGER,
 ]
 
+function isValidEmail(v: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+}
+
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -41,12 +45,24 @@ export async function PATCH(
     }
 
     const contentType = req.headers.get('content-type') || ''
-    const updates: { role?: string; displayName?: string | null; imageUrl?: string | null; passwordHash?: string | null } = {}
+    const updates: { role?: string; displayName?: string | null; imageUrl?: string | null; passwordHash?: string | null; email?: string } = {}
 
     if (contentType.includes('multipart/form-data')) {
       const form = await req.formData()
       const displayNameVal = form.get('displayName')
       if (typeof displayNameVal === 'string') updates.displayName = displayNameVal.trim() || null
+      const emailVal = form.get('email')
+      if (canEditOthers && typeof emailVal === 'string' && emailVal.trim()) {
+        const normalized = emailVal.toLowerCase().trim()
+        if (!isValidEmail(normalized)) {
+          return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+        }
+        const existingEmail = await prisma.adminUser.findUnique({ where: { email: normalized } })
+        if (existingEmail && existingEmail.id !== id) {
+          return NextResponse.json({ error: 'An admin with this email already exists' }, { status: 409 })
+        }
+        updates.email = normalized
+      }
       const roleVal = form.get('role')
       if (canEditOthers && typeof roleVal === 'string' && ALLOWED_ROLES.includes(roleVal as Role)) {
         updates.role = roleVal
@@ -69,6 +85,17 @@ export async function PATCH(
       }
       if (typeof body.imageUrl === 'string') {
         updates.imageUrl = body.imageUrl.trim() || null
+      }
+      if (canEditOthers && typeof body.email === 'string' && body.email.trim()) {
+        const normalized = body.email.toLowerCase().trim()
+        if (!isValidEmail(normalized)) {
+          return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+        }
+        const existingEmail = await prisma.adminUser.findUnique({ where: { email: normalized } })
+        if (existingEmail && existingEmail.id !== id) {
+          return NextResponse.json({ error: 'An admin with this email already exists' }, { status: 409 })
+        }
+        updates.email = normalized
       }
       if (canEditOthers && typeof body.role === 'string' && ALLOWED_ROLES.includes(body.role as Role)) {
         updates.role = body.role

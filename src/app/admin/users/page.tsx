@@ -45,7 +45,7 @@ export default function AdminUsersPage() {
     imageFile: null as File | null,
   })
   const [editUser, setEditUser] = useState<AdminUser | null>(null)
-  const [editForm, setEditForm] = useState({ displayName: '', imageUrl: '', role: '', password: '' })
+  const [editForm, setEditForm] = useState({ email: '', displayName: '', imageUrl: '', role: '', password: '' })
   const [editImageFile, setEditImageFile] = useState<File | null>(null)
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success'; text: string } | null>(null)
@@ -87,6 +87,7 @@ export default function AdminUsersPage() {
   function openEdit(u: AdminUser) {
     setEditUser(u)
     setEditForm({
+      email: u.email,
       displayName: u.displayName || '',
       imageUrl: u.imageUrl || '',
       role: u.role,
@@ -178,6 +179,7 @@ export default function AdminUsersPage() {
             const fd = new FormData()
             fd.set('displayName', editForm.displayName.trim())
             if (canManageUsers && currentEmail !== editUser.email) fd.set('role', editForm.role)
+            if (canManageUsers && currentEmail !== editUser.email) fd.set('email', editForm.email.trim())
             if (editForm.password.trim().length >= 8) fd.set('password', editForm.password.trim())
             fd.set('image', editImageFile!)
             return fetch(`/api/admin/users/${editUser.id}`, {
@@ -193,6 +195,7 @@ export default function AdminUsersPage() {
             body: JSON.stringify({
               displayName: editForm.displayName.trim() || null,
               imageUrl: editForm.imageUrl.trim() || null,
+              ...(canManageUsers && currentEmail !== editUser.email ? { email: editForm.email.trim() } : {}),
               ...(canManageUsers && currentEmail !== editUser.email ? { role: editForm.role } : {}),
               ...(editForm.password.trim().length >= 8 ? { password: editForm.password.trim() } : {}),
             }),
@@ -204,7 +207,12 @@ export default function AdminUsersPage() {
         return
       }
       setMessage({ type: 'success', text: 'User updated.' })
-      setEditForm((f) => ({ ...f, password: '', ...(typeof j.imageUrl === 'string' ? { imageUrl: j.imageUrl } : {}) }))
+      setEditForm((f) => ({
+        ...f,
+        password: '',
+        ...(typeof j.imageUrl === 'string' ? { imageUrl: j.imageUrl } : {}),
+        ...(typeof j.email === 'string' ? { email: j.email } : {}),
+      }))
       setEditImageFile(null)
       load()
       setTimeout(closeEdit, 1500)
@@ -379,8 +387,17 @@ export default function AdminUsersPage() {
           <h2 className="text-lg font-semibold text-[#044444] dark:text-[#44AAAA] mb-4">Edit user</h2>
           <form onSubmit={onEditSubmit} className="space-y-4 max-w-md">
             <div>
-              <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">Email</label>
-              <div className="py-2 text-neutral-600 dark:text-neutral-400">{editUser.email}</div>
+              <label htmlFor="edit-email" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
+                Email
+              </label>
+              <input
+                id="edit-email"
+                type="email"
+                value={editForm.email}
+                disabled={!canManageUsers || currentEmail === editUser.email}
+                onChange={(e) => setEditForm((f) => ({ ...f, email: e.target.value }))}
+                className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 disabled:opacity-60"
+              />
             </div>
             <div>
               <label htmlFor="edit-displayName" className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1">
@@ -513,7 +530,7 @@ export default function AdminUsersPage() {
                             alt=""
                             width={36}
                             height={36}
-                            className="h-9 w-9 rounded-full border border-neutral-200 dark:border-neutral-600 object-cover"
+                            className="h-9 w-9 rounded-full border border-neutral-200 dark:border-neutral-600 object-contain bg-white p-0.5"
                             unoptimized
                             onError={() => setBrokenImages((prev) => ({ ...prev, [u.id]: true }))}
                           />

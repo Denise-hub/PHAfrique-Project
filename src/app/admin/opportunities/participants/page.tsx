@@ -344,7 +344,7 @@ function AdminParticipantsPageInner() {
                     alt=""
                     width={48}
                     height={48}
-                    className="h-12 w-12 rounded-full object-cover border border-neutral-200 dark:border-neutral-600 shrink-0"
+                    className="h-12 w-12 rounded-full object-contain bg-white p-0.5 border border-neutral-200 dark:border-neutral-600 shrink-0"
                     unoptimized
                     onError={() => setBrokenImages((prev) => ({ ...prev, [p.id]: true }))}
                   />

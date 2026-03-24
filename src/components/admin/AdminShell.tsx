@@ -192,7 +192,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 alt=""
                 width={40}
                 height={40}
-                className="h-10 w-10 shrink-0 rounded-full border-2 border-white/30 object-cover"
+                className="h-10 w-10 shrink-0 rounded-full border-2 border-white/30 object-contain bg-white p-0.5"
                 unoptimized
                 onError={() => setAvatarBroken(true)}
               />
