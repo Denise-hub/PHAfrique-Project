@@ -5,6 +5,12 @@ import Image from 'next/image'
 import PageHero from '@/components/ui/PageHero'
 import { imageSrc } from '@/lib/image-url'
 
+import InternshipHeroImg from '../../../public/assets/images/opportunities/internship-hero.jpg'
+import PublicHealthInternImg from '../../../public/assets/images/programs/public-health-research-intern.jpg'
+import CapacityBuildingImg from '../../../public/assets/images/programs/capacity-building.jpg'
+import VolunteerHeroImg from '../../../public/assets/images/portfolios/2.jpg'
+import VolunteerWithPhaImg from '../../../public/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5851.jpeg'
+
 type Opp = {
   id: string
   title: string
@@ -326,11 +332,12 @@ export default function OpportunitiesPage() {
           {/* Visual Hero Banner - Similar to Volunteering but with #044444 */}
           <div className="relative rounded-3xl overflow-hidden mb-12 md:mb-16 h-64 md:h-80">
             <Image
-              src="/assets/images/opportunities/internship-hero.jpg"
+              src={InternshipHeroImg}
               alt="Internship Opportunities"
               fill
               className="object-cover"
               sizes="100vw"
+              placeholder="blur"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#044444]/40 via-[#044444]/55 to-[#044444]/75" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -436,29 +443,32 @@ export default function OpportunitiesPage() {
                   <div className="flex flex-col gap-3 h-64 md:h-full">
                     <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
                       <Image
-                        src="/assets/images/programs/public-health-research-intern.jpg"
+                        src={PublicHealthInternImg}
                         alt="PHA internship program — interns collaborating"
                         fill
                         className="object-contain p-2"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        placeholder="blur"
                       />
                     </div>
                     <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
                       <Image
-                        src="/assets/images/programs/capacity-building.jpg"
+                        src={CapacityBuildingImg}
                         alt="Capacity building session"
                         fill
                         className="object-contain p-2"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        placeholder="blur"
                       />
                     </div>
                     <div className="relative flex-1 min-h-[88px] rounded-2xl overflow-hidden shadow-md bg-neutral-50 dark:bg-neutral-900/40">
                       <Image
-                        src="/assets/images/programs/public-health-research-intern.jpg"
+                        src={PublicHealthInternImg}
                         alt="Public health research internship"
                         fill
                         className="object-contain p-2"
                         sizes="(max-width: 768px) 100vw, 50vw"
+                        placeholder="blur"
                       />
                     </div>
                   </div>
@@ -475,11 +485,12 @@ export default function OpportunitiesPage() {
           {/* Visual Hero Banner */}
           <div className="relative rounded-3xl overflow-hidden mb-12 md:mb-16 h-64 md:h-80">
             <Image
-              src="/assets/images/portfolios/2.jpg"
+              src={VolunteerHeroImg}
               alt="Volunteer Opportunities"
               fill
               className="object-cover"
               sizes="100vw"
+              placeholder="blur"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#FF0000]/40 via-[#FF0000]/55 to-[#FF0000]/75" />
             <div className="absolute inset-0 flex items-center justify-center">
@@ -528,11 +539,12 @@ export default function OpportunitiesPage() {
                 </div>
                 <div className="relative w-full md:w-1/2 h-64 md:h-auto overflow-hidden">
                   <Image
-                    src="/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5851.jpeg"
+                    src={VolunteerWithPhaImg}
                     alt="Volunteer with PHA"
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder="blur"
                   />
                 </div>
               </div>

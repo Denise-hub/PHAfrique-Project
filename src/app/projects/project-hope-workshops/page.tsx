@@ -9,14 +9,21 @@ export const metadata: Metadata = {
     'SOS MENHEMA × Project Hope UK: hands-on program focused on menstrual health, environmental awareness, and empowerment for young people in South Africa.',
 }
 
-const HERO_IMAGE = '/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5888.jpeg'
-const SIDE_IMAGE = '/assets/images/programs/SOS MENHEMA - Project Hope/1.jpg'
+import HeroImage from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5888.jpeg'
+import SideImage from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/1.jpg'
+import ExtraImage1 from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/Untitled design (2).png'
+import ExtraImage2 from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/Untitled design.png'
+import ExtraImage3 from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5904.jpeg'
+import ExtraImage4 from '../../../../public/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5851.jpeg'
+
+const HERO_IMAGE = HeroImage
+const SIDE_IMAGE = SideImage
 
 const EXTRA_IMAGES = [
-  '/assets/images/programs/SOS MENHEMA - Project Hope/Untitled design (2).png',
-  '/assets/images/programs/SOS MENHEMA - Project Hope/Untitled design.png',
-  '/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5904.jpeg',
-  '/assets/images/programs/SOS MENHEMA - Project Hope/IMG_5851.jpeg',
+  ExtraImage1,
+  ExtraImage2,
+  ExtraImage3,
+  ExtraImage4,
 ]
 
 export default function ProjectHopeWorkshopsPage() {
@@ -28,7 +35,7 @@ export default function ProjectHopeWorkshopsPage() {
       <section className="pt-6 md:pt-8 pb-10 md:pb-14 bg-white dark:bg-neutral-950">
         <div className="container-custom">
           <div className="relative rounded-3xl overflow-hidden h-72 md:h-[420px] shadow-2xl">
-            <Image src={HERO_IMAGE} alt="Project Hope Workshops" fill className="object-cover" sizes="100vw" priority />
+            <Image src={HERO_IMAGE} alt="Project Hope Workshops" fill className="object-cover" sizes="100vw" priority placeholder="blur" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/30 to-transparent" aria-hidden />
             <div className="absolute inset-0 flex items-end">
               <div className="p-6 md:p-10 max-w-3xl">
@@ -78,6 +85,7 @@ export default function ProjectHopeWorkshopsPage() {
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 100vw, 50vw"
+                    placeholder="blur"
                   />
                 </div>
               </div>
@@ -123,9 +131,9 @@ export default function ProjectHopeWorkshopsPage() {
             {/* Extra images gallery */}
             <div className="mt-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {EXTRA_IMAGES.map((src) => (
+                {EXTRA_IMAGES.map((src, index) => (
                   <div
-                    key={src}
+                    key={index}
                     className="relative rounded-2xl overflow-hidden shadow-lg border border-neutral-200/70 dark:border-neutral-800 bg-white dark:bg-neutral-900"
                   >
                     <div className="relative h-56 sm:h-52 lg:h-48">
@@ -135,6 +143,7 @@ export default function ProjectHopeWorkshopsPage() {
                         fill
                         className="object-cover"
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        placeholder="blur"
                       />
                     </div>
                   </div>

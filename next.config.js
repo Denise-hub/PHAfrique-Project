@@ -13,7 +13,7 @@ const nextConfig = {
       { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
     ],
     formats: ['image/avif', 'image/webp'],
-    unoptimized: true,
+    minimumCacheTTL: 31536000,
   },
   compress: true,
   poweredByHeader: false,

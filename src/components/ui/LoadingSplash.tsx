@@ -4,7 +4,9 @@ import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 
-const LOGO_PATH = '/assets/logos/TRANSPARENT-MAIN-LOGO-ico.png'
+import LogoImg from '../../../public/assets/logos/TRANSPARENT-MAIN-LOGO-ico.png'
+
+const LOGO_PATH = LogoImg
 const MIN_DISPLAY_MS = 1200
 const FADEOUT_MS = 500
 const MAX_DISPLAY_MS = 4000
@@ -56,7 +58,6 @@ export default function LoadingSplash() {
             height={80}
             className="h-20 w-auto object-contain md:h-24"
             priority
-            unoptimized
           />
         </div>
         <div className="flex justify-center gap-1.5" aria-hidden>

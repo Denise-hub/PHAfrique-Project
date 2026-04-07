@@ -9,9 +9,13 @@ export const metadata: Metadata = {
     'SOS MENHEMA is a grassroots project designed to address period poverty and menstrual stigma in underserved African communities.',
 }
 
-const HERO_IMAGE = '/assets/images/programs/SOS MENHEMA page/IMG_20251011_141015.jpg'
-const EXTRA_IMAGE_1 = '/assets/images/programs/SOS MENHEMA page/IMG_20251011_125603.jpg'
-const EXTRA_IMAGE_2 = '/assets/images/programs/SOS MENHEMA page/IMG_7265.jpg'
+import HeroImage from '../../../../public/assets/images/programs/SOS MENHEMA page/IMG_20251011_141015.jpg'
+import ExtraImage1 from '../../../../public/assets/images/programs/SOS MENHEMA page/IMG_20251011_125603.jpg'
+import ExtraImage2 from '../../../../public/assets/images/programs/SOS MENHEMA page/IMG_7265.jpg'
+
+const HERO_IMAGE = HeroImage
+const EXTRA_IMAGE_1 = ExtraImage1
+const EXTRA_IMAGE_2 = ExtraImage2
 
 const WORKSHOP_PDF =
   'https://www.phafrique.com/wp-content/uploads/2025/12/SOS-Menhema-October-workshop-flyers.pdf'
@@ -26,7 +30,7 @@ export default function SosMenhemaPage() {
       <section className="pt-6 md:pt-8 pb-10 md:pb-14 bg-white dark:bg-neutral-950">
         <div className="container-custom">
           <div className="relative rounded-3xl overflow-hidden h-72 md:h-[420px] shadow-2xl">
-            <Image src={HERO_IMAGE} alt="SOS MENHEMA" fill className="object-cover" sizes="100vw" priority />
+            <Image src={HERO_IMAGE} alt="SOS MENHEMA" fill className="object-cover" sizes="100vw" priority placeholder="blur" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent" aria-hidden />
             <div className="absolute inset-0 flex items-end">
               <div className="p-6 md:p-10 max-w-3xl">
@@ -97,6 +101,7 @@ export default function SosMenhemaPage() {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder="blur"
                   />
                 </div>
               </div>
@@ -108,6 +113,7 @@ export default function SosMenhemaPage() {
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
+                    placeholder="blur"
                   />
                 </div>
               </div>

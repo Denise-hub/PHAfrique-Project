@@ -2,6 +2,11 @@ import PortfoliosList from '@/components/portfolios/PortfoliosList'
 import PageHero from '@/components/ui/PageHero'
 import Image from 'next/image'
 
+import TargetAudienceImg from '../../../public/assets/images/programs/2.jpg'
+import Portfolios2Img from '../../../public/assets/images/portfolios/2.jpg'
+import CapacityBuildingImg from '../../../public/assets/images/programs/capacity-building.jpg'
+import VolunteerImg from '../../../public/assets/images/portfolios/volunteer.jpg'
+
 export const revalidate = 60
 
 export default function PortfoliosPage() {
@@ -117,11 +122,12 @@ export default function PortfoliosPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   <div className="relative min-h-[260px] md:min-h-[320px]">
                     <Image
-                      src="/assets/images/programs/2.jpg"
+                      src={TargetAudienceImg}
                       alt="Target audience"
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 50vw"
+                      placeholder="blur"
                     />
                   </div>
                   <div className="p-6 md:p-8">
@@ -144,11 +150,12 @@ export default function PortfoliosPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   <div className="order-1 lg:order-2 relative min-h-[260px] md:min-h-[320px]">
                     <Image
-                      src="/assets/images/portfolios/2.jpg"
+                      src={Portfolios2Img}
                       alt="Communication and engagement"
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 50vw"
+                      placeholder="blur"
                     />
                   </div>
                   <div className="order-2 lg:order-1 p-6 md:p-8">
@@ -167,11 +174,12 @@ export default function PortfoliosPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   <div className="relative min-h-[260px] md:min-h-[320px]">
                     <Image
-                      src="/assets/images/programs/capacity-building.jpg"
+                      src={CapacityBuildingImg}
                       alt="Skills development and learnership"
                       fill
                       className="object-cover"
                       sizes="(max-width: 1024px) 100vw, 50vw"
+                      placeholder="blur"
                     />
                   </div>
                   <div className="p-6 md:p-8">
@@ -193,11 +201,12 @@ export default function PortfoliosPage() {
         <div className="container-custom">
           <div className="relative rounded-3xl overflow-hidden h-64 md:h-72 lg:h-80 shadow-xl max-w-6xl mx-auto">
             <Image
-              src="/assets/images/portfolios/volunteer.jpg"
+              src={VolunteerImg}
               alt="Would you like to volunteer"
               fill
               className="object-cover object-top"
               sizes="100vw"
+              placeholder="blur"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/45 to-black/55" />
             <div className="absolute inset-0 flex items-center justify-center">
