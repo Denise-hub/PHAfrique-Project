@@ -146,3 +146,25 @@ model Participant {
   updatedAt      DateTime     @updatedAt
 }
 
+// -----------------------------------------------------------------------------
+// Newsletters & Subscriptions
+// -----------------------------------------------------------------------------
+
+model Newsletter {
+  id          String   @id @default(cuid())
+  title       String
+  content     String?  // Rich text or summary
+  link        String?  // External link
+  imageUrl    String?  // Associated image
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
+  isActive     Boolean  @default(true)
+}
+

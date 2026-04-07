@@ -74,7 +74,7 @@ export async function PATCH(
       const passwordVal = form.get('password')
       if (typeof passwordVal === 'string' && passwordVal.length >= 8) {
         updates.passwordHash = await hash(passwordVal, 10)
-      } else if (passwordVal === null || passwordVal === '') {
+      } else if (typeof passwordVal === 'string' && passwordVal === '') {
         updates.passwordHash = null
       }
       const imageFile = form.get('image') as File | null

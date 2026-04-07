@@ -19,6 +19,7 @@ const navItems: { href: string; label: string; icon: string; section: AdminSecti
   { href: '/admin/applications', label: 'Applications', icon: 'users', section: 'applications' },
   { href: '/admin/contact-messages', label: 'Contact Messages', icon: 'file', section: 'content' },
   { href: '/admin/events', label: 'News', icon: 'newspaper', section: 'news' },
+  { href: '/admin/newsletters', label: 'Newsletters', icon: 'newspaper', section: 'newsletters' },
   { href: '/admin/content', label: 'Content', icon: 'file', section: 'content' },
   { href: '/admin/images', label: 'Gallery', icon: 'image', section: 'gallery' },
   { href: '/admin/users', label: 'Users', icon: 'users-cog', section: 'users' },

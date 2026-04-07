@@ -19,15 +19,8 @@ async function main() {
     { email: SUPER_ADMIN_EMAIL, role: ROLES.SUPER_ADMIN, passwordHash: process.env.ADMIN_PASSWORD_HASH || null },
   ]
 
-  if (process.env.SEED_DEFAULT_ADMIN_TEAM === 'true') {
-    adminUsers.push(
-      { email: 'eunice.tshilengu@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-      { email: 'jemima.lotika@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-      { email: 'kabala@phafrique.org', role: ROLES.CO_FOUNDER, passwordHash: null },
-      { email: 'munashe.faranisi@phafrique.org', role: ROLES.SOCIAL_MEDIA_MANAGER, passwordHash: null },
-      { email: 'queren.basemenane@phafrique.org', role: ROLES.NEWSLETTER_MANAGER, passwordHash: null },
-    )
-  }
+  // Intentionally do not recreate team admin accounts from seed.
+  // This prevents deleted admin users from reappearing after seed runs.
   for (const u of adminUsers) {
     const email = u.email.toLowerCase().trim()
     const updateData = { role: u.role }

@@ -33,6 +33,7 @@ type FounderCard = {
   name: string
   email: string
   imageUrl: string
+  subtitle?: string
 }
 
 function normalizeFounderName(value: string) {
@@ -53,16 +54,19 @@ const DEFAULT_FOUNDERS: FounderCard[] = [
     name: 'Tshowa Kabala',
     email: 'tshowa@phafrique.com',
     imageUrl: '/assets/images/team/Tshowa_Kabala.png',
+    subtitle: 'Ethics & Mental Health',
   },
   {
     name: 'Jemima Lotika',
     email: 'jemima@phafrique.com',
     imageUrl: '/assets/images/team/Jemima_Lotika.png',
+    subtitle: 'Maternal and Child Health',
   },
   {
     name: 'Eunice Tshilengu',
     email: 'eunice@phafrique.com',
     imageUrl: '/assets/images/team/Eunice_Tshilengu_Co-Founder.png',
+    subtitle: 'Environmental Health',
   },
 ]
 
@@ -115,10 +119,10 @@ async function getFounders(): Promise<FounderCard[]> {
       )
     })
 
-    const canonicalProfile: Record<string, { name: string; email: string }> = {
-      tshowa: { name: 'Tshowa Kabala', email: 'tshowa@phafrique.com' },
-      jemima: { name: 'Jemima Lotika', email: 'jemima@phafrique.com' },
-      eunice: { name: 'Eunice Tshilengu', email: 'eunice@phafrique.com' },
+    const canonicalProfile: Record<string, { name: string; email: string; subtitle: string }> = {
+      tshowa: { name: 'Tshowa Kabala', email: 'tshowa@phafrique.com', subtitle: 'Ethics & Mental Health' },
+      jemima: { name: 'Jemima Lotika', email: 'jemima@phafrique.com', subtitle: 'Maternal and Child Health' },
+      eunice: { name: 'Eunice Tshilengu', email: 'eunice@phafrique.com', subtitle: 'Environmental Health' },
     }
 
     const canonicalized = deduped.map((founder) => {
@@ -129,6 +133,7 @@ async function getFounders(): Promise<FounderCard[]> {
         ...founder,
         name: profile.name,
         email: profile.email,
+        subtitle: profile.subtitle,
       }
     })
 
@@ -544,6 +549,9 @@ export default async function AboutPage() {
                   </div>
                   <h4 className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{founder.name}</h4>
                   <p className="mt-1 text-sm text-neutral-600 dark:text-neutral-300">Co-founder</p>
+                  {founder.subtitle && (
+                    <p className="mt-0.5 text-xs font-medium text-[#044444] dark:text-[#44AAAA]">{founder.subtitle}</p>
+                  )}
                   <a
                     href={`mailto:${founder.email}`}
                     className="mt-1 text-xs sm:text-sm font-medium text-[#044444] dark:text-[#44AAAA] hover:underline break-all"

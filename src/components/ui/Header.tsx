@@ -14,6 +14,7 @@ const TOP_LINKS: NavLink[] = [
   { href: '/about', label: 'About' },
   { href: '/portfolios', label: 'Portfolios' },
   { href: '/opportunities', label: 'Opportunities' },
+  { href: '/news', label: 'News' },
   { href: '/contact', label: 'Contact' },
 ]
 

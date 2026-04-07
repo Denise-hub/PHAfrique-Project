@@ -7,6 +7,14 @@ import { effectiveRole, ROLES } from '@/lib/roles'
 
 export const dynamic = 'force-dynamic'
 
+const LEGACY_EMAILS = [
+  'queren.basemenane@phafrique.org',
+  'munashe.faranisi@phafrique.org',
+  'kabala@phafrique.org',
+  'jemima.lotika@phafrique.org',
+  'eunice.tshilengu@phafrique.org',
+]
+
 function maskEmail(email: string) {
   const [name, domain] = email.split('@')
   if (!name || !domain) return email
@@ -32,11 +40,19 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
       select: { email: true, role: true, passwordHash: true, createdAt: true },
     })
+    const emails = new Set(admins.map((a) => a.email.toLowerCase().trim()))
+    const legacyPresence = LEGACY_EMAILS.map((email) => ({
+      email: maskEmail(email),
+      exists: emails.has(email),
+    }))
 
     return NextResponse.json({
       env: process.env.VERCEL_ENV || process.env.NODE_ENV || 'unknown',
       dbFingerprint: dbFingerprint(process.env.DATABASE_URL),
+      nextAuthUrl: process.env.NEXTAUTH_URL || 'missing',
+      seedDefaultAdminTeam: process.env.SEED_DEFAULT_ADMIN_TEAM === 'true',
       adminCount: admins.length,
+      legacyPresence,
       admins: admins.map((a) => ({
         email: maskEmail(a.email),
         role: a.role,
