@@ -21,6 +21,7 @@ export type AdminSection =
   | 'opportunities'
   | 'applications'
   | 'news'
+  | 'newsletters'
   | 'content'
   | 'gallery'
   | 'users'
@@ -32,6 +33,7 @@ const SECTION_ACCESS: Record<Role, AdminSection[]> = {
     'opportunities',
     'applications',
     'content',
+    'newsletters',
     'users',
     'profile',
   ],
@@ -40,6 +42,7 @@ const SECTION_ACCESS: Record<Role, AdminSection[]> = {
     'opportunities',
     'applications',
     'content',
+    'newsletters',
     'users',
     'profile',
   ],
@@ -48,6 +51,7 @@ const SECTION_ACCESS: Record<Role, AdminSection[]> = {
     'opportunities',
     'applications',
     'content',
+    'newsletters',
     'users',
     'profile',
   ],
@@ -56,10 +60,11 @@ const SECTION_ACCESS: Record<Role, AdminSection[]> = {
     'opportunities',
     'applications',
     'content',
+    'newsletters',
     'users',
     'profile',
   ],
-  [ROLES.NEWSLETTER_MANAGER]: ['dashboard', 'opportunities', 'profile'],
+  [ROLES.NEWSLETTER_MANAGER]: ['dashboard', 'opportunities', 'newsletters', 'profile'],
 }
 
 export function canAccessSection(role: string | null | undefined, section: AdminSection): boolean {
