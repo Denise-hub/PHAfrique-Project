@@ -11,10 +11,10 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
-    "db:push": "prisma db push",
+    "db:push": "prisma db push --accept-data-loss",
     "db:seed": "node prisma/seed.js",
     "db:sync-admin": "node prisma/sync-admin-user-schema.js",
-    "db:setup": "prisma generate && prisma db push && node prisma/sync-admin-user-schema.js",
+    "db:setup": "prisma generate && prisma db push --accept-data-loss && node prisma/sync-admin-user-schema.js",
     "db:ensure-super-admin": "node prisma/ensure-super-admin.js",
     "db:set-super-admin-password": "node prisma/set-super-admin-password.js"
   },

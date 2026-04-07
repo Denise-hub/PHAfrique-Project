@@ -9,6 +9,15 @@ import { prisma } from '@/lib/db'
 // there is always at least one account able to reach the admin panel.
 const SUPER_ADMIN_EMAIL = 'denmaombi@gmail.com'
 
+interface AdminSessionUser {
+  id: string
+  email: string
+  role: string
+  passwordHash: string | null
+  displayName?: string | null
+  imageUrl?: string | null
+}
+
 function canonicalAdminEmail(input: string) {
   const email = input.toLowerCase().trim()
   const aliases: Record<string, string> = {
@@ -129,9 +138,9 @@ export const authOptions: NextAuthOptions = {
         console.log('[auth] email:', email, '| isSuperAdminEmail:', isSuperAdminEmail)
         console.log('[auth] process.env.ADMIN_PASSWORD: defined =', !!envPasswordRaw, '| length after trim:', envPassword.length)
 
-        let admin: { id: string; email: string; role: string; passwordHash: string | null; displayName?: string | null; imageUrl?: string | null } | null
+        let admin: AdminSessionUser | null
         try {
-          admin = await findAdminByAnyEmail(adminUser, rawEmail) as typeof admin
+          admin = (await findAdminByAnyEmail(adminUser, rawEmail)) as AdminSessionUser | null
         } catch (e) {
           console.error('[auth] authorize RETURNING null: reason=DB error during findUnique:', (e as Error).message)
           return null
@@ -247,11 +256,11 @@ export const authOptions: NextAuthOptions = {
           let admin = await findAdminByAnyEmail(adminUser, email)
           if (!admin && email === SUPER_ADMIN_EMAIL) {
             console.log('[auth] Google sign-in: SUPER_ADMIN not in DB, creating now')
-            admin = await prisma.adminUser.upsert({
+            admin = (await prisma.adminUser.upsert({
               where: { email },
               create: { email, role: 'SUPER_ADMIN', passwordHash: null },
               update: { role: 'SUPER_ADMIN' },
-            }) as typeof admin
+            })) as AdminSessionUser | null
           }
           if (!admin) {
             console.error(`[auth] Google sign-in: ${email} is not in the admin list. Run: npm run db:seed to add more admins.`)
